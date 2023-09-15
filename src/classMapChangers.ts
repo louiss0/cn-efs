@@ -3,18 +3,7 @@
 const cssVariableWithOptionalPrefixedHintRE =
     /^(?<variable_hint>[a-z]+:)?(?<variable_value>--_?[a-z0-9]+(?:(?:-|_)[a-z0-9]+)*)$/
 
-
-// const VariableHints = Object.freeze({
-//     COLOR: "color",
-//     LENGTH: "length",
-//     STRING: "string"
-// })
-
-
-// const findVariantTermAfterOpeningBracketAmpersandAndColonBeforeClosingBracketAndColonRE =
-//     /(<=[&:)(?:[a-z-]+(?:\([a-z0-9+-_]\))?)(?=]:)/
-
-
+const checkIfStringIsACssVariableWithAnOptionalHint = (string: string) => cssVariableWithOptionalPrefixedHintRE.test(string)
 
 // const arbitraryPropertyRE = /\[(<property_key>[a-z]+(?:-[a-z]+)?):(<property_value>[_-)(a-z0-9]+)\]/
 
@@ -24,19 +13,45 @@ const cssTypeSubTypeAndValueUtilityClassRE = /^(?<type>[a-z\][#&!:]+)-(?<sub_typ
 
 const properCSSDigitRE = /^(?<digit>\d{1,4}(?:[a-z]{2,4})?)$/
 
+
+const checkIfStringIsAProperDigit = (string: string) => properCSSDigitRE.test(string)
+
+
 const colorRangeRE = /(?<color>[a-z]+)-(?<range>[1-9]00|9?50)/
+
+
 
 const hexColorRE = /^(?<hex_color>#[A-Fa-f0-9]{3,6})$/
 
+
 const cssColorFunctionRE = /(?<css_color_function>[a-z]{3,9}\((?:\d{1,4}(?:%|[a-z]{3,4}|\.\d+)?(?:,|_)?){3,4}\))/
+
+
+
+const checkIfStringIsAProperColor = (string: string) =>
+    colorRangeRE.test(string)
+    || hexColorRE.test(string)
+    || cssColorFunctionRE.test(string)
+
 
 const cssNormalFunctionRE = /(?<css_function>[a-z_-]{3,15}\(([a-z0-9%!\(\).\/-]+(?:_|,)?)+\))/
 
+const checkIfStringIsAProperCSSNormalFunction = (string: string) =>
+    cssNormalFunctionRE.test(string) && !cssColorFunctionRE.test(string)
+
 const arbitraryValueRE = /^\[(?<value>[a-z,0-9_\-)%!\/($.:]+)\]$/
+
+const checkIfStringIsAProperArbitraryValue = (string: string) => arbitraryValueRE.test(string)
 
 const lowerCaseWordRE = /^(?<lower_case_word>[a-z]+)$/
 
-const cssOneOrMoreArgsRE = /(?:[a-z0-9#)$.\/\-(%]+(?:,|_)?){2,}/
+
+const checkIfStringIsALowerCaseWord = (string: string) => lowerCaseWordRE.test(string)
+
+const cssTwoOrMoreArgsRE =
+    /(?<first_arg>[a-z0-9]+\((?:[a-z0-9\-\/.]+|[a-z0-9\-_]+\([a-z0-9\-_\/.#$]+(?:(?:,|_)[a-z0-9\-_\/.#$]+)+\))(?:(?:,|_)[a-z0-9\-\/.#$]+|[a-z0-9\-_]+\([a-z0-9\-_\/.#$]+(?:(?:,_)[a-z0-9\-_\/.#$]+)+\))*\))(?:_[a-z0-9\-]+\([a-z0-9\-_\/.#$]+(?:(,|_)[a-z0-9\-_\/.#$]+)*\)|_[a-z0-9]+)+/g
+const checkIfStringIsASetOfArgs = (string: string) => cssTwoOrMoreArgsRE.test(string)
+
 
 export const viableClassObjectMapKeys = ["digit", "word", "color", "variable", "function", "args"] as const
 
@@ -86,7 +101,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOf
             && cssColorFunctionRE.test(arbitraryValueMatchSecondValue)
 
         const arbitraryValueIsASetOfArgs = !!arbitraryValueMatchSecondValue
-            && cssOneOrMoreArgsRE.test(arbitraryValueMatchSecondValue)
+            && cssTwoOrMoreArgsRE.test(arbitraryValueMatchSecondValue)
             && !arbitraryValueIsAColorFunction
 
         const arbitraryValueIsAViableCSSVariable = !!arbitraryValueMatchSecondValue
@@ -271,8 +286,8 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOf
         const valueOrArbitraryValueMatchSecondValueIsAViableWord = lowerCaseWordRE.test(value)
             || !!arbitraryValueMatchSecondValue && lowerCaseWordRE.test(arbitraryValueMatchSecondValue)
 
-        const valueOrArbitraryValueMatchSecondValueIsASetOfArgs = cssOneOrMoreArgsRE.test(value)
-            || !!arbitraryValueMatchSecondValue && cssOneOrMoreArgsRE.test(arbitraryValueMatchSecondValue)
+        const valueOrArbitraryValueMatchSecondValueIsASetOfArgs = cssTwoOrMoreArgsRE.test(value)
+            || !!arbitraryValueMatchSecondValue && cssTwoOrMoreArgsRE.test(arbitraryValueMatchSecondValue)
 
         const arbitraryValueMatchSecondValueIsAViableCSSVariable =
             !!arbitraryValueMatchSecondValue
@@ -441,12 +456,12 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOf
  
 TODO: Find a way to fix the debugger.
  
-TODO: Add the logic needed to make this function work.
 
 */
-const arbitraryVariant = /^\[&(?<variant>(?::{1,2})?[a-z]+(?:-[a-z]+)?(?:\(\d+\))?)]:$/
 
-const wordVariant = /(?<variant>(?::{1,2})?[a-z]+(?:-[a-z]+)?(?:\(\d+\))?):/
+const startsWithArbitraryVariantAndTypeRE = /^(?<variant>\[&(?::{1,2})?[a-z]+(?:-[a-z]+)?(?:\(\d+\))?\]):(?<type>[a-z]+)/
+
+const startsWithWordVariantAndTypeRE = /^(?<variant>(?::{1,2})?[a-z]+(?:-[a-z]+)?(?:\(\d+\))?):(?<type>[a-z]+)/
 
 
 export const attemptToExchangeIdenticalKeysInClassMapBasedOnVariants: ClassMapChangerBasedOnClassName = (classMap, className) => {
@@ -462,7 +477,380 @@ export const attemptToExchangeIdenticalKeysInClassMapBasedOnVariants: ClassMapCh
 
         const [type, value] = classNameTypeAndValueMatch
 
+
         if (!type || !value) return classMapHasChanged
+
+
+        const typeStartsWithAnArbitraryVariantMatch = type.match(startsWithArbitraryVariantAndTypeRE)
+
+        const typeStartsWithAWordVariantMatch = type.match(startsWithWordVariantAndTypeRE)
+
+
+        if (typeStartsWithAnArbitraryVariantMatch) {
+
+
+            const [variant, type] = typeStartsWithAnArbitraryVariantMatch
+
+
+            if (!variant || !type) return classMapHasChanged
+
+            const stringMadeFromVariantAndTypeFromArbitraryVariantMatch = `${variant}${type}`
+
+            const wordVariantVersionOfTheString = stringMadeFromVariantAndTypeFromArbitraryVariantMatch
+                .replace(/\[\]\&/g, "")
+
+            const classMapHasTheTypeAsAKey = classMap.has(wordVariantVersionOfTheString)
+
+
+            const classMapHasMatchedVariantAndTypeAsTheKey = classMap.has(stringMadeFromVariantAndTypeFromArbitraryVariantMatch)
+
+
+            if (classMapHasTheTypeAsAKey && classMapHasMatchedVariantAndTypeAsTheKey) {
+
+
+
+                const valueFromClassMapUsingClassType = classMap.get(wordVariantVersionOfTheString)
+
+                const valueFromClassMapUsingClassVariantAndType = classMap.get(stringMadeFromVariantAndTypeFromArbitraryVariantMatch)
+
+                const valueFromClassMapUsingClassTypeAndValueFromUsingMatchedVariantAndClassTypeIsAMap =
+                    valueFromClassMapUsingClassType instanceof Map
+                    && valueFromClassMapUsingClassVariantAndType instanceof Map
+
+                if (valueFromClassMapUsingClassTypeAndValueFromUsingMatchedVariantAndClassTypeIsAMap) {
+
+
+                    if (checkIfStringIsAProperDigit(value)) {
+
+
+                        valueFromClassMapUsingClassVariantAndType.delete(viableClassObjectMapKeys[0])
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[0], value)
+
+
+                        classMapHasChanged = true
+
+                    }
+
+                    if (checkIfStringIsALowerCaseWord(value)) {
+
+                        valueFromClassMapUsingClassVariantAndType.delete(viableClassObjectMapKeys[1])
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[1], value)
+
+                        classMapHasChanged = true
+                    }
+
+                    if (checkIfStringIsAProperColor(value)) {
+                        valueFromClassMapUsingClassVariantAndType.delete(viableClassObjectMapKeys[2])
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[2], value)
+
+                    }
+
+                    if (checkIfStringIsACssVariableWithAnOptionalHint(value)) {
+
+                        valueFromClassMapUsingClassVariantAndType.delete(viableClassObjectMapKeys[3])
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[3], value)
+
+                        classMapHasChanged = true
+                    }
+
+                    if (checkIfStringIsAProperCSSNormalFunction(value)) {
+
+                        valueFromClassMapUsingClassVariantAndType.delete(viableClassObjectMapKeys[4])
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[4], value)
+
+                        classMapHasChanged = true
+                    }
+
+
+                    if (checkIfStringIsASetOfArgs(value)) {
+
+                        valueFromClassMapUsingClassVariantAndType.delete(viableClassObjectMapKeys[5])
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[5], value)
+
+
+                        classMapHasChanged = true
+                    }
+
+
+
+
+                }
+
+
+
+
+                return classMapHasChanged
+
+
+            }
+
+
+
+            if (classMapHasMatchedVariantAndTypeAsTheKey) {
+
+
+                const valueFromClassMapUsingClassType = classMap.get(stringMadeFromVariantAndTypeFromArbitraryVariantMatch)
+
+                const valueFromClassMapUsingClassTypeIsAMap = valueFromClassMapUsingClassType instanceof Map
+
+                if (valueFromClassMapUsingClassTypeIsAMap) {
+
+
+                    if (checkIfStringIsAProperDigit(value)) {
+
+
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[0], value)
+
+
+                        classMapHasChanged = true
+
+                    }
+
+                    if (checkIfStringIsALowerCaseWord(value)) {
+
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[1], value)
+
+                        classMapHasChanged = true
+                    }
+
+                    if (checkIfStringIsAProperColor(value)) {
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[2], value)
+
+                    }
+
+                    if (checkIfStringIsACssVariableWithAnOptionalHint(value)) {
+
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[3], value)
+
+                        classMapHasChanged = true
+                    }
+
+                    if (checkIfStringIsAProperCSSNormalFunction(value)) {
+
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[4], value)
+
+                        classMapHasChanged = true
+                    }
+
+
+                    if (checkIfStringIsASetOfArgs(value)) {
+
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[5], value)
+
+
+                        classMapHasChanged = true
+                    }
+
+
+
+
+                }
+
+
+                return classMapHasChanged
+
+
+            }
+
+
+
+        }
+
+
+        if (typeStartsWithAWordVariantMatch) {
+
+
+            const [variant, type] = typeStartsWithAWordVariantMatch
+
+
+            if (!variant || !type) return classMapHasChanged
+
+            const stringMadeFromVariantAndTypeFromWordVariantMatch = `${variant}:${type}`
+
+            const arbitraryVariantVersionOfTheString = `[&${variant}]:${type}`
+
+            const classMapHasTheTypeAsAKey = classMap.has(arbitraryVariantVersionOfTheString)
+
+
+            const classMapHasMatchedVariantAndTypeAsTheKey = classMap.has(stringMadeFromVariantAndTypeFromWordVariantMatch)
+
+
+            if (classMapHasTheTypeAsAKey && classMapHasMatchedVariantAndTypeAsTheKey) {
+
+
+
+                const valueFromClassMapUsingClassType = classMap.get(arbitraryVariantVersionOfTheString)
+
+                const valueFromClassMapUsingClassVariantAndType = classMap.get(stringMadeFromVariantAndTypeFromWordVariantMatch)
+
+                const valueFromClassMapUsingClassTypeAndValueFromUsingMatchedVariantAndClassTypeIsAMap =
+                    valueFromClassMapUsingClassType instanceof Map
+                    && valueFromClassMapUsingClassVariantAndType instanceof Map
+
+                if (valueFromClassMapUsingClassTypeAndValueFromUsingMatchedVariantAndClassTypeIsAMap) {
+
+
+                    if (checkIfStringIsAProperDigit(value)) {
+
+
+                        valueFromClassMapUsingClassVariantAndType.delete(viableClassObjectMapKeys[0])
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[0], value)
+
+
+                        classMapHasChanged = true
+
+                    }
+
+                    if (checkIfStringIsALowerCaseWord(value)) {
+
+                        valueFromClassMapUsingClassVariantAndType.delete(viableClassObjectMapKeys[1])
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[1], value)
+
+                        classMapHasChanged = true
+                    }
+
+                    if (checkIfStringIsAProperColor(value)) {
+                        valueFromClassMapUsingClassVariantAndType.delete(viableClassObjectMapKeys[2])
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[2], value)
+
+                    }
+
+                    if (checkIfStringIsACssVariableWithAnOptionalHint(value)) {
+
+                        valueFromClassMapUsingClassVariantAndType.delete(viableClassObjectMapKeys[3])
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[3], value)
+
+                        classMapHasChanged = true
+                    }
+
+                    if (checkIfStringIsAProperCSSNormalFunction(value)) {
+
+                        valueFromClassMapUsingClassVariantAndType.delete(viableClassObjectMapKeys[4])
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[4], value)
+
+                        classMapHasChanged = true
+                    }
+
+
+                    if (checkIfStringIsASetOfArgs(value)) {
+
+                        valueFromClassMapUsingClassVariantAndType.delete(viableClassObjectMapKeys[5])
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[5], value)
+
+
+                        classMapHasChanged = true
+                    }
+
+
+
+
+                }
+
+
+
+
+                return classMapHasChanged
+
+
+            }
+
+
+
+            if (classMapHasMatchedVariantAndTypeAsTheKey) {
+
+
+                const valueFromClassMapUsingClassType = classMap.get(stringMadeFromVariantAndTypeFromWordVariantMatch)
+
+                const valueFromClassMapUsingClassTypeIsAMap = valueFromClassMapUsingClassType instanceof Map
+
+                if (valueFromClassMapUsingClassTypeIsAMap) {
+
+
+                    if (checkIfStringIsAProperDigit(value)) {
+
+
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[0], value)
+
+
+                        classMapHasChanged = true
+
+                    }
+
+                    if (checkIfStringIsALowerCaseWord(value)) {
+
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[1], value)
+
+                        classMapHasChanged = true
+                    }
+
+                    if (checkIfStringIsAProperColor(value)) {
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[2], value)
+
+                    }
+
+                    if (checkIfStringIsACssVariableWithAnOptionalHint(value)) {
+
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[3], value)
+
+                        classMapHasChanged = true
+                    }
+
+                    if (checkIfStringIsAProperCSSNormalFunction(value)) {
+
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[4], value)
+
+                        classMapHasChanged = true
+                    }
+
+
+                    if (checkIfStringIsASetOfArgs(value)) {
+
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[5], value)
+
+
+                        classMapHasChanged = true
+                    }
+
+
+
+
+                }
+
+
+                return classMapHasChanged
+
+
+            }
+
+
+
+        }
+
+
 
     }
 
@@ -476,8 +864,382 @@ export const attemptToExchangeIdenticalKeysInClassMapBasedOnVariants: ClassMapCh
 
         if (!type || !subType || !value) return classMapHasChanged
 
+        const fullType = `${type}-${subType}`
+
+        const typeStartsWithAnArbitraryVariantMatch = fullType.match(startsWithArbitraryVariantAndTypeRE)
+
+        const typeStartsWithAWordVariantMatch = fullType.match(startsWithWordVariantAndTypeRE)
+
+
+        if (typeStartsWithAnArbitraryVariantMatch) {
+
+
+            const [variant, type] = typeStartsWithAnArbitraryVariantMatch
+
+
+            if (!variant || !type) return classMapHasChanged
+
+            const stringMadeFromVariantAndTypeFromArbitraryVariantMatch = `${variant}${type}`
+
+            const wordVariantVersionOfTheString = stringMadeFromVariantAndTypeFromArbitraryVariantMatch
+                .replace(/\[\]\&/g, "")
+
+            const classMapHasTheTypeAsAKey = classMap.has(wordVariantVersionOfTheString)
+
+
+            const classMapHasMatchedVariantAndTypeAsTheKey = classMap.has(stringMadeFromVariantAndTypeFromArbitraryVariantMatch)
+
+
+            if (classMapHasTheTypeAsAKey && classMapHasMatchedVariantAndTypeAsTheKey) {
+
+
+
+                const valueFromClassMapUsingClassType = classMap.get(wordVariantVersionOfTheString)
+
+                const valueFromClassMapUsingClassVariantAndType = classMap.get(stringMadeFromVariantAndTypeFromArbitraryVariantMatch)
+
+                const valueFromClassMapUsingClassTypeAndValueFromUsingMatchedVariantAndClassTypeIsAMap =
+                    valueFromClassMapUsingClassType instanceof Map
+                    && valueFromClassMapUsingClassVariantAndType instanceof Map
+
+                if (valueFromClassMapUsingClassTypeAndValueFromUsingMatchedVariantAndClassTypeIsAMap) {
+
+
+                    if (checkIfStringIsAProperDigit(value)) {
+
+
+                        valueFromClassMapUsingClassVariantAndType.delete(viableClassObjectMapKeys[0])
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[0], value)
+
+
+                        classMapHasChanged = true
+
+                    }
+
+                    if (checkIfStringIsALowerCaseWord(value)) {
+
+                        valueFromClassMapUsingClassVariantAndType.delete(viableClassObjectMapKeys[1])
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[1], value)
+
+                        classMapHasChanged = true
+                    }
+
+                    if (checkIfStringIsAProperColor(value)) {
+                        valueFromClassMapUsingClassVariantAndType.delete(viableClassObjectMapKeys[2])
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[2], value)
+
+                    }
+
+                    if (checkIfStringIsACssVariableWithAnOptionalHint(value)) {
+
+                        valueFromClassMapUsingClassVariantAndType.delete(viableClassObjectMapKeys[3])
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[3], value)
+
+                        classMapHasChanged = true
+                    }
+
+                    if (checkIfStringIsAProperCSSNormalFunction(value)) {
+
+                        valueFromClassMapUsingClassVariantAndType.delete(viableClassObjectMapKeys[4])
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[4], value)
+
+                        classMapHasChanged = true
+                    }
+
+
+                    if (checkIfStringIsASetOfArgs(value)) {
+
+                        valueFromClassMapUsingClassVariantAndType.delete(viableClassObjectMapKeys[5])
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[5], value)
+
+
+                        classMapHasChanged = true
+                    }
+
+
+
+
+                }
+
+
+
+
+                return classMapHasChanged
+
+
+            }
+
+
+
+            if (classMapHasMatchedVariantAndTypeAsTheKey) {
+
+
+                const valueFromClassMapUsingClassType = classMap.get(stringMadeFromVariantAndTypeFromArbitraryVariantMatch)
+
+                const valueFromClassMapUsingClassTypeIsAMap = valueFromClassMapUsingClassType instanceof Map
+
+                if (valueFromClassMapUsingClassTypeIsAMap) {
+
+
+                    if (checkIfStringIsAProperDigit(value)) {
+
+
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[0], value)
+
+
+                        classMapHasChanged = true
+
+                    }
+
+                    if (checkIfStringIsALowerCaseWord(value)) {
+
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[1], value)
+
+                        classMapHasChanged = true
+                    }
+
+                    if (checkIfStringIsAProperColor(value)) {
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[2], value)
+
+                    }
+
+                    if (checkIfStringIsACssVariableWithAnOptionalHint(value)) {
+
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[3], value)
+
+                        classMapHasChanged = true
+                    }
+
+                    if (checkIfStringIsAProperCSSNormalFunction(value)) {
+
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[4], value)
+
+                        classMapHasChanged = true
+                    }
+
+
+                    if (checkIfStringIsASetOfArgs(value)) {
+
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[5], value)
+
+
+                        classMapHasChanged = true
+                    }
+
+
+
+
+                }
+
+
+                return classMapHasChanged
+
+
+            }
+
+
+
+        }
+
+
+        if (typeStartsWithAWordVariantMatch) {
+
+
+            const [variant, type] = typeStartsWithAWordVariantMatch
+
+
+            if (!variant || !type) return classMapHasChanged
+
+            const stringMadeFromVariantAndTypeFromWordVariantMatch = `${variant}:${type}`
+
+            const arbitraryVariantVersionOfTheString = `[&${variant}]:${type}`
+
+            const classMapHasTheTypeAsAKey = classMap.has(arbitraryVariantVersionOfTheString)
+
+
+            const classMapHasMatchedVariantAndTypeAsTheKey = classMap.has(stringMadeFromVariantAndTypeFromWordVariantMatch)
+
+
+            if (classMapHasTheTypeAsAKey && classMapHasMatchedVariantAndTypeAsTheKey) {
+
+
+
+                const valueFromClassMapUsingClassType = classMap.get(arbitraryVariantVersionOfTheString)
+
+                const valueFromClassMapUsingClassVariantAndType = classMap.get(stringMadeFromVariantAndTypeFromWordVariantMatch)
+
+                const valueFromClassMapUsingClassTypeAndValueFromUsingMatchedVariantAndClassTypeIsAMap =
+                    valueFromClassMapUsingClassType instanceof Map
+                    && valueFromClassMapUsingClassVariantAndType instanceof Map
+
+                if (valueFromClassMapUsingClassTypeAndValueFromUsingMatchedVariantAndClassTypeIsAMap) {
+
+
+                    if (checkIfStringIsAProperDigit(value)) {
+
+
+                        valueFromClassMapUsingClassVariantAndType.delete(viableClassObjectMapKeys[0])
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[0], value)
+
+
+                        classMapHasChanged = true
+
+                    }
+
+                    if (checkIfStringIsALowerCaseWord(value)) {
+
+                        valueFromClassMapUsingClassVariantAndType.delete(viableClassObjectMapKeys[1])
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[1], value)
+
+                        classMapHasChanged = true
+                    }
+
+                    if (checkIfStringIsAProperColor(value)) {
+                        valueFromClassMapUsingClassVariantAndType.delete(viableClassObjectMapKeys[2])
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[2], value)
+
+                    }
+
+                    if (checkIfStringIsACssVariableWithAnOptionalHint(value)) {
+
+                        valueFromClassMapUsingClassVariantAndType.delete(viableClassObjectMapKeys[3])
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[3], value)
+
+                        classMapHasChanged = true
+                    }
+
+                    if (checkIfStringIsAProperCSSNormalFunction(value)) {
+
+                        valueFromClassMapUsingClassVariantAndType.delete(viableClassObjectMapKeys[4])
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[4], value)
+
+                        classMapHasChanged = true
+                    }
+
+
+                    if (checkIfStringIsASetOfArgs(value)) {
+
+                        valueFromClassMapUsingClassVariantAndType.delete(viableClassObjectMapKeys[5])
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[5], value)
+
+
+                        classMapHasChanged = true
+                    }
+
+
+
+
+                }
+
+
+
+
+                return classMapHasChanged
+
+
+            }
+
+
+
+            if (classMapHasMatchedVariantAndTypeAsTheKey) {
+
+
+                const valueFromClassMapUsingClassType = classMap.get(stringMadeFromVariantAndTypeFromWordVariantMatch)
+
+                const valueFromClassMapUsingClassTypeIsAMap = valueFromClassMapUsingClassType instanceof Map
+
+                if (valueFromClassMapUsingClassTypeIsAMap) {
+
+
+                    if (checkIfStringIsAProperDigit(value)) {
+
+
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[0], value)
+
+
+                        classMapHasChanged = true
+
+                    }
+
+                    if (checkIfStringIsALowerCaseWord(value)) {
+
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[1], value)
+
+                        classMapHasChanged = true
+                    }
+
+                    if (checkIfStringIsAProperColor(value)) {
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[2], value)
+
+                    }
+
+                    if (checkIfStringIsACssVariableWithAnOptionalHint(value)) {
+
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[3], value)
+
+                        classMapHasChanged = true
+                    }
+
+                    if (checkIfStringIsAProperCSSNormalFunction(value)) {
+
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[4], value)
+
+                        classMapHasChanged = true
+                    }
+
+
+                    if (checkIfStringIsASetOfArgs(value)) {
+
+
+                        valueFromClassMapUsingClassType.set(viableClassObjectMapKeys[5], value)
+
+
+                        classMapHasChanged = true
+                    }
+
+
+
+
+                }
+
+
+                return classMapHasChanged
+
+
+            }
+
+
+
+        }
+
+
 
     }
+
+
 
 
     return classMapHasChanged
@@ -495,6 +1257,8 @@ export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenRet
 
 
     let classNamesMapHasChanged = false
+
+    // TODO: All logic to handle modifiers 
 
     Object.entries(classTypeAndListObject).forEach(([classType, classList]) => {
 
