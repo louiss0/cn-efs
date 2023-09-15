@@ -1,15 +1,15 @@
 {
-  "name": "@thecodebreaker-23/cnsf",
+  "name": "@code-fixer-23/cnfs",
   "version": "1.0.0",
-  "description": "This ",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "description": "This is the repo for creating a  Class Name Filter Sorter",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./dist/index.d.mts",
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "require": "./dist/index.js"
     }
   },
   "files": [
