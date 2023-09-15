@@ -19,7 +19,9 @@
     "access": "public"
   },
   "scripts": {
-    "dev": "tsup --watch",
+    "dev": "vitest",
+    "dev:ui": "vitest --ui",
+    "coverage": "vitest run --coverage",
     "release": "tsup && dotenv release-it"
   },
   "license": "ISC",
