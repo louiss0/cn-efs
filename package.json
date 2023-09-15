@@ -1,0 +1,41 @@
+{
+  "name": "@thecodebreaker-23/cnsf",
+  "version": "1.0.0",
+  "description": "This ",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "tsup --watch",
+    "release": "tsup && dotenv release-it"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "@total-typescript/ts-reset": "^0.5.1",
+    "@vitest/ui": "^0.34.4",
+    "dotenv-cli": "^7.3.0",
+    "eslint": "^8.49.0",
+    "tsup": "^7.2.0",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.9",
+    "vitest": "^0.34.4"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Shelton Louis",
+    "url": "https://github.com/louiss0"
+  }
+}
