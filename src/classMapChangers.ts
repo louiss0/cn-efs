@@ -34,7 +34,7 @@ const checkIfStringIsAProperColor = (string: string) =>
     || cssColorFunctionRE.test(string)
 
 
-const cssNormalFunctionRE = /(?<css_function>[a-z_-]{3,15}\(([a-z0-9%!\(\).\/-]+(?:_|,)?)+\))/
+const cssNormalFunctionRE = /^(?<css_function>[a-z_-]{3,15}\(([a-z0-9%!\(\).\/-]+(?:_|,)?)+\))$/
 
 const checkIfStringIsAProperCSSNormalFunction = (string: string) =>
     cssNormalFunctionRE.test(string) && !cssColorFunctionRE.test(string)
@@ -48,9 +48,11 @@ const lowerCaseWordRE = /^(?<lower_case_word>[a-z]+)$/
 
 const checkIfStringIsALowerCaseWord = (string: string) => lowerCaseWordRE.test(string)
 
-const cssTwoOrMoreArgsRE =
-    /(?<first_arg>[a-z0-9]+\((?:[a-z0-9\-\/.]+|[a-z0-9\-_]+\([a-z0-9\-_\/.#$]+(?:(?:,|_)[a-z0-9\-_\/.#$]+)+\))(?:(?:,|_)[a-z0-9\-\/.#$]+|[a-z0-9\-_]+\([a-z0-9\-_\/.#$]+(?:(?:,_)[a-z0-9\-_\/.#$]+)+\))*\))(?:_[a-z0-9\-]+\([a-z0-9\-_\/.#$]+(?:(,|_)[a-z0-9\-_\/.#$]+)*\)|_[a-z0-9]+)+/g
+const cssTwoOrMoreArgsRE = /([a-z0-9\-)(\/,.]+)(?:_[a-z0-9\/),(.\-]+)+/
+
 const checkIfStringIsASetOfArgs = (string: string) => cssTwoOrMoreArgsRE.test(string)
+
+
 
 
 export const viableClassObjectMapKeys = ["digit", "word", "color", "variable", "function", "args"] as const
@@ -84,31 +86,26 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOf
 
         const arbitraryValueMatchSecondValue = value.match(arbitraryValueRE)?.[1]
 
+        const arbitraryValueMatchSecondValueBoolValue = !!arbitraryValueMatchSecondValue
 
         const valueIsAViableDigit = properCSSDigitRE.test(value)
             || arbitraryValueMatchSecondValue && properCSSDigitRE.test(arbitraryValueMatchSecondValue)
 
 
         const valueIsAViableWord = lowerCaseWordRE.test(value)
-            || !!arbitraryValueMatchSecondValue && lowerCaseWordRE.test(arbitraryValueMatchSecondValue)
+            || arbitraryValueMatchSecondValueBoolValue && lowerCaseWordRE.test(arbitraryValueMatchSecondValue)
 
         const arbitraryValueIsAViableNonColorFunction = !!arbitraryValueMatchSecondValue
-            && cssNormalFunctionRE.test(arbitraryValueMatchSecondValue)
-            && !cssColorFunctionRE.test(arbitraryValueMatchSecondValue)
+            && checkIfStringIsAProperCSSNormalFunction(arbitraryValueMatchSecondValue)
 
-        const arbitraryValueIsAColorFunction = !!arbitraryValueMatchSecondValue
-            && cssNormalFunctionRE.test(arbitraryValueMatchSecondValue)
-            && cssColorFunctionRE.test(arbitraryValueMatchSecondValue)
-
-        const arbitraryValueIsASetOfArgs = !!arbitraryValueMatchSecondValue
-            && cssTwoOrMoreArgsRE.test(arbitraryValueMatchSecondValue)
-            && !arbitraryValueIsAColorFunction
+        const arbitraryValueIsASetOfArgs = !!arbitraryValueMatchSecondValue && checkIfStringIsASetOfArgs(arbitraryValueMatchSecondValue)
 
         const arbitraryValueIsAViableCSSVariable = !!arbitraryValueMatchSecondValue
-            && cssVariableWithOptionalPrefixedHintRE.test(arbitraryValueMatchSecondValue)
+            && checkIfStringIsACssVariableWithAnOptionalHint(arbitraryValueMatchSecondValue)
 
 
-        const valueIsAViableColor = arbitraryValueIsAColorFunction || hexColorRE.test(value)
+        const valueIsAViableColor = arbitraryValueMatchSecondValue
+            && checkIfStringIsAProperColor(arbitraryValueMatchSecondValue)
 
 
 
@@ -273,29 +270,34 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOf
 
         const arbitraryValueMatchSecondValue = arbitraryValueMatch?.[1]
 
+        const arbitraryValueMatchSecondValueBoolValue = !!arbitraryValueMatchSecondValue
+
         const valueIsAViableDigit = properCSSDigitRE.test(value)
-            || arbitraryValueMatchSecondValue && properCSSDigitRE.test(arbitraryValueMatchSecondValue)
+            || arbitraryValueMatchSecondValueBoolValue && properCSSDigitRE.test(arbitraryValueMatchSecondValue)
 
 
-        const valueIsAViableFunction = cssNormalFunctionRE.test(value) && !cssColorFunctionRE.test(value)
-
+        const valueIsAViableFunction = arbitraryValueMatchSecondValueBoolValue
+            && checkIfStringIsAProperCSSNormalFunction(arbitraryValueMatchSecondValue)
 
 
         const valueIsAViableColor = colorRangeRE.test(`${subType}-${value}`)
 
-        const valueOrArbitraryValueMatchSecondValueIsAViableWord = lowerCaseWordRE.test(value)
-            || !!arbitraryValueMatchSecondValue && lowerCaseWordRE.test(arbitraryValueMatchSecondValue)
 
-        const valueOrArbitraryValueMatchSecondValueIsASetOfArgs = cssTwoOrMoreArgsRE.test(value)
-            || !!arbitraryValueMatchSecondValue && cssTwoOrMoreArgsRE.test(arbitraryValueMatchSecondValue)
+        const valueOrArbitraryValueMatchSecondValueIsAViableWord = lowerCaseWordRE.test(value)
+            || arbitraryValueMatchSecondValueBoolValue && lowerCaseWordRE.test(arbitraryValueMatchSecondValue)
+
+        const arbitraryValueMatchSecondValueIsASetOfArgs = arbitraryValueMatchSecondValueBoolValue
+            && checkIfStringIsASetOfArgs(arbitraryValueMatchSecondValue)
+
 
         const arbitraryValueMatchSecondValueIsAViableCSSVariable =
-            !!arbitraryValueMatchSecondValue
-            && cssVariableWithOptionalPrefixedHintRE.test(arbitraryValueMatchSecondValue)
+            arbitraryValueMatchSecondValueBoolValue
+            && checkIfStringIsACssVariableWithAnOptionalHint(arbitraryValueMatchSecondValue)
 
 
+        const fullClassType = `${type}-${subType}`
 
-        if (!classNamesMap.has(`${type}-${subType}`)) {
+        if (!classNamesMap.has(fullClassType)) {
 
 
 
@@ -311,7 +313,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOf
 
             if (valueIsAViableDigit) {
 
-                classNamesMap.set(`${type}-${subType}`, new Map([[viableClassObjectMapKeys[0], value]]))
+                classNamesMap.set(fullClassType, new Map([[viableClassObjectMapKeys[0], value]]))
 
                 classMapHasChanged = true
 
@@ -323,7 +325,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOf
 
             if (valueOrArbitraryValueMatchSecondValueIsAViableWord) {
 
-                classNamesMap.set(`${type}-${subType}`, new Map([[viableClassObjectMapKeys[1], value]]))
+                classNamesMap.set(fullClassType, new Map([[viableClassObjectMapKeys[1], value]]))
 
                 classMapHasChanged = true
 
@@ -332,7 +334,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOf
 
             if (valueIsAViableFunction) {
 
-                classNamesMap.set(`${type}-${subType}`, new Map([[viableClassObjectMapKeys[4], value]]))
+                classNamesMap.set(fullClassType, new Map([[viableClassObjectMapKeys[4], value]]))
 
                 classMapHasChanged = true
 
@@ -342,16 +344,16 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOf
 
             if (arbitraryValueMatchSecondValueIsAViableCSSVariable) {
 
-                classNamesMap.set(`${type}-${subType}`, new Map([[viableClassObjectMapKeys[3], value]]))
+                classNamesMap.set(fullClassType, new Map([[viableClassObjectMapKeys[3], value]]))
 
                 classMapHasChanged = true
 
                 return classMapHasChanged
             }
 
-            if (valueOrArbitraryValueMatchSecondValueIsASetOfArgs) {
+            if (arbitraryValueMatchSecondValueIsASetOfArgs) {
 
-                classNamesMap.set(`${type}-${subType}`, new Map([[viableClassObjectMapKeys[5], value]]))
+                classNamesMap.set(fullClassType, new Map([[viableClassObjectMapKeys[5], value]]))
 
                 classMapHasChanged = true
 
@@ -422,7 +424,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOf
                 return classMapHasChanged
             }
 
-            if (valueOrArbitraryValueMatchSecondValueIsASetOfArgs) {
+            if (arbitraryValueMatchSecondValueIsASetOfArgs) {
 
                 result.set(viableClassObjectMapKeys[5], value)
 
@@ -459,9 +461,9 @@ TODO: Find a way to fix the debugger.
 
 */
 
-const startsWithArbitraryVariantAndTypeRE = /^(?<variant>\[&(?::{1,2})?[a-z]+(?:-[a-z]+)?(?:\(\d+\))?\]):(?<type>[a-z]+)/
+const startsWithArbitraryVariantAndTypeRE = /^(?<variant>\[&(?::{1,2})?[a-z]+(?:-[a-z]+)?(?:\(\d+\))?\]:)(?<type>[a-z]+)/
 
-const startsWithWordVariantAndTypeRE = /^(?<variant>(?::{1,2})?[a-z]+(?:-[a-z]+)?(?:\(\d+\))?):(?<type>[a-z]+)/
+const startsWithWordVariantAndTypeRE = /^(?<variant>(?::{1,2})?[a-z]+(?:-[a-z]+)?(?:\(\d+\))?:)(?<type>[a-z]+)/
 
 
 export const attemptToExchangeIdenticalKeysInClassMapBasedOnVariants: ClassMapChangerBasedOnClassName = (classMap, className) => {
@@ -489,7 +491,7 @@ export const attemptToExchangeIdenticalKeysInClassMapBasedOnVariants: ClassMapCh
         if (typeStartsWithAnArbitraryVariantMatch) {
 
 
-            const [variant, type] = typeStartsWithAnArbitraryVariantMatch
+            const [, variant, type] = typeStartsWithAnArbitraryVariantMatch
 
 
             if (!variant || !type) return classMapHasChanged
@@ -497,12 +499,20 @@ export const attemptToExchangeIdenticalKeysInClassMapBasedOnVariants: ClassMapCh
             const stringMadeFromVariantAndTypeFromArbitraryVariantMatch = `${variant}${type}`
 
             const wordVariantVersionOfTheString = stringMadeFromVariantAndTypeFromArbitraryVariantMatch
-                .replace(/\[\]\&/g, "")
+                .replace(/\[&()|\]|/g, "")
 
             const classMapHasTheTypeAsAKey = classMap.has(wordVariantVersionOfTheString)
 
 
             const classMapHasMatchedVariantAndTypeAsTheKey = classMap.has(stringMadeFromVariantAndTypeFromArbitraryVariantMatch)
+
+
+            console.table({
+                stringMadeFromVariantAndTypeFromArbitraryVariantMatch,
+                wordVariantVersionOfTheString,
+                classMapHasTheTypeAsAKey,
+                classMapHasMatchedVariantAndTypeAsTheKey
+            })
 
 
             if (classMapHasTheTypeAsAKey && classMapHasMatchedVariantAndTypeAsTheKey) {
@@ -512,6 +522,11 @@ export const attemptToExchangeIdenticalKeysInClassMapBasedOnVariants: ClassMapCh
                 const valueFromClassMapUsingClassType = classMap.get(wordVariantVersionOfTheString)
 
                 const valueFromClassMapUsingClassVariantAndType = classMap.get(stringMadeFromVariantAndTypeFromArbitraryVariantMatch)
+
+                console.table({
+                    valueFromClassMapUsingClassType,
+                    valueFromClassMapUsingClassVariantAndType
+                })
 
                 const valueFromClassMapUsingClassTypeAndValueFromUsingMatchedVariantAndClassTypeIsAMap =
                     valueFromClassMapUsingClassType instanceof Map
@@ -599,6 +614,8 @@ export const attemptToExchangeIdenticalKeysInClassMapBasedOnVariants: ClassMapCh
 
                 const valueFromClassMapUsingClassTypeIsAMap = valueFromClassMapUsingClassType instanceof Map
 
+
+
                 if (valueFromClassMapUsingClassTypeIsAMap) {
 
 
@@ -667,6 +684,9 @@ export const attemptToExchangeIdenticalKeysInClassMapBasedOnVariants: ClassMapCh
 
 
         }
+
+
+
 
 
         if (typeStartsWithAWordVariantMatch) {
