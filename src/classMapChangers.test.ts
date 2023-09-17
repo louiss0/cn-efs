@@ -7,6 +7,7 @@ import {
     type ClassValueTypeAndValueMap,
     viableClassObjectMapKeys,
     type ViableClassObjectMapKeys,
+    attemptToExchangeIdenticalKeysInClassMapBasedOnVariants,
 } from './classMapChangers';
 
 
@@ -44,6 +45,7 @@ const createTestMessageForTestingIfAClassNameChangesTheMapWithAnExpectedKeyAndAV
 
 const insertMessagePrefix = "inserts the word before the dash as key and the word after the dash in a map with a key";
 
+
 describe("Test if all class map changers work", () => {
 
 
@@ -56,7 +58,7 @@ describe("Test if all class map changers work", () => {
         it<TestContext>("doesn't change the map if there is a single word class", ({ classMap }) => {
 
 
-            attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(classMap, "opacity")
+            attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(classMap, "outline")
 
 
 
@@ -90,7 +92,7 @@ describe("Test if all class map changers work", () => {
                 it<TestContext>("changes the map when a class with a digit is passed in", ({ classMap }) => {
 
 
-                    attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(classMap, "opacity-0")
+                    attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(classMap, "outline-0")
 
 
                     expect(classMap).toHaveLength(1)
@@ -106,14 +108,14 @@ describe("Test if all class map changers work", () => {
                     ({ classMap }) => {
 
 
-                        attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(classMap, "opacity-0")
+                        attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(classMap, "outline-0")
 
 
 
-                        expect(classMap.has("opacity")).toBeTruthy()
+                        expect(classMap.has("outline")).toBeTruthy()
 
 
-                        const res = classMap.get("opacity")
+                        const res = classMap.get("outline")
 
                         expect(res).toBeInstanceOf(Map)
 
@@ -134,7 +136,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-                        const classMap = new Map<string, ClassValueTypeAndValueMap | string | undefined>()
+                        const classMap = new Map()
 
                         it.each([
                             {
@@ -211,13 +213,13 @@ describe("Test if all class map changers work", () => {
                 ({ classMap }) => {
 
 
-                    attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(classMap, "opacity-solid")
+                    attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(classMap, "outline-solid")
 
 
-                    expect(classMap.has("opacity")).toBeTruthy()
+                    expect(classMap.has("outline")).toBeTruthy()
 
 
-                    const res = classMap.get("opacity")
+                    const res = classMap.get("outline")
 
                     expect(res).toBeInstanceOf(Map)
 
@@ -235,7 +237,7 @@ describe("Test if all class map changers work", () => {
                 ({ classMap }) => {
 
 
-                    attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(classMap, "grid-cols-[2fr,auto]")
+                    attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(classMap, "grid-cols-[2fr_auto]")
 
 
 
@@ -247,13 +249,77 @@ describe("Test if all class map changers work", () => {
                     expect(res).toBeInstanceOf(Map)
 
 
-                    expect(Object.fromEntries(res as Map<string, string>)).toHaveProperty("args", "[2fr,auto]")
+                    expect(Object.fromEntries(res as Map<string, string>)).toHaveProperty("args", "[2fr_auto]")
 
 
                 }
             )
 
 
+
+            const classMap = new Map()
+
+            it.each(
+                [
+
+                    {
+                        className: "border-[2_solid_3px]",
+                        expected: {
+                            key: "border",
+                            value: "[2_solid_3px]"
+                        }
+                    },
+                    {
+                        className: "numbers-[09_word_3px]",
+                        expected: {
+                            key: "numbers",
+                            value: "[09_word_3px]"
+                        }
+                    },
+                    {
+                        className: "grid-cols-[45px_repeat(2,fr)_minmax(auto-fill,35rem)]",
+                        expected: {
+                            key: "grid-cols",
+                            value: "[45px_repeat(2,fr)_minmax(auto-fill,35rem)]"
+                        }
+                    },
+                    {
+                        className: "bg-[url(/img.jpg)_full]",
+                        expected: {
+                            key: "bg",
+                            value: "[url(/img.jpg)_full]"
+                        }
+                    },
+
+
+                ]
+            )
+                (
+                    createTestMessageForTestingIfAClassNameChangesTheMapWithAnExpectedKeyAndAValueTHatIsAMapWithAnExpectedKeyAndValue("args"),
+                    ({ className, expected: { key, value } }) => {
+
+
+                        attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(classMap, className)
+
+
+
+                        expect(classMap.has(key)).toBeTruthy()
+
+
+                        const res = classMap.get(key)
+
+
+                        expect(res).toBeInstanceOf(Map)
+
+
+
+                        expect(Object.fromEntries(res)).toHaveProperty("args", value)
+
+
+
+
+                    }
+                )
 
 
 
@@ -269,14 +335,14 @@ describe("Test if all class map changers work", () => {
                 ({ classMap }) => {
 
 
-                    attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(classMap, "opacity-gray-500")
+                    attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(classMap, "outline-gray-500")
 
 
 
-                    expect(classMap.has("opacity")).toBeTruthy()
+                    expect(classMap.has("outline")).toBeTruthy()
 
 
-                    const res = classMap.get("opacity")
+                    const res = classMap.get("outline")
 
                     expect(res).toBeInstanceOf(Map)
 
@@ -423,9 +489,9 @@ describe("Test if all class map changers work", () => {
             it.each(
                 [
                     {
-                        className: "opacity-[--gray-light-1]",
+                        className: "outline-[--gray-light-1]",
                         expected: {
-                            key: "opacity",
+                            key: "outline",
                             value: "[--gray-light-1]"
                         }
                     },
@@ -487,70 +553,113 @@ describe("Test if all class map changers work", () => {
     })
 
 
+    describe("Test attemptToExchangeIdenticalKeysInClassMapBasedOnVariants", () => {
+
+
+        const classMapWithAValueInsideOfIt = new Map([
+            ["hover:outline",
+                new Map([
+                    ["digit", "90"]
+                ])
+            ]
+        ]) satisfies ClassNamesMap
+
+
+        it(
+            "replaces the value when there is two different variants with the same value incoming variant is replaced with the new one",
+            () => {
+
+
+                attemptToExchangeIdenticalKeysInClassMapBasedOnVariants(classMapWithAValueInsideOfIt, "[&:hover]:outline-20")
+
+
+                const objectLiteralVersionOfResult = Object.fromEntries(classMapWithAValueInsideOfIt)
+
+                expect(objectLiteralVersionOfResult).toHaveProperty("[&:hover]:outline", new Map([["digit", "20"]]))
+
+
+            })
+
+
+    })
+
+
+    describe("Test attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged()", () => {
+
+
+        it<TestContext>("doesn't change the map if there is a single word class", ({ classMap }) => {
+
+
+            const res = attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged({}, classMap, "nice")
+
+
+            expect(res).toBe(false)
+
+            expect(classMap).toHaveLength(0)
+
+
+
+        })
+
+
+        it<TestContext>("returns false when the map doesn't change", ({ classMap }) => {
+
+
+            const res = attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged({}, classMap, "nice")
+
+            expect(res).toBe(false)
+
+        })
+
+
+    })
+
+
+
+
+    describe("Test attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged()", () => {
+
+
+        it<TestContext>("doesn't change the map if there is a single word class", ({ classMap }) => {
+
+
+            attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged(classMap, "nice")
+
+
+
+            expect(classMap).toHaveLength(0)
+
+
+
+        })
+
+        it<TestContext>("returns false when the map doesn't change", ({ classMap }) => {
+
+
+            const res = attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged({}, classMap, "nice")
+
+            expect(res).toBe(false)
+
+        })
+
+    })
+
+
+
+
+
+
+
+
+
+
+
 
 
 })
 
 
-describe("Test attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged()", () => {
 
-
-    it<TestContext>("doesn't change the map if there is a single word class", ({ classMap }) => {
-
-
-        const res = attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged({}, classMap, "nice")
-
-
-        expect(res).toBe(false)
-
-        expect(classMap).toHaveLength(0)
-
-
-
-    })
-
-
-    it<TestContext>("returns false when the map doesn't change", ({ classMap }) => {
-
-
-        const res = attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged({}, classMap, "nice")
-
-        expect(res).toBe(false)
-
-    })
-
-
-})
-
-
-
-
-describe("Test attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged()", () => {
-
-
-    it<TestContext>("doesn't change the map if there is a single word class", ({ classMap }) => {
-
-
-        attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged(classMap, "nice")
-
-
-
-        expect(classMap).toHaveLength(0)
-
-
-
-    })
-
-    it<TestContext>("returns false when the map doesn't change", ({ classMap }) => {
-
-
-        const res = attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged({}, classMap, "nice")
-
-        expect(res).toBe(false)
-
-    })
-
-})
 
 
 
