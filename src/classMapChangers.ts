@@ -453,7 +453,6 @@ export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenRet
 
 
 
-    let classNamesMapHasChanged = false
 
     // TODO: All logic to handle modifiers 
 
@@ -557,7 +556,8 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnRe
 
 }
 
-const arbitraryPropertyRE = /\[(<property_key>[a-z]+(?:-[a-z]+)?):(<property_value>[_-)(a-z0-9]+)\]/
+const arbitraryPropertyRE =
+    /(?<modifier>(?:(?:(?:[\&:{1,2}[a-z0-9\-]+(?:\([a-z0-9\+\-\_]+\))?)\]|[a-z0-9\-]+(?:\([a-z0-9\+\-\_]+\))?):)*)\[(?<property_key>[a-z]+(?:\-[a-z]+)*:)(?<property_value>[_\-),.\/(a-z0-9]+)\]/
 
 
 export const attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty: ClassMapChangerBasedOnClassName = (classMap, className) => {
@@ -565,13 +565,22 @@ export const attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProper
 
     const arbitraryPropertyKeyAndValueMatch = arbitraryPropertyRE.exec(className)
 
-
     if (!arbitraryPropertyKeyAndValueMatch) return
 
 
-    const [propertyKey, propertyValue] = arbitraryPropertyKeyAndValueMatch
+    const [, modifier, propertyKey, propertyValue] = arbitraryPropertyKeyAndValueMatch
+
 
     if (!propertyKey || !propertyValue) return
+
+
+    if (modifier) {
+
+        classMap.set(`${modifier}${propertyKey}`, propertyValue)
+
+        return
+    }
+
 
 
 
