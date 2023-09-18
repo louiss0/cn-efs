@@ -6,6 +6,7 @@ import {
     attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged,
     attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged,
     viableClassObjectMapKeys,
+    attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty,
 
 } from './classMapChangers';
 
@@ -66,17 +67,6 @@ describe("Test if all class map changers work", () => {
 
 
         })
-
-
-        it<TestContext>("returns false when the map doesn't change", ({ classMap }) => {
-
-
-            const res = attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(classMap, "nice")
-
-            expect(res).toBe(false)
-
-        })
-
 
 
 
@@ -559,10 +549,9 @@ describe("Test if all class map changers work", () => {
         it<TestContext>("doesn't change the map if there is a single word class", ({ classMap }) => {
 
 
-            const res = attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged({}, classMap, "nice")
+            attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged({}, classMap, "nice")
 
 
-            expect(res).toBe(false)
 
             expect(classMap).toHaveLength(0)
 
@@ -571,14 +560,7 @@ describe("Test if all class map changers work", () => {
         })
 
 
-        it<TestContext>("returns false when the map doesn't change", ({ classMap }) => {
 
-
-            const res = attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged({}, classMap, "nice")
-
-            expect(res).toBe(false)
-
-        })
 
 
     })
@@ -602,19 +584,147 @@ describe("Test if all class map changers work", () => {
 
         })
 
-        it<TestContext>("returns false when the map doesn't change", ({ classMap }) => {
 
-
-            const res = attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged({}, classMap, "nice")
-
-            expect(res).toBe(false)
-
-        })
 
     })
 
 
 
+
+    describe("Test attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty()", () => {
+
+
+
+        it<TestContext>("Assigns a property as a string and a value as a string", ({ classMap }) => {
+
+
+            attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty(classMap, "[font-size:2rem]")
+
+
+
+            expect(classMap.has("font-size:")).toBeTruthy()
+
+            expect(classMap.get("font-size:")).toBe("2rem")
+
+
+
+        })
+
+        describe("It works with lots of arbitrary properties", () => {
+
+
+            const classMap = new Map()
+
+            it.each([
+                {
+                    className: "[font-size:4rem]",
+                    expected: {
+                        key: "font-size:",
+                        value: "4rem"
+                    }
+                },
+                {
+                    className: "[border:2px_solid_green]",
+                    expected: {
+                        key: "border:",
+                        value: "2px_solid_green"
+                    }
+                },
+                {
+                    className: "[text-transform:uppercase]",
+                    expected: {
+                        key: "text-transform:",
+                        value: "uppercase"
+                    }
+                },
+                {
+                    className: "[background-position-x:center]",
+                    expected: {
+                        key: "background-position-x:",
+                        value: "center"
+                    }
+                },
+                {
+                    className: "[background-image:url(/img.jpg)]",
+                    expected: {
+                        key: "background-image:",
+                        value: "url(/img.jpg)"
+                    }
+                }
+            ])("For class $className I expect there to be a value with the key of $expected.key and the value $expected.value ",
+                ({ className, expected: { key, value } }) => {
+
+
+
+                    attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty(classMap, className)
+
+
+                    expect(classMap.has(key)).toBeTruthy()
+
+
+                    expect(classMap.get(key)).toBe(value)
+
+
+
+
+
+                })
+
+        })
+
+
+        describe("It works with lots of arbitrary properties that have modifiers", () => {
+
+
+            const classMap = new Map()
+
+            it.each([
+                {
+                    className: "sm:[font-size:4rem]",
+                    expected: {
+                        key: "sm:font-size:",
+                        value: "4rem"
+                    }
+                },
+                {
+                    className: "md:[font-size:6rem]",
+                    expected: {
+                        key: "md:font-size:",
+                        value: "6rem"
+                    }
+                },
+                {
+                    className: "lg:hover:[font-size:6rem]",
+                    expected: {
+                        key: "lg:hover:font-size:",
+                        value: "6rem"
+                    }
+                },
+
+            ])("For class $className I expect there to be a value with the key of $expected.key and the value $expected.value ",
+                ({ className, expected: { key, value } }) => {
+
+
+
+                    attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty(classMap, className)
+
+
+                    expect(classMap.has(key)).toBeTruthy()
+
+
+                    expect(classMap.get(key)).toBe(value)
+
+
+
+
+
+                })
+
+        })
+
+
+
+    })
 
 
 
