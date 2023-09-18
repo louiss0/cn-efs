@@ -25,28 +25,24 @@ function getClassNameMapCreator(classTypesAndClassNames?: Record<Lowercase<strin
 
         if (classTypesAndClassNames) {
 
-            const classMapHasChangedBasedOnTypeOfClassToClassesObject =
-                attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged(classTypesAndClassNames, carry, value)
-
-
-            if (classMapHasChangedBasedOnTypeOfClassToClassesObject) return carry
+            attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged(
+                classTypesAndClassNames,
+                carry,
+                value
+            )
 
         }
 
 
 
-        const classNameMapHasChangedBasedOnIfTheClassNameHasADigitWordOrAColorRangeAsAPartOfItsSubstring =
-            attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(carry, value)
+        attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(carry, value)
 
 
-        if (classNameMapHasChangedBasedOnIfTheClassNameHasADigitWordOrAColorRangeAsAPartOfItsSubstring) return carry
 
 
-        const classNameMapHasChangedAccordingToTheBEMConvention =
-            attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged(carry, value)
+        attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged(carry, value)
 
 
-        if (classNameMapHasChangedAccordingToTheBEMConvention) return carry
 
 
         return carry

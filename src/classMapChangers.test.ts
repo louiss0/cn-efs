@@ -1,13 +1,12 @@
 import {
     type ClassNamesMap,
+    type ClassValueTypeAndValueMap,
+    type ViableClassObjectMapKeys,
     attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged,
     attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged,
     attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged,
-
-    type ClassValueTypeAndValueMap,
     viableClassObjectMapKeys,
-    type ViableClassObjectMapKeys,
-    attemptToExchangeIdenticalKeysInClassMapBasedOnVariants,
+
 } from './classMapChangers';
 
 
@@ -552,36 +551,6 @@ describe("Test if all class map changers work", () => {
 
     })
 
-
-    describe("Test attemptToExchangeIdenticalKeysInClassMapBasedOnVariants", () => {
-
-
-        const classMapWithAValueInsideOfIt = new Map([
-            ["hover:outline",
-                new Map([
-                    ["digit", "90"]
-                ])
-            ]
-        ]) satisfies ClassNamesMap
-
-
-        it(
-            "replaces the value when there is two different variants with the same value incoming variant is replaced with the new one",
-            () => {
-
-
-                attemptToExchangeIdenticalKeysInClassMapBasedOnVariants(classMapWithAValueInsideOfIt, "[&:hover]:outline-20")
-
-
-                const objectLiteralVersionOfResult = Object.fromEntries(classMapWithAValueInsideOfIt)
-
-                expect(objectLiteralVersionOfResult).toHaveProperty("[&:hover]:outline", new Map([["digit", "20"]]))
-
-
-            })
-
-
-    })
 
 
     describe("Test attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged()", () => {
