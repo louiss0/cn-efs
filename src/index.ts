@@ -126,14 +126,28 @@ export const classFilterAndSorter = (classNames: string, classTypesAndClassNames
         for (const [utility, utilityValueMap] of classNameMap.utility) {
 
 
+            if (!utilityValueMap) continue;
+
+            const valuesFromUtilityValueMap = [
+                utilityValueMap.get("digit"),
+                utilityValueMap.get("word"),
+                utilityValueMap.get("color"),
+                utilityValueMap.get("function"),
+                utilityValueMap.get("variable"),
+                utilityValueMap.get("args"),
+            ]
+
+
+
+
+            const utilityClassesCreatedFromDefinedValuesFromTheUtilityValueMap =
+                valuesFromUtilityValueMap
+                    .filter(value => typeof value === "string")
+                    .map((value) => `${utility}-${value} `)
 
             sortString = sortString.concat(
-                `${utility}-${utilityValueMap?.get("digit") ?? ""} `,
-                `${utility}-${utilityValueMap?.get("word") ?? ""} `,
-                `${utility}-${utilityValueMap?.get("color") ?? ""} `,
-                `${utility}-${utilityValueMap?.get("function") ?? ""} `,
-                `${utility}-${utilityValueMap?.get("variable") ?? ""} `,
-                `${utility}-${utilityValueMap?.get("args") ?? ""} `,
+                ...utilityClassesCreatedFromDefinedValuesFromTheUtilityValueMap
+
             )
 
 
@@ -165,7 +179,7 @@ export const classFilterAndSorter = (classNames: string, classTypesAndClassNames
 
 
 
-    return sortString
+    return sortString.trimEnd()
 
 
 }
