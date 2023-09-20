@@ -1,11 +1,11 @@
 
 import { TailwindOrWindiFilterMap } from "./classFilterMaps"
 import {
-    type ClassNamesMap,
-    type ViableClassObjectMapKeys,
+    SortedClasses,
     attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged,
     attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged,
     attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged,
+    attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty,
 } from "./classMapChangers"
 
 
@@ -18,7 +18,7 @@ export type ClassFilterAndSorter = typeof classFilterAndSorter
 
 function getClassNameMapCreator(classTypesAndClassNames?: Record<Lowercase<string>, Array<Lowercase<string>>>) {
 
-    return (carry: ClassNamesMap, value: string) => {
+    return (carry: SortedClasses, value: string) => {
 
 
 
@@ -27,7 +27,7 @@ function getClassNameMapCreator(classTypesAndClassNames?: Record<Lowercase<strin
 
             attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged(
                 classTypesAndClassNames,
-                carry,
+                carry.customFiltered,
                 value
             )
 
@@ -35,14 +35,15 @@ function getClassNameMapCreator(classTypesAndClassNames?: Record<Lowercase<strin
 
 
 
-        attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(carry, value)
+        attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(carry.utility, value)
 
 
 
 
-        attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged(carry, value)
+        attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged(carry.bem, value)
 
 
+        attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty(carry.arbitraryProperties, value)
 
 
         return carry
@@ -53,77 +54,124 @@ function getClassNameMapCreator(classTypesAndClassNames?: Record<Lowercase<strin
 
 
 
-export const classFilterAndSorter = (classNames: Array<string>, classTypesAndClassNames?: Record<Lowercase<string>, Array<Lowercase<string>>>) => {
+const moreThanOneSpaceRE = /\s+/
+
+export const classFilterAndSorter = (classNames: string, classTypesAndClassNames?: Record<Lowercase<string>, Array<Lowercase<string>>>) => {
 
 
-    const classNameMap = classNames
-        .reduce(
+    const splitClassNames = classNames.split(moreThanOneSpaceRE)
+
+    if (splitClassNames.length === 0) {
+
+        throw new Error(
+            "This string has no sets of classes please add spaces between classes that need to be sorted",
+        )
+
+    }
+
+
+    const classNameMap =
+        splitClassNames.reduce(
             getClassNameMapCreator(classTypesAndClassNames),
-            new Map<string, string | Map<ViableClassObjectMapKeys, string | undefined> | undefined>()
+            new SortedClasses()
         )
 
 
 
-    return Array.from(classNameMap).map(([key, value]) => {
 
-
-        if (!value) return ""
-
-
-        if (typeof value === "string") {
-
-            return value
-
-        }
-
-        let dashedClassName = ""
+    let sortString = ""
 
 
 
-        if (value.has("digit") || value.has("word") || value.has("color")) {
+    if (classNameMap.bem.size !== 0) {
+
+        for (const [block, value] of classNameMap.bem) {
 
 
-            const digit = value.get("digit")
-
-            const secondLowerCaseWord = value.get("word")
-
-            const color = value.get("color")
-
-
-            if (digit) {
-
-                dashedClassName = dashedClassName.concat(`${key}-${digit}`)
-            }
-
-
-            if (secondLowerCaseWord) {
-
-                dashedClassName = dashedClassName.concat(` ${key}-${secondLowerCaseWord}`)
-
-            }
-
-
-            if (color) {
-
-                dashedClassName = dashedClassName.concat(` ${key}-${color}`)
-
-            }
+            sortString = sortString.concat(
+                `${block}${value?.get("modifier") ?? ""} `,
+                `${block}${value?.get("element") ?? ""} `
+            )
 
 
         }
 
-        return dashedClassName
-
-    }).join(" ")
+    }
 
 
 
+    if (classNameMap.arbitraryProperties.size !== 0) {
+
+
+        for (const [property, variantAndValueMap] of classNameMap.arbitraryProperties) {
+
+
+
+            if (!variantAndValueMap) continue;
+
+
+            for (const [variant, value] of variantAndValueMap) {
+
+                sortString = sortString.concat(`${variant === "base" ? "" : variant}[${property}${value}] `)
+            }
+
+
+
+        }
+
+    }
+
+    if (classNameMap.utility.size !== 0) {
+
+        for (const [utility, utilityValueMap] of classNameMap.utility) {
+
+
+
+            sortString = sortString.concat(
+                `${utility}-${utilityValueMap?.get("digit") ?? ""} `,
+                `${utility}-${utilityValueMap?.get("word") ?? ""} `,
+                `${utility}-${utilityValueMap?.get("color") ?? ""} `,
+                `${utility}-${utilityValueMap?.get("function") ?? ""} `,
+                `${utility}-${utilityValueMap?.get("variable") ?? ""} `,
+                `${utility}-${utilityValueMap?.get("args") ?? ""} `,
+            )
+
+
+
+
+        }
+
+    }
+
+    if (classNameMap.customFiltered.size !== 0) {
+
+        for (const filterClassVariantsAndValues of classNameMap.customFiltered.values()) {
+
+
+            if (!filterClassVariantsAndValues) continue
+
+            for (const [variant, className] of filterClassVariantsAndValues) {
+
+
+                sortString = sortString.concat(`${variant === "base" ? "" : variant}${className}`)
+
+            }
+
+
+        }
+
+    }
+
+
+
+
+    return sortString
 
 
 }
 
 
-export const tailwindOrWindiCSSClassFilterAndSorter = (classNames: string) => classFilterAndSorter(classNames.split(" "), TailwindOrWindiFilterMap)
+export const tailwindOrWindiCSSClassFilterAndSorter = (classNames: string) => classFilterAndSorter(classNames, TailwindOrWindiFilterMap)
 
 
 
