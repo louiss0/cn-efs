@@ -519,10 +519,10 @@ export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenRet
 
 
 const aBlockElementClassName =
-    /^(?<lower_case_word>[a-z]+)__(?<element>[a-z]+)(?<modifier>--[a-z0-9]+)?$/
+    /^(?<lower_case_word>[a-z]+)(?<element>__[a-z]+)(?<modifier>--[a-z0-9]+)?$/
 
 const aBlockModifierClassName =
-    /^(?<lower_case_word>[a-z]+)--(?<modifier>[a-z0-9]+)$/
+    /^(?<lower_case_word>[a-z]+)(?<modifier>--[a-z0-9]+)$/
 
 
 export const attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged: ClassMapChangerBasedOnClassName<SortedClasses["bem"]> =
