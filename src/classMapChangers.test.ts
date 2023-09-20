@@ -755,8 +755,6 @@ describe("Test if all class map changers work", () => {
 
                     expect(classMap.has(key)).toBeTruthy()
 
-                    console.table(classMap)
-
                     expect(classMap.get(key).get("base")).toBe(value)
 
 
