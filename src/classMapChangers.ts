@@ -5,9 +5,9 @@ const cssVariableWithOptionalPrefixedHintRE =
 
 const checkIfStringIsACssVariableWithAnOptionalHint = (string: string) => cssVariableWithOptionalPrefixedHintRE.test(string)
 
-const cssTypeAndValueUtilityClassRE = /^(?<type>[a-z\][#&!:]+)-(?<value>[a-z0-9_\][$.#),\/\-(%:]+)$/
+const cssTypeAndValueUtilityClassRE = /^(?<type>[a-z\][#&!:]+)-(?<value>[\w\][$.#),\/\-(%:]+)$/
 
-const cssTypeSubTypeAndValueUtilityClassRE = /^(?<type>[a-z\][#&!:]+)-(?<sub_type>[a-z]+)-(?<value>[a-z0-9_\][$.#),\-(%:]+)$/
+const cssTypeSubTypeAndValueUtilityClassRE = /^(?<type>[a-z\][#&!:]+)-(?<sub_type>[a-z]+)-(?<value>[\w\][$.#),\-(%:]+)$/
 
 const properCSSDigitRE = /^(?<digit>\d{1,4}(?:[a-z]{2,4})?)$/
 
@@ -33,7 +33,7 @@ const cssNormalFunctionRE = /^(?<css_function>[a-z_-]{3,15}\(([a-z0-9%!\(\).\/-]
 const checkIfStringIsAProperCSSNormalFunction = (string: string) =>
     cssNormalFunctionRE.test(string) && !cssColorFunctionRE.test(string)
 
-const arbitraryValueRE = /^\[(?<value>[a-z,0-9_\-)%!\/($.:]+)\]$/
+const arbitraryValueRE = /^\[(?<value>[\w\-),%!\/($.:#]+)\]$/
 
 const lowerCaseWordRE = /^(?<lower_case_word>[a-z]+)$/
 
@@ -98,6 +98,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOf
             if (!type || !value) return
 
 
+
             const arbitraryValueMatchSecondValue = value.match(arbitraryValueRE)?.[1]
 
             const arbitraryValueMatchSecondValueBoolValue = !!arbitraryValueMatchSecondValue
@@ -120,6 +121,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOf
 
             const valueIsAViableColor = arbitraryValueMatchSecondValue
                 && checkIfStringIsAProperColor(arbitraryValueMatchSecondValue)
+
 
 
 
@@ -194,7 +196,8 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOf
             const result = classNamesMap.get(type)
 
 
-            if (result && typeof result !== "string") {
+
+            if (result) {
 
 
                 if (valueIsAViableDigit) {
@@ -264,6 +267,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOf
 
 
 
+
         const cssTypeSubTypeAndValueUtilityClassMatch = className.match(cssTypeSubTypeAndValueUtilityClassRE)
 
 
@@ -271,13 +275,14 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOf
 
         if (cssTypeSubTypeAndValueUtilityClassMatch) {
 
+
             const [, type, subType, value] = cssTypeSubTypeAndValueUtilityClassMatch
+
 
             if (!type || !subType || !value) return
 
 
             const arbitraryValueMatch = value.match(arbitraryValueRE)
-
 
             const arbitraryValueMatchSecondValue = arbitraryValueMatch?.[1]
 
@@ -308,7 +313,11 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOf
 
             const fullClassType = `${type}-${subType}`
 
-            if (!classNamesMap.has(fullClassType)) {
+
+            const getCurrentClassNameMap = classNamesMap.has(type) || classNamesMap.has(fullClassType)
+
+
+            if (!getCurrentClassNameMap) {
 
 
 
