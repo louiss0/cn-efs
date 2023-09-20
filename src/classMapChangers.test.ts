@@ -1,45 +1,27 @@
 import {
-    type ClassNamesMap,
-    type ClassValueTypeAndValueMap,
-    type ViableClassObjectMapKeys,
+    viableUtilityClassMapKeys,
+    type ViableUtilityClassMapKeys,
     attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged,
     attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged,
     attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged,
-    viableClassObjectMapKeys,
     attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty,
-
+    SortedClasses,
 } from './classMapChangers';
 
 
-type TestContext = {
-    classMap: ClassNamesMap
-}
+type TestContext = SortedClasses
 
 beforeEach<TestContext>((context) => {
 
-    context.classMap = new Map()
+
+    Object.assign(context, new SortedClasses())
 
 })
 
 
-function assertClassValueTypeAndValueMap(value: unknown): asserts value is ClassValueTypeAndValueMap {
 
 
-
-    if (!(value instanceof Map)) throw new Error("This is not a map it's has to be one");
-
-
-    const theMapHasOneOfTheseKeys = viableClassObjectMapKeys.some(viableKey => value.has(viableKey) === true);
-
-
-    if (!theMapHasOneOfTheseKeys) throw new Error(`The map must have one of these keys ${viableClassObjectMapKeys.join(",")}`);
-
-
-
-}
-
-
-const createTestMessageForTestingIfAClassNameChangesTheMapWithAnExpectedKeyAndAValueTHatIsAMapWithAnExpectedKeyAndValue = (key: ViableClassObjectMapKeys) =>
+const createTestMessageForTestingIfAClassNameChangesTheMapWithAnExpectedKeyAndAValueTHatIsAMapWithAnExpectedKeyAndValue = (key: ViableUtilityClassMapKeys) =>
     `For class $className the key for the created map is called $expected.key the value is a map with a key called ${key} with the value of $expected.value .`
 
 
@@ -55,14 +37,14 @@ describe("Test if all class map changers work", () => {
     describe("Test attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged()", () => {
 
 
-        it<TestContext>("doesn't change the map if there is a single word class", ({ classMap }) => {
+        it<TestContext>("doesn't change the map if there is a single word class", ({ utility }) => {
 
 
-            attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(classMap, "outline")
+            attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(utility, "outline")
 
 
 
-            expect(classMap).toHaveLength(0)
+            expect(utility).toHaveLength(0)
 
 
 
@@ -78,13 +60,13 @@ describe("Test if all class map changers work", () => {
             () => {
 
 
-                it<TestContext>("changes the map when a class with a digit is passed in", ({ classMap }) => {
+                it<TestContext>("changes the map when a class with a digit is passed in", ({ utility }) => {
 
 
-                    attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(classMap, "outline-0")
+                    attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(utility, "outline-0")
 
 
-                    expect(classMap).toHaveLength(1)
+                    expect(utility).toHaveLength(1)
 
 
                 })
@@ -94,17 +76,17 @@ describe("Test if all class map changers work", () => {
 
                 it<TestContext>(
                     `${insertMessagePrefix} called digit with it as the value when the value is a number.`,
-                    ({ classMap }) => {
+                    ({ utility }) => {
 
 
-                        attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(classMap, "outline-0")
+                        attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(utility, "outline-0")
 
 
 
-                        expect(classMap.has("outline")).toBeTruthy()
+                        expect(utility.has("outline")).toBeTruthy()
 
 
-                        const res = classMap.get("outline")
+                        const res = utility.get("outline")
 
                         expect(res).toBeInstanceOf(Map)
 
@@ -162,8 +144,6 @@ describe("Test if all class map changers work", () => {
                                 expect(res).toBeInstanceOf(Map)
 
 
-                                assertClassValueTypeAndValueMap(res)
-
 
                                 expect(Object.fromEntries(res))
                                     .toHaveProperty("digit", value)
@@ -199,16 +179,16 @@ describe("Test if all class map changers work", () => {
 
             it<TestContext>(
                 `${insertMessagePrefix} called word with it as the value when the value is a word.`,
-                ({ classMap }) => {
+                ({ utility }) => {
 
 
-                    attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(classMap, "outline-solid")
+                    attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(utility, "outline-solid")
 
 
-                    expect(classMap.has("outline")).toBeTruthy()
+                    expect(utility.has("outline")).toBeTruthy()
 
 
-                    const res = classMap.get("outline")
+                    const res = utility.get("outline")
 
                     expect(res).toBeInstanceOf(Map)
 
@@ -223,17 +203,17 @@ describe("Test if all class map changers work", () => {
 
             it<TestContext>(
                 `${insertMessagePrefix} called args with it as the value when multiple args are passed.`,
-                ({ classMap }) => {
+                ({ utility }) => {
 
 
-                    attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(classMap, "grid-cols-[2fr_auto]")
+                    attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(utility, "grid-cols-[2fr_auto]")
 
 
 
-                    expect(classMap.has("grid-cols")).toBeTruthy()
+                    expect(utility.has("grid-cols")).toBeTruthy()
 
 
-                    const res = classMap.get("grid-cols")
+                    const res = utility.get("grid-cols")
 
                     expect(res).toBeInstanceOf(Map)
 
@@ -321,17 +301,17 @@ describe("Test if all class map changers work", () => {
 
             it<TestContext>(
                 `${insertMessagePrefix} called color with it as the value when the value is a color-range.`,
-                ({ classMap }) => {
+                ({ utility }) => {
 
 
-                    attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(classMap, "outline-gray-500")
+                    attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(utility, "outline-gray-500")
 
 
 
-                    expect(classMap.has("outline")).toBeTruthy()
+                    expect(utility.has("outline")).toBeTruthy()
 
 
-                    const res = classMap.get("outline")
+                    const res = utility.get("outline")
 
                     expect(res).toBeInstanceOf(Map)
 
@@ -390,7 +370,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-                        expect(Object.fromEntries(result)).toHaveProperty(viableClassObjectMapKeys["2"], value)
+                        expect(Object.fromEntries(result)).toHaveProperty(viableUtilityClassMapKeys["2"], value)
 
 
 
@@ -455,10 +435,10 @@ describe("Test if all class map changers work", () => {
 
 
                     expect(Object.fromEntries(result))
-                        .toHaveProperty(viableClassObjectMapKeys[4], value)
+                        .toHaveProperty(viableUtilityClassMapKeys[4], value)
 
                     expect(Object.fromEntries(result))
-                        .not.toHaveProperty(viableClassObjectMapKeys[2], value)
+                        .not.toHaveProperty(viableUtilityClassMapKeys[2], value)
 
 
 
@@ -523,10 +503,10 @@ describe("Test if all class map changers work", () => {
 
 
                     expect(Object.fromEntries(result))
-                        .toHaveProperty(viableClassObjectMapKeys[3], value)
+                        .toHaveProperty(viableUtilityClassMapKeys[3], value)
 
                     expect(Object.fromEntries(result))
-                        .not.toHaveProperty(viableClassObjectMapKeys["5"], value)
+                        .not.toHaveProperty(viableUtilityClassMapKeys[5], value)
 
 
 
@@ -546,19 +526,129 @@ describe("Test if all class map changers work", () => {
     describe("Test attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged()", () => {
 
 
-        it<TestContext>("doesn't change the map if there is a single word class", ({ classMap }) => {
+        it<TestContext>("doesn't change the map if there is a single word class", ({ customFiltered }) => {
 
 
-            attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged({}, classMap, "nice")
+            attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged({}, customFiltered, "nice")
 
 
 
-            expect(classMap).toHaveLength(0)
+            expect(customFiltered).toHaveLength(0)
 
 
 
         })
 
+
+
+        it<TestContext>(
+            `Changes the class Map by putting a key that is in the filter Object with a value that is 
+             one of the list of values in the Array that key accesses from the filter object.  
+            `,
+            ({ customFiltered }) => {
+
+
+                attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged({
+                    position: ["fixed", "absolute"]
+                },
+                    customFiltered,
+                    "fixed"
+                )
+
+
+                expect(customFiltered.has("position")).toBeTruthy()
+
+                expect(customFiltered.get("position")?.get("base")).toBe("fixed")
+
+
+
+            })
+
+
+        it<TestContext>(
+            `When iterating through a list of class names.
+            If a utility class is found in the filter object's list of classes.
+            The key associated with the list where it is found will be used as a key in the
+            map It's value will be a map with the key of base and the value being the class.     
+            `,
+            ({ customFiltered }) => {
+
+
+                const classNames = ["fixed", "absolute", "static"]
+
+
+                const filterObject = {
+                    position: ["fixed", "absolute", "static", "relative", "sticky"]
+                };
+
+                classNames.forEach((value) => {
+
+                    attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged(
+                        filterObject,
+                        customFiltered,
+                        value
+                    )
+
+                })
+
+
+
+                expect(customFiltered.has("position")).toBeTruthy()
+
+                const variantAndClassMap = customFiltered.get("position")
+
+                expect(variantAndClassMap?.get("base")).toBe(classNames.at(-1))
+
+
+
+            })
+
+
+        it<TestContext>(
+            `When sorting based on class names if no variant is provided
+            the default variant will be base and it's value the class
+            when a it is provided then the key will be the variant
+            and the value the   
+            `,
+            ({ customFiltered }) => {
+
+
+                const classNames = ["hidden", "md:block",]
+
+
+                const filterObject = {
+                    display: [
+                        "hidden",
+                        "block",
+                        "static",
+                        "relative",
+                        "sticky"
+                    ]
+                };
+
+                classNames.forEach((value) => {
+
+                    attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged(
+                        filterObject,
+                        customFiltered,
+                        value
+                    )
+
+                })
+
+
+
+                expect(customFiltered.has("display")).toBeTruthy()
+
+                const variantAndClassMap = customFiltered.get("display")
+
+                expect(variantAndClassMap?.get("base")).toBe("hidden")
+
+                expect(variantAndClassMap?.get("md:")).toBe("block")
+
+
+
+            })
 
 
 
@@ -571,14 +661,14 @@ describe("Test if all class map changers work", () => {
     describe("Test attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged()", () => {
 
 
-        it<TestContext>("doesn't change the map if there is a single word class", ({ classMap }) => {
+        it<TestContext>("doesn't change the map if there is a single word class", ({ bem }) => {
 
 
-            attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged(classMap, "nice")
+            attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged(bem, "nice")
 
 
 
-            expect(classMap).toHaveLength(0)
+            expect(bem).toHaveLength(0)
 
 
 
@@ -595,20 +685,24 @@ describe("Test if all class map changers work", () => {
 
 
 
-        it<TestContext>("Assigns a property as a string and a value as a string", ({ classMap }) => {
+        it<TestContext>(
+            `The arbitraryProperties map has a key inserted that is the arbitrary property key and a value.
+            That value is a map with a key called base and a value that is the arbitrary property value.
+            `,
+            ({ arbitraryProperties }) => {
 
 
-            attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty(classMap, "[font-size:2rem]")
-
-
-
-            expect(classMap.has("font-size:")).toBeTruthy()
-
-            expect(classMap.get("font-size:")).toBe("2rem")
+                attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty(arbitraryProperties, "[font-size:2rem]")
 
 
 
-        })
+                expect(arbitraryProperties.has("font-size:")).toBeTruthy()
+
+                expect(arbitraryProperties.get("font-size:")?.get("base")).toBe("2rem")
+
+
+
+            })
 
         describe("It works with lots of arbitrary properties", () => {
 
@@ -661,8 +755,9 @@ describe("Test if all class map changers work", () => {
 
                     expect(classMap.has(key)).toBeTruthy()
 
+                    console.table(classMap)
 
-                    expect(classMap.get(key)).toBe(value)
+                    expect(classMap.get(key).get("base")).toBe(value)
 
 
 
@@ -682,27 +777,31 @@ describe("Test if all class map changers work", () => {
                 {
                     className: "sm:[font-size:4rem]",
                     expected: {
-                        key: "sm:font-size:",
+                        key: "font-size:",
+                        variant: "sm:",
                         value: "4rem"
                     }
                 },
                 {
                     className: "md:[font-size:6rem]",
                     expected: {
-                        key: "md:font-size:",
+                        key: "font-size:",
+                        variant: "md:",
                         value: "6rem"
                     }
                 },
                 {
                     className: "lg:hover:[font-size:6rem]",
                     expected: {
-                        key: "lg:hover:font-size:",
+                        key: "font-size:",
+                        variant: "lg:hover:",
                         value: "6rem"
                     }
                 },
 
-            ])("For class $className I expect there to be a value with the key of $expected.key and the value $expected.value ",
-                ({ className, expected: { key, value } }) => {
+            ])(
+                "For class $className I expect there to be a value with the key of $expected.key and the value $expected.value variant to be $expected.variant ",
+                ({ className, expected: { key, value, variant } }) => {
 
 
 
@@ -712,7 +811,13 @@ describe("Test if all class map changers work", () => {
                     expect(classMap.has(key)).toBeTruthy()
 
 
-                    expect(classMap.get(key)).toBe(value)
+                    const variantAndValueMap = classMap.get(key);
+
+                    expect(variantAndValueMap).toBeInstanceOf(Map)
+
+
+                    expect(variantAndValueMap.get(variant)).toBe(value)
+
 
 
 
