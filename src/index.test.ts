@@ -21,10 +21,9 @@ describe("Test class filters work as intended", () => {
 
             expect(sortedClasses.length).toBeLessThan(classes.length)
 
-            expect(sortedClasses).not.toBe("outline-solid outline-1 outline-gray-600")
 
 
-            expect(sortedClasses).not.toBe("outline-solid outline-1 outline-[#FFF333]")
+            expect(sortedClasses).toBe("outline-1 outline-solid outline-[#FFF333]")
 
 
 
@@ -47,6 +46,31 @@ describe("Test class filters work as intended", () => {
 
             })
 
+
+        it("filters bem classes based on block and modifier", () => {
+
+
+            const bemClassesWithOnlyModifiers = "card card--foo card--baz"
+
+            const sortedClasses = classFilterAndSorter(bemClassesWithOnlyModifiers)
+
+            expect(sortedClasses).toBe("card card--baz")
+
+
+
+        })
+
+        it("filters bem classes based on block element or block element element and modifier", () => {
+
+            const bemClassesWithOnlyElementsAndElementModifiers = "card card__title card__title--lg"
+
+
+            const sortedClasses = classFilterAndSorter(bemClassesWithOnlyElementsAndElementModifiers)
+
+
+            expect(sortedClasses).toBe("card card__title--lg")
+
+        })
 
 
 
