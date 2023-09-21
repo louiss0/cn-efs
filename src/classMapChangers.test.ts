@@ -40,7 +40,7 @@ describe("Test if all class map changers work", () => {
         it<TestContext>("doesn't change the map if there is a single word class", ({ utility }) => {
 
 
-            attemptToChangeUtilityClassBasedOnTheTypeAndValue(utility, "outline")
+            attemptToChangeUtilityClassBasedOnTheTypeAndValue(utility, "outline-")
 
 
 
@@ -83,10 +83,10 @@ describe("Test if all class map changers work", () => {
 
 
 
-                        expect(utility.has("outline")).toBeTruthy()
+                        expect(utility.has("outline-")).toBeTruthy()
 
 
-                        const res = utility.get("outline")
+                        const res = utility.get("outline-")
 
                         expect(res).toBeInstanceOf(Map)
 
@@ -112,19 +112,19 @@ describe("Test if all class map changers work", () => {
                         it.each([
                             {
                                 className: "width-0",
-                                expected: { key: "width", value: "0" }
+                                expected: { key: "width-", value: "0" }
                             },
                             {
                                 className: "width-[25]",
-                                expected: { key: "width", value: "[25]" }
+                                expected: { key: "width-", value: "[25]" }
                             },
                             {
                                 className: "width-[45ch]",
-                                expected: { key: "width", value: "[45ch]" }
+                                expected: { key: "width-", value: "[45ch]" }
                             },
                             {
                                 className: "width-33",
-                                expected: { key: "width", value: "33" }
+                                expected: { key: "width-", value: "33" }
                             },
 
                         ])(
@@ -185,10 +185,10 @@ describe("Test if all class map changers work", () => {
                     attemptToChangeUtilityClassBasedOnTheTypeAndValue(utility, "outline-solid")
 
 
-                    expect(utility.has("outline")).toBeTruthy()
+                    expect(utility.has("outline-")).toBeTruthy()
 
 
-                    const res = utility.get("outline")
+                    const res = utility.get("outline-")
 
                     expect(res).toBeInstanceOf(Map)
 
@@ -210,10 +210,10 @@ describe("Test if all class map changers work", () => {
 
 
 
-                    expect(utility.has("grid-cols")).toBeTruthy()
+                    expect(utility.has("grid-cols-")).toBeTruthy()
 
 
-                    const res = utility.get("grid-cols")
+                    const res = utility.get("grid-cols-")
 
                     expect(res).toBeInstanceOf(Map)
 
@@ -234,28 +234,28 @@ describe("Test if all class map changers work", () => {
                     {
                         className: "border-[2_solid_3px]",
                         expected: {
-                            key: "border",
+                            key: "border-",
                             value: "[2_solid_3px]"
                         }
                     },
                     {
                         className: "numbers-[09_word_3px]",
                         expected: {
-                            key: "numbers",
+                            key: "numbers-",
                             value: "[09_word_3px]"
                         }
                     },
                     {
                         className: "grid-cols-[45px_repeat(2,fr)_minmax(auto-fill,35rem)]",
                         expected: {
-                            key: "grid-cols",
+                            key: "grid-cols-",
                             value: "[45px_repeat(2,fr)_minmax(auto-fill,35rem)]"
                         }
                     },
                     {
                         className: "bg-[url(/img.jpg)_full]",
                         expected: {
-                            key: "bg",
+                            key: "bg-",
                             value: "[url(/img.jpg)_full]"
                         }
                     },
@@ -308,10 +308,10 @@ describe("Test if all class map changers work", () => {
 
 
 
-                    expect(utility.has("outline")).toBeTruthy()
+                    expect(utility.has("outline-")).toBeTruthy()
 
 
-                    const res = utility.get("outline")
+                    const res = utility.get("outline-")
 
                     expect(res).toBeInstanceOf(Map)
 
@@ -330,28 +330,28 @@ describe("Test if all class map changers work", () => {
                 {
                     className: "border-[hsl(123,25%,90%)]",
                     expected: {
-                        key: "border",
+                        key: "border-",
                         value: "[hsl(123,25%,90%)]"
                     }
                 },
                 {
                     className: "border-[hsl(123_25%_90%)]",
                     expected: {
-                        key: "border",
+                        key: "border-",
                         value: "[hsl(123_25%_90%)]"
                     }
                 },
                 {
                     className: "bg-[hsl(20_25%_50%)]",
                     expected: {
-                        key: "bg",
+                        key: "bg-",
                         value: "[hsl(20_25%_50%)]"
                     }
                 },
                 {
                     className: "bg-[hsl(180,25%,60%)]",
                     expected: {
-                        key: "bg",
+                        key: "bg-",
                         value: "[hsl(180,25%,60%)]"
                     }
                 },
@@ -393,28 +393,28 @@ describe("Test if all class map changers work", () => {
                 {
                     className: "grid-cols-[repeat(auto-fill,384px)]",
                     expected: {
-                        key: "grid-cols",
+                        key: "grid-cols-",
                         value: "[repeat(auto-fill,384px)]"
                     }
                 },
                 {
                     className: "font-size-[clamp(200px,40vw,600px)]",
                     expected: {
-                        key: "font-size",
+                        key: "font-size-",
                         value: "[clamp(200px,40vw,600px)]"
                     }
                 },
                 {
                     className: "bg-[url(/image.jpg)]",
                     expected: {
-                        key: "bg",
+                        key: "bg-",
                         value: "[url(/image.jpg)]"
                     }
                 },
                 {
                     className: "content-[counter(first-one)]",
                     expected: {
-                        key: "content",
+                        key: "content-",
                         value: "[counter(first-one)]"
                     }
                 },
@@ -460,28 +460,28 @@ describe("Test if all class map changers work", () => {
                     {
                         className: "outline-[--gray-light-1]",
                         expected: {
-                            key: "outline",
+                            key: "outline-",
                             value: "[--gray-light-1]"
                         }
                     },
                     {
                         className: "font-size-[length:--step-2]",
                         expected: {
-                            key: "font-size",
+                            key: "font-size-",
                             value: "[length:--step-2]"
                         }
                     },
                     {
                         className: "bg-[--primary-color]",
                         expected: {
-                            key: "bg",
+                            key: "bg-",
                             value: "[--primary-color]"
                         }
                     },
                     {
                         className: "border-[color:--gray-9]",
                         expected: {
-                            key: "border",
+                            key: "border-",
                             value: "[color:--gray-9]"
                         }
                     },
