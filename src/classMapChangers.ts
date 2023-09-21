@@ -77,8 +77,8 @@ export class SortedClasses {
 
 
 
-type ClassMapChangerBasedOnClassName<T extends Map<string, Map<string | Omit<string, string>, string | undefined> | undefined>> =
-    (classNamesMap: T, className: string) => void
+type ClassMapChangerBasedOnClassName<T extends Map<string, Map<string | Omit<string, string>, string | undefined> | undefined>, U = undefined>
+    = U extends undefined ? (classNamesMap: T, className: string,) => void : (classNamesMap: T, className: string, data: U) => void
 
 
 export const attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged:
@@ -527,15 +527,20 @@ export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenRet
 }
 
 
+
+
 const aBlockElementClassName =
-    /^(?<lower_case_word>[a-z]+)(?<element>__[a-z]+)(?<modifier>--[a-z0-9]+)?$/
+    /^(?<lower_case_word>[a-z]+)(?<element>__[a-z]+(?:--[a-z0-9]+)?)$/
 
 const aBlockModifierClassName =
     /^(?<lower_case_word>[a-z]+)(?<modifier>--[a-z0-9]+)$/
 
 
-export const attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged: ClassMapChangerBasedOnClassName<SortedClasses["bem"]> =
-    (classNamesMap, className) => {
+export const attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged: ClassMapChangerBasedOnClassName<
+    SortedClasses["bem"],
+    Array<string>
+> =
+    (classNamesMap, className, classNames) => {
 
 
         const blockAndElementClassNameMatch = className.match(aBlockElementClassName)
@@ -550,7 +555,6 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnRe
                 ,
                 lowerCaseWord,
                 element,
-                modifier
             ] = blockAndElementClassNameMatch
 
             if (!lowerCaseWord || !element) return
@@ -562,16 +566,16 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnRe
                     lowerCaseWord,
                     new Map([
                         ["element", element],
-                        ["modifier", modifier],
+
                     ])
                 )
+
+                return
 
             }
 
             classNamesMap.get(lowerCaseWord)
                 ?.set("element", element)
-                .set("modifier", modifier)
-
 
 
 
@@ -588,9 +592,21 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnRe
             if (!lowerCaseWord || !modifier) return
 
 
+            if (!classNames.includes(lowerCaseWord)) {
+
+                throw new Error(`
+                To have a modifier you must have the block ${lowerCaseWord} in the list of classes already.
+                Please put the block as the class that requires the use of the modifier.
+                `)
+
+            }
+
+
             if (!classNamesMap.has(lowerCaseWord)) {
 
                 classNamesMap.set(lowerCaseWord, new Map([["modifier", modifier]]))
+
+                return
 
             }
 
