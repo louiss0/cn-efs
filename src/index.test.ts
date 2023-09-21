@@ -19,11 +19,11 @@ describe("Test class filters work as intended", () => {
             expect(sortedClasses).not.toBe(classes)
 
 
-            expect(sortedClasses.length).toBeLessThan(classes.length)
+            expect(sortedClasses?.length).toBeLessThan(classes.length)
 
 
 
-            expect(sortedClasses).toBe("outline-1 outline-solid outline-[#FFF333]")
+            expect(sortedClasses).toMatchInlineSnapshot('"outline-1 outline-solid outline-[#FFF333]"')
 
 
 
@@ -54,7 +54,7 @@ describe("Test class filters work as intended", () => {
 
             const sortedClasses = classFilterAndSorter(bemClassesWithOnlyModifiers)
 
-            expect(sortedClasses).toBe("card card--baz")
+            expect(sortedClasses).toMatchInlineSnapshot('"card card--baz"')
 
 
 
@@ -68,11 +68,74 @@ describe("Test class filters work as intended", () => {
             const sortedClasses = classFilterAndSorter(bemClassesWithOnlyElementsAndElementModifiers)
 
 
-            expect(sortedClasses).toBe("card card__title--lg")
+            expect(sortedClasses).toBe("card__title--lg")
 
         })
 
 
+        it("throws error when a class that is modifier is in a list that is does'nt have a block ", () => {
+
+            const bemClassesWithOnlyModifiers = " card--lg card--md"
+
+
+
+
+
+            expect(() => classFilterAndSorter(bemClassesWithOnlyModifiers))
+                .toThrowErrorMatchingInlineSnapshot(`
+                  "To have a modifier you must have the block card in the list of classes already.
+                                      Please put the block as the class that requires the use of the modifier."
+                `)
+
+
+        })
+
+
+        it("filters arbitraryProperties ", () => {
+
+
+            const classes = "[font-size:2px] [font-size:4px] [font-size:8px]"
+
+
+            const sortedClasses = classFilterAndSorter(classes)
+
+
+            expect(sortedClasses).toBe("[font-size:8px]")
+
+
+        })
+
+        it("filters based on variants of arbitraryProperties", () => {
+
+            const classes = "[font-size:2px] md:[font-size:4px] md:[font-size:8px] lg:[font-size:6px] lg:[font-size:7px]"
+
+
+            const sortedClasses = classFilterAndSorter(classes)
+
+
+            expect(sortedClasses).toBe("[font-size:2px] md:[font-size:8px] lg:[font-size:7px]")
+
+
+        })
+
+        it(
+            `It sorts classes with this order.
+                1. BEM first.
+                2. Arbitrary Properties.
+                3. Utility Classes.
+                4. Custom Filtered classes.
+            `,
+            () => {
+
+                const classes = "absolute border-1 border-dashed border-gray-500 [font-size:2px] card card--large"
+
+
+                const sortedClasses = classFilterAndSorter(classes, { position: ["absolute", "fixed", "static"] })
+
+                expect(sortedClasses).toBe("card card--large [font-size:2px] border-1 border-dashed border-gray-500 absolute")
+
+
+            })
 
 
     })
