@@ -40,7 +40,10 @@ function getClassNameMapCreator(classTypesAndClassNames?: Record<Lowercase<strin
 
 
 
+
         attemptToChangeClassNameMapAccordingToIfTheBEMConvention(carry.bem, value, array)
+
+
 
 
         attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty(carry.arbitraryProperties, value)
@@ -70,12 +73,21 @@ export const classFilterAndSorter = (classNames: string, classTypesAndClassNames
     }
 
 
-    const classNameMap =
-        splitClassNames.reduce(
-            getClassNameMapCreator(classTypesAndClassNames),
-            new SortedClasses()
-        )
+    let classNameMap
+    try {
 
+        classNameMap =
+            splitClassNames.reduce(
+                getClassNameMapCreator(classTypesAndClassNames),
+                new SortedClasses()
+            )
+    } catch (error) {
+
+
+        throw error
+
+
+    }
 
 
 
@@ -88,10 +100,20 @@ export const classFilterAndSorter = (classNames: string, classTypesAndClassNames
         for (const [block, value] of classNameMap.bem) {
 
 
-            sortString = sortString.concat(
-                `${block}${value?.get("modifier") ?? ""} `,
-                `${block}${value?.get("element") ?? ""} `
-            )
+            const modifier = value?.get("modifier")
+            const element = value?.get("element")
+
+
+            if (modifier) {
+
+                sortString = sortString.concat(`${block} ${block}${modifier} `)
+            }
+
+            if (element) {
+
+                sortString = sortString.concat(`${block}${element}`)
+            }
+
 
 
         }
