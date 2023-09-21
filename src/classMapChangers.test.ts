@@ -1,9 +1,9 @@
 import {
     viableUtilityClassMapKeys,
     type ViableUtilityClassMapKeys,
-    attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged,
-    attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged,
-    attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged,
+    attemptToChangeUtilityClassBasedOnTheTypeAndValue,
+    attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject,
+    attemptToChangeClassNameMapAccordingToIfTheBEMConvention,
     attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty,
     SortedClasses,
 } from './classMapChangers';
@@ -40,7 +40,7 @@ describe("Test if all class map changers work", () => {
         it<TestContext>("doesn't change the map if there is a single word class", ({ utility }) => {
 
 
-            attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(utility, "outline")
+            attemptToChangeUtilityClassBasedOnTheTypeAndValue(utility, "outline")
 
 
 
@@ -63,7 +63,7 @@ describe("Test if all class map changers work", () => {
                 it<TestContext>("changes the map when a class with a digit is passed in", ({ utility }) => {
 
 
-                    attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(utility, "outline-0")
+                    attemptToChangeUtilityClassBasedOnTheTypeAndValue(utility, "outline-0")
 
 
                     expect(utility).toHaveLength(1)
@@ -79,7 +79,7 @@ describe("Test if all class map changers work", () => {
                     ({ utility }) => {
 
 
-                        attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(utility, "outline-0")
+                        attemptToChangeUtilityClassBasedOnTheTypeAndValue(utility, "outline-0")
 
 
 
@@ -132,7 +132,7 @@ describe("Test if all class map changers work", () => {
                             ({ className, expected: { key, value } }) => {
 
 
-                                attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(classMap, className)
+                                attemptToChangeUtilityClassBasedOnTheTypeAndValue(classMap, className)
 
 
                                 expect(classMap.has(key)).toBeTruthy()
@@ -182,7 +182,7 @@ describe("Test if all class map changers work", () => {
                 ({ utility }) => {
 
 
-                    attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(utility, "outline-solid")
+                    attemptToChangeUtilityClassBasedOnTheTypeAndValue(utility, "outline-solid")
 
 
                     expect(utility.has("outline")).toBeTruthy()
@@ -206,7 +206,7 @@ describe("Test if all class map changers work", () => {
                 ({ utility }) => {
 
 
-                    attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(utility, "grid-cols-[2fr_auto]")
+                    attemptToChangeUtilityClassBasedOnTheTypeAndValue(utility, "grid-cols-[2fr_auto]")
 
 
 
@@ -268,7 +268,7 @@ describe("Test if all class map changers work", () => {
                     ({ className, expected: { key, value } }) => {
 
 
-                        attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(classMap, className)
+                        attemptToChangeUtilityClassBasedOnTheTypeAndValue(classMap, className)
 
 
 
@@ -304,7 +304,7 @@ describe("Test if all class map changers work", () => {
                 ({ utility }) => {
 
 
-                    attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(utility, "outline-gray-500")
+                    attemptToChangeUtilityClassBasedOnTheTypeAndValue(utility, "outline-gray-500")
 
 
 
@@ -360,7 +360,7 @@ describe("Test if all class map changers work", () => {
                     createTestMessageForTestingIfAClassNameChangesTheMapWithAnExpectedKeyAndAValueTHatIsAMapWithAnExpectedKeyAndValue("color"),
                     ({ className, expected: { key, value } }) => {
 
-                        attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(classMap, className)
+                        attemptToChangeUtilityClassBasedOnTheTypeAndValue(classMap, className)
 
 
                         expect(classMap.has(key)).toBeTruthy()
@@ -424,7 +424,7 @@ describe("Test if all class map changers work", () => {
                 ({ className, expected: { key, value } }) => {
 
 
-                    attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(classMap, className)
+                    attemptToChangeUtilityClassBasedOnTheTypeAndValue(classMap, className)
 
 
                     expect(classMap.has(key)).toBeTruthy()
@@ -492,7 +492,7 @@ describe("Test if all class map changers work", () => {
                 ({ className, expected: { key, value } }) => {
 
 
-                    attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(classMap, className)
+                    attemptToChangeUtilityClassBasedOnTheTypeAndValue(classMap, className)
 
 
                     expect(classMap.has(key)).toBeTruthy()
@@ -529,7 +529,7 @@ describe("Test if all class map changers work", () => {
         it<TestContext>("doesn't change the map if there is a single word class", ({ customFiltered }) => {
 
 
-            attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged({}, customFiltered, "nice")
+            attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(customFiltered, "nice", {})
 
 
 
@@ -548,11 +548,12 @@ describe("Test if all class map changers work", () => {
             ({ customFiltered }) => {
 
 
-                attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged({
-                    position: ["fixed", "absolute"]
-                },
+                attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(
                     customFiltered,
-                    "fixed"
+                    "fixed",
+                    {
+                        position: ["fixed", "absolute"]
+                    }
                 )
 
 
@@ -583,10 +584,10 @@ describe("Test if all class map changers work", () => {
 
                 classNames.forEach((value) => {
 
-                    attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged(
-                        filterObject,
+                    attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(
                         customFiltered,
-                        value
+                        value,
+                        filterObject,
                     )
 
                 })
@@ -628,10 +629,10 @@ describe("Test if all class map changers work", () => {
 
                 classNames.forEach((value) => {
 
-                    attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged(
-                        filterObject,
+                    attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(
                         customFiltered,
-                        value
+                        value,
+                        filterObject,
                     )
 
                 })
@@ -814,7 +815,7 @@ describe("Test if all class map changers work", () => {
         it<TestContext>("doesn't change the map if there is a single word class", ({ bem }) => {
 
 
-            attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged(bem, "nice")
+            attemptToChangeClassNameMapAccordingToIfTheBEMConvention(bem, "nice", [])
 
 
 
@@ -832,9 +833,9 @@ describe("Test if all class map changers work", () => {
             const bemClasses = ["card", "card__title", "card__title--lg", "card--lg"];
 
 
-            bemClasses.forEach((className) => {
+            bemClasses.forEach((className, _, array) => {
 
-                attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged(bem, className)
+                attemptToChangeClassNameMapAccordingToIfTheBEMConvention(bem, className, array)
             })
 
 
@@ -859,7 +860,7 @@ describe("Test if all class map changers work", () => {
             // const bemClasses = ["card",  "card__title--lg", "card--lg"];
 
 
-            attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged(bem, "card__title")
+            attemptToChangeClassNameMapAccordingToIfTheBEMConvention(bem, "card__title", [])
 
             const cardElementAndModifierMap = bem.get("card");
 
@@ -882,10 +883,10 @@ describe("Test if all class map changers work", () => {
             ({ bem }) => {
 
 
-                // const bemClasses = ["card",  "card__title--lg", "card--lg"];
+                const bemClasses = ["card", "card__title--lg", "card--lg"];
 
 
-                attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged(bem, "card__title")
+                attemptToChangeClassNameMapAccordingToIfTheBEMConvention(bem, "card__title", bemClasses)
 
                 const cardElementAndModifierMap = bem.get("card");
 
@@ -906,10 +907,10 @@ describe("Test if all class map changers work", () => {
             ({ bem }) => {
 
 
-                // const bemClasses = ["card",  "card__title--lg", "card--lg"];
+                const bemClasses = ["card", "card__title--lg", "card--lg"];
 
 
-                attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged(bem, "card__title")
+                attemptToChangeClassNameMapAccordingToIfTheBEMConvention(bem, "card__title", bemClasses)
 
                 const cardElementAndModifierMap = bem.get("card");
 
