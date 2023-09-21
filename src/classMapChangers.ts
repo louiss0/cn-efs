@@ -81,7 +81,7 @@ type ClassMapChangerBasedOnClassName<T extends Map<string, Map<string | Omit<str
     = U extends undefined ? (classNamesMap: T, className: string,) => void : (classNamesMap: T, className: string, data: U) => void
 
 
-export const attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged:
+export const attemptToChangeUtilityClassBasedOnTheTypeAndValue:
     ClassMapChangerBasedOnClassName<SortedClasses["utility"]> = (classNamesMap, className) => {
 
 
@@ -470,11 +470,9 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOf
 
 
 
-export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged = (
-    classTypeAndListObject: Record<string, Array<string>>,
-    classNamesMap: SortedClasses["customFiltered"],
-    className: string
-): void => {
+type TypeAndListClassMapChanger = ClassMapChangerBasedOnClassName<SortedClasses["customFiltered"], Record<string, Array<string>>>
+
+export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject: TypeAndListClassMapChanger = (classNamesMap, className, classTypeAndListObject) => {
 
 
     Object.entries(classTypeAndListObject).forEach(([classType, classList]) => {
@@ -536,7 +534,7 @@ const aBlockModifierClassName =
     /^(?<lower_case_word>[a-z]+)(?<modifier>--[a-z0-9]+)$/
 
 
-export const attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged: ClassMapChangerBasedOnClassName<
+export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapChangerBasedOnClassName<
     SortedClasses["bem"],
     Array<string>
 > =
