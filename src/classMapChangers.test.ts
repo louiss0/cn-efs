@@ -658,29 +658,6 @@ describe("Test if all class map changers work", () => {
 
 
 
-    describe("Test attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged()", () => {
-
-
-        it<TestContext>("doesn't change the map if there is a single word class", ({ bem }) => {
-
-
-            attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged(bem, "nice")
-
-
-
-            expect(bem).toHaveLength(0)
-
-
-
-        })
-
-
-
-    })
-
-
-
-
     describe("Test attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty()", () => {
 
 
@@ -831,7 +808,124 @@ describe("Test if all class map changers work", () => {
 
 
 
+    describe("Test attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged()", () => {
 
+
+        it<TestContext>("doesn't change the map if there is a single word class", ({ bem }) => {
+
+
+            attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged(bem, "nice")
+
+
+
+            expect(bem).toHaveLength(0)
+
+
+
+        })
+
+
+        it<TestContext>("alters the BEM map when bem classes are encountered", ({ bem }) => {
+
+
+
+            const bemClasses = ["card", "card__title", "card__title--lg", "card--lg"];
+
+
+            bemClasses.forEach((className) => {
+
+                attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged(bem, className)
+            })
+
+
+            expect(bem.has("card")).toBeTruthy()
+
+            const cardElementAndModifierMap = bem.get("card");
+
+            expect(cardElementAndModifierMap?.has("element")).toBeTruthy()
+
+
+            expect(cardElementAndModifierMap?.has("modifier")).toBeTruthy()
+
+
+
+
+        })
+
+
+        it<TestContext>("adds an  element to the map when a lower_case_word and two underscores are encountered", ({ bem }) => {
+
+
+            // const bemClasses = ["card",  "card__title--lg", "card--lg"];
+
+
+            attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged(bem, "card__title")
+
+            const cardElementAndModifierMap = bem.get("card");
+
+            expect(cardElementAndModifierMap?.has("element")).toBeTruthy()
+
+            expect(cardElementAndModifierMap?.get("element")).toBe("__title")
+
+
+
+
+        })
+
+
+
+        it<TestContext>(
+            `When a lower_case_word is encountered with two underscores.
+             The map is changed to have a key with the word on the left of the two underscores as a key.
+             The value is a Map called that has a key called element with value that is the two underscores plus the word.  
+            `,
+            ({ bem }) => {
+
+
+                // const bemClasses = ["card",  "card__title--lg", "card--lg"];
+
+
+                attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged(bem, "card__title")
+
+                const cardElementAndModifierMap = bem.get("card");
+
+                expect(cardElementAndModifierMap?.has("element")).toBeTruthy()
+
+                expect(cardElementAndModifierMap?.get("element")).toBe("__title")
+
+
+
+
+            })
+
+        it<TestContext>(
+            `When a lower_case_word is encountered with two dashes.
+             The map is changed to have a key with the word on the left of the two dashes as a key.
+             The value is a Map called that has a key called element with value that is the two dashes plus the word.  
+            `,
+            ({ bem }) => {
+
+
+                // const bemClasses = ["card",  "card__title--lg", "card--lg"];
+
+
+                attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged(bem, "card__title")
+
+                const cardElementAndModifierMap = bem.get("card");
+
+                expect(cardElementAndModifierMap?.has("element")).toBeTruthy()
+
+                expect(cardElementAndModifierMap?.get("element")).toBe("__title")
+
+
+
+
+            })
+
+
+
+
+    })
 
 
 
