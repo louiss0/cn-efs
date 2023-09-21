@@ -5,9 +5,9 @@ const cssVariableWithOptionalPrefixedHintRE =
 
 const checkIfStringIsACssVariableWithAnOptionalHint = (string: string) => cssVariableWithOptionalPrefixedHintRE.test(string)
 
-const cssTypeAndValueUtilityClassRE = /^(?<type>[a-z\][#&!:]+)-(?<value>[\w\][$.#),\/\-(%:]+)$/
+const cssTypeAndValueUtilityClassRE = /^(?<type>[a-z\][#&!:@]+(?:\\|-))(?<value>[\w\][$.#),\/\-(%:]+)$/
 
-const cssTypeSubTypeAndValueUtilityClassRE = /^(?<type>[a-z\][#&!:]+)-(?<sub_type>[a-z]+)-(?<value>[\w\][$.#),\-(%:]+)$/
+const cssTypeSubTypeAndValueUtilityClassRE = /^(?<type>[a-z\][\\#&!:@]+-)(?<sub_type>[a-z]+-)(?<value>[\w\][$.#),\-(%:]+)$/
 
 const properCSSDigitRE = /^(?<digit>\d{1,4}(?:[a-z]{2,4})?)$/
 
