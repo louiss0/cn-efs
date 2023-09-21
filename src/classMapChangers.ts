@@ -479,17 +479,14 @@ export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject: TypeA
 
 
 
-
         const utilityClassVariantAndSelfMatch = utilityClassVariantAndSelfRE.exec(className)
-
-
-
 
 
         if (!utilityClassVariantAndSelfMatch) return
 
 
         const [, variant = "base", classTypeAndValue] = utilityClassVariantAndSelfMatch
+
 
 
 
@@ -500,8 +497,9 @@ export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject: TypeA
             classNamesMap.set(
                 classType,
                 new Map([
-                    [variant, classTypeAndValue],
-
+                    [variant,
+                        classTypeAndValue
+                    ],
                 ])
             )
 
@@ -509,10 +507,16 @@ export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject: TypeA
         }
 
 
+        if (classList.includes(classTypeAndValue)) {
 
-        classNamesMap
-            .get(classType,)
-            ?.set(variant, classTypeAndValue)
+
+            classNamesMap.get(classType,)
+                ?.set(variant, classTypeAndValue)
+
+
+        }
+
+
 
 
 
@@ -592,10 +596,10 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapC
 
             if (!classNames.includes(lowerCaseWord)) {
 
-                throw new Error(`
-                To have a modifier you must have the block ${lowerCaseWord} in the list of classes already.
-                Please put the block as the class that requires the use of the modifier.
-                `)
+                throw new Error(
+                    `To have a modifier you must have the block ${lowerCaseWord} in the list of classes already.
+                    Please put the block as the class that requires the use of the modifier.`
+                )
 
             }
 
