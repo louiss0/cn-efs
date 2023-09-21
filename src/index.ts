@@ -2,9 +2,9 @@
 import { TailwindOrWindiFilterMap } from "./classFilterMaps"
 import {
     SortedClasses,
-    attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged,
-    attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged,
-    attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged,
+    attemptToChangeClassNameMapAccordingToIfTheBEMConvention,
+    attemptToChangeUtilityClassBasedOnTheTypeAndValue,
+    attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject,
     attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty,
 } from "./classMapChangers"
 
@@ -18,29 +18,29 @@ export type ClassFilterAndSorter = typeof classFilterAndSorter
 
 function getClassNameMapCreator(classTypesAndClassNames?: Record<Lowercase<string>, Array<Lowercase<string>>>) {
 
-    return (carry: SortedClasses, value: string) => {
+    return (carry: SortedClasses, value: string, _: number, array: Array<string>) => {
 
 
 
 
         if (classTypesAndClassNames) {
 
-            attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged(
-                classTypesAndClassNames,
+            attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(
                 carry.customFiltered,
-                value
+                value,
+                classTypesAndClassNames
             )
 
         }
 
 
 
-        attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged(carry.utility, value)
+        attemptToChangeUtilityClassBasedOnTheTypeAndValue(carry.utility, value)
 
 
 
 
-        attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged(carry.bem, value)
+        attemptToChangeClassNameMapAccordingToIfTheBEMConvention(carry.bem, value, array)
 
 
         attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty(carry.arbitraryProperties, value)
