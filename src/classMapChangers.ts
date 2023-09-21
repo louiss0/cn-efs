@@ -296,7 +296,9 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValue:
                 && checkIfStringIsAProperCSSNormalFunction(arbitraryValueMatchSecondValue)
 
 
-            const valueIsAViableColor = colorRangeRE.test(`${subType}-${value}`)
+            const potentialColorRange = `${subType}${value}`
+
+            const valueIsAViableColor = colorRangeRE.test(potentialColorRange)
 
 
             const valueOrArbitraryValueMatchSecondValueIsAViableWord = lowerCaseWordRE.test(value)
@@ -311,7 +313,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValue:
                 && checkIfStringIsACssVariableWithAnOptionalHint(arbitraryValueMatchSecondValue)
 
 
-            const fullClassType = `${type}-${subType}`
+            const fullClassType = `${type}${subType}`
 
 
             const getCurrentClassNameMap = classNamesMap.has(type) || classNamesMap.has(fullClassType)
@@ -323,7 +325,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValue:
 
                 if (valueIsAViableColor) {
 
-                    classNamesMap.set(`${type}`, new Map([[viableUtilityClassMapKeys[2], `${subType}-${value}`]]))
+                    classNamesMap.set(`${type}`, new Map([[viableUtilityClassMapKeys[2], potentialColorRange]]))
 
 
 
@@ -390,7 +392,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValue:
 
 
 
-            const result = classNamesMap.get(type) || classNamesMap.get(`${type}-${subType}`)
+            const result = classNamesMap.get(type) || classNamesMap.get(`${type}${subType}`)
 
 
             if (result) {
@@ -398,7 +400,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValue:
 
                 if (valueIsAViableColor) {
 
-                    result.set(viableUtilityClassMapKeys[2], `${subType}-${value}`)
+                    result.set(viableUtilityClassMapKeys[2], `${subType}${value}`)
 
 
 
