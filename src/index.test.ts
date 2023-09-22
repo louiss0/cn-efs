@@ -138,6 +138,19 @@ describe("Test class filters work as intended", () => {
             })
 
 
+        it("throws error when string is not spaced", () => {
+
+
+
+            expect(() => classFilterAndSorter("foo"))
+                .toThrowErrorMatchingInlineSnapshot('"This string has no sets of classes please add spaces between classes that need to be sorted"')
+
+        })
+
+
     })
+
+
+
 
 })
