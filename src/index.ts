@@ -64,7 +64,7 @@ export const classFilterAndSorter = (classNames: string, classTypesAndClassNames
 
     const splitClassNames = classNames.split(moreThanOneSpaceRE)
 
-    if (splitClassNames.length === 0) {
+    if (splitClassNames.length < 2) {
 
         throw new Error(
             "This string has no sets of classes please add spaces between classes that need to be sorted",
@@ -165,7 +165,7 @@ export const classFilterAndSorter = (classNames: string, classTypesAndClassNames
             const utilityClassesCreatedFromDefinedValuesFromTheUtilityValueMap =
                 valuesFromUtilityValueMap
                     .filter(value => typeof value === "string")
-                    .map((value) => `${utility}-${value} `)
+                    .map((value) => `${utility}${value} `)
 
             sortString = sortString.concat(
                 ...utilityClassesCreatedFromDefinedValuesFromTheUtilityValueMap
