@@ -81,7 +81,7 @@ type ClassMapChangerBasedOnClassName<T extends Map<string, Map<string | Omit<str
     = U extends undefined ? (classMap: T, className: string,) => void : (classMap: T, className: string, data: U) => void
 
 
-export const attemptToChangeUtilityClassBasedOnTheTypeAndValue:
+export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
     ClassMapChangerBasedOnClassName<SortedClasses["utility"]> = (classMap, className) => {
 
 
@@ -632,7 +632,7 @@ const arbitraryPropertyRE =
     /(?<variant>(?:(?:(?:[\&:{1,2}[a-z0-9\-]+(?:\([a-z0-9\+\-\_]+\))?)\]|[a-z0-9\-]+(?:\([a-z0-9\+\-\_]+\))?):)*)?\[(?<property_key>[a-z]+(?:\-[a-z]+)*:)(?<property_value>[_\-),.\/(a-z0-9]+)\]/
 
 
-export const attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty: ClassMapChangerBasedOnClassName<SortedClasses["arbitraryProperties"]> =
+export const attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty: ClassMapChangerBasedOnClassName<SortedClasses["arbitraryProperties"]> =
     (classMap, className) => {
 
 
@@ -684,16 +684,16 @@ const relationClassUtilityRE = /^(?<relationship>@?[a-z-]+\/)(?<name>[a-z]+)$/
 
 
 const relationalTypeAndValueUtilityClassRE =
-    /^(?<variant_and_group_name>@?[a-z-]+(?:\/[a-z]+):)(?<type>[a-z#&!]+-)(?<value>[\w\][$.#),\-(%:]+)$/
+    /^(?<variant_and_group_name>@?[a-z0-9\]\[&\-\.#@+),\/(:]+(?:\/[a-z]+):)(?<type>[a-z#&!]+-)(?<value>[\w\][$.#),\-(%:]+)$/
 
 const arbitraryRelationalTypeAndValueUtilityClassRE =
-    /^(?<group_name_and_variants>@?[a-z-]+-\[[\.a-z\-_]+\]:(?:[a-z-]+:)*)(?<type>[a-z#&!]+-)(?<value>[\w\][$.#),\-(%:]+)$/
+    /^(?<group_name_and_variants>@?[a-z0-9\]\[&\-\.#@+),\/(:]+-\[[\.a-z\-_]+\]:(?:[a-z-]+:)*)(?<type>[a-z#&!]+-)(?<value>[\w\][$.#),\-(%:]+)$/
 
 const relationalTypeSubTypeAndValueUtilityClassRE =
-    /^(?<variant_and_group_name>@?[a-z-]+(?:\/[a-z]+):)(?<type>[a-z#&!]+-)(?<sub_type>[a-z]+-)(?<value>[\w\][$.#),\-(%:]+)$/
+    /^(?<variant_and_group_name>@?[a-z0-9\]\[&\-\.#@+),\/(:]+(?:\/[a-z]+):)(?<type>[a-z#&!]+-)(?<sub_type>[a-z]+-)(?<value>[\w\][$.#),\-(%:]+)$/
 
 const arbitraryRelationalTypeSubTypeAndValueUtilityClassRE =
-    /^(?<group_name_and_variants>@?[a-z-]+-\[[\.a-z\-_]+\]:(?:[a-z-]+:)*)(?<type>[a-z#&!]+-)(?<sub_type>[a-z]+-)(?<value>[\w\][$.#),\-(%:]+)$/
+    /^(?<group_name_and_variants>@?[a-z0-9\]\[&\-\.#@+),\/(:]+-\[[\.a-z\-_]+\]:(?:[a-z-]+:)*)(?<type>[a-z#&!]+-)(?<sub_type>[a-z]+-)(?<value>[\w\][$.#),\-(%:]+)$/
 
 
 
@@ -1123,10 +1123,10 @@ export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassM
 
 
 const variantGroupRE =
-    /(?<variant>[a-z0-9\]\[&\-\.#@+),(:]+:)\((?<class_names>(?:[\w\-\]\[$.#),(%:]+)(?:\s[\w\-\]\[$.#),(%:]+)+)\)/
+    /(?<variant>[a-z0-9\]\[&\-\.#@+),\/(:]+:)\((?<class_names>(?:[\w\-\]\[$.#),(%:\/]+)(?:\s[\w\-\]\[$.#)\/,(%:]+)+)\)/
 
-export const attemptToChangeClassMapBasedOnIfItIsAVariantGroup: ClassMapChangerBasedOnClassName<SortedClasses["utility"]> =
-    (classMap, className) => {
+export const attemptToChangeClassMapBasedOnIfItIsAVariantGroup =
+    (sortedClasses: SortedClasses, className: string) => {
 
 
 
@@ -1140,17 +1140,21 @@ export const attemptToChangeClassMapBasedOnIfItIsAVariantGroup: ClassMapChangerB
 
         const [, variant, classNames] = variantGroupMatch
 
+
         if (!variant || !classNames) return
 
         const splitClassNames = classNames?.split(/\s/)
+
 
         splitClassNames
             .map(className => `${variant}${className}`)
             .forEach((className) => {
 
-                attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty(classMap, className)
-                attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(classMap, className)
+                attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(sortedClasses.utility, className)
+                attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(sortedClasses.utility, className)
+                attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty(sortedClasses.arbitraryProperties, className)
             })
+
 
 
     };
