@@ -1,5 +1,5 @@
 {
-  "name": "@code-fixer-23/cnfs",
+  "name": "@code-fixer-23/class-name-sorter-and-filter",
   "version": "1.0.0",
   "description": "This is the repo for creating a Class Name Filter Sorter",
   "main": "./dist/index.js",
