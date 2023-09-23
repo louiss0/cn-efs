@@ -6,6 +6,7 @@ import {
     attemptToChangeClassNameMapAccordingToIfTheBEMConvention,
     attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty,
     SortedClasses,
+    attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass,
 } from './classMapChangers';
 
 
@@ -34,7 +35,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-    describe("Test attemptToChangeUtilityClassBasedOnTheTypeAndValueThenReturnResultOfItHasChanged()", () => {
+    describe("Test attemptToChangeUtilityClassBasedOnTheTypeAndValue()", () => {
 
 
         it<TestContext>("doesn't change the map if there is a single word class", ({ utility }) => {
@@ -519,11 +520,15 @@ describe("Test if all class map changers work", () => {
 
 
 
+
+
+
+
     })
 
 
 
-    describe("Test attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectThenReturnResultOfItHasChanged()", () => {
+    describe("Test attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject()", () => {
 
 
         it<TestContext>("doesn't change the map if there is a single word class", ({ customFiltered }) => {
@@ -928,6 +933,76 @@ describe("Test if all class map changers work", () => {
 
     })
 
+
+
+
+    describe("Testing attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass", () => {
+
+
+
+        it<TestContext>("works with container queries", ({ utility }) => {
+
+
+            attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(utility, "@container/main")
+
+
+
+            expect(utility.has("@container/")).toBeTruthy()
+
+            expect(utility.get("@container/")?.has("word")).toBeTruthy()
+
+
+
+        })
+
+
+
+        it<TestContext>("works with named groups", ({ utility }) => {
+
+            attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(utility, "group/main")
+
+
+            expect(utility.has("group/")).toBeTruthy()
+
+            expect(utility.get("group/")?.has("word")).toBeTruthy()
+
+
+
+        })
+
+
+
+        it<TestContext>("Works with relational variants that use the / syntax", ({ utility, }) => {
+
+
+            attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(utility, "peer-checked/draft:text-sky-500")
+
+
+            expect(utility.has("peer-checked/draft:text-")).toBeTruthy()
+
+            expect(utility.get("peer-checked/draft:text-")?.has("color")).toBeTruthy()
+
+
+
+        })
+
+
+        it<TestContext>("Works with arbitrary relational variants", ({ utility, }) => {
+
+
+            attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(utility, "group-[.is-published]:opacity-50")
+
+
+            expect(utility.has("group-[.is-published]:opacity-")).toBeTruthy()
+
+            expect(utility.get("group-[.is-published]:opacity-")?.has("digit")).toBeTruthy()
+
+
+
+        })
+
+
+    })
 
 
 
