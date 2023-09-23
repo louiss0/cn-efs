@@ -695,6 +695,9 @@ const relationalTypeSubTypeAndValueUtilityClassRE =
 const arbitraryRelationalTypeSubTypeAndValueUtilityClassRE =
     /^(?<group_name_and_variants>@?[a-z-]+-\[[\.a-z\-_]+\]:(?:[a-z-]+:)*)(?<type>[a-z#&!]+-)(?<sub_type>[a-z]+-)(?<value>[\w\][$.#),\-(%:]+)$/
 
+
+
+
 export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassMapChangerBasedOnClassName<SortedClasses["utility"]> =
     (classMap, className) => {
 
@@ -1117,3 +1120,51 @@ export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassM
 
 
     }
+
+
+const variantGroupRE =
+    /(?<variant>[a-z0-9\]\[&\-\.#@+),(:]+:)\((?<class_names>(?:[\w\-\]\[$.#),(%:]+)(?:\s[\w\-\]\[$.#),(%:]+)+)\)/
+
+export const attemptToChangeClassMapBasedOnIfItIsAVariantGroup: ClassMapChangerBasedOnClassName<SortedClasses["utility"]> =
+    (classMap, className) => {
+
+
+
+        const variantGroupMatch = variantGroupRE.exec(className)
+
+
+        if (!variantGroupMatch) return
+
+
+
+
+        const [, variant, classNames] = variantGroupMatch
+
+        if (!variant || !classNames) return
+
+        const splitClassNames = classNames?.split(/\s/)
+
+        splitClassNames
+            .map(className => `${variant}${className}`)
+            .forEach((className) => {
+
+                attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty(classMap, className)
+                attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(classMap, className)
+            })
+
+
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
