@@ -3,9 +3,11 @@ import { TailwindOrWindiFilterMap } from "./classFilterMaps"
 import {
     SortedClasses,
     attemptToChangeClassNameMapAccordingToIfTheBEMConvention,
-    attemptToChangeUtilityClassBasedOnTheTypeAndValue,
+    attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue,
     attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject,
-    attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty,
+    attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty,
+    attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass,
+    attemptToChangeClassMapBasedOnIfItIsAVariantGroup,
 } from "./classMapChangers"
 
 
@@ -35,18 +37,29 @@ function getClassNameMapCreator(classTypesAndClassNames?: Record<Lowercase<strin
 
 
 
-        attemptToChangeUtilityClassBasedOnTheTypeAndValue(carry.utility, value)
-
-
-
+        attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(carry.utility, value)
 
 
         attemptToChangeClassNameMapAccordingToIfTheBEMConvention(carry.bem, value, array)
 
 
+        attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty(carry.arbitraryProperties, value)
 
 
-        attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty(carry.arbitraryProperties, value)
+        attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(carry.utility, value)
+
+
+        const { customFiltered, utility, arbitraryProperties } = carry
+
+        attemptToChangeClassMapBasedOnIfItIsAVariantGroup(
+            {
+                utility,
+                arbitraryProperties,
+                customFiltered
+            },
+            value,
+            classTypesAndClassNames
+        )
 
 
         return carry
