@@ -14,7 +14,7 @@ import {
 
 
 
-export type ClassFilterAndSorter = typeof classFilterAndSorter
+export type ClassFilterAndSorter = typeof classNamesSorterAndFilter
 
 
 
@@ -221,7 +221,7 @@ export const classNamesSorterAndFilter = (classNames: string, classTypesAndClass
 }
 
 
-export const tailwindOrWindiCSSClassFilterAndSorter = (classNames: string) => classFilterAndSorter(classNames, TailwindOrWindiFilterMap)
+export const tailwindOrWindiCSSClassFilterAndSorter = (classNames: string) => classNamesSorterAndFilter(classNames, TailwindOrWindiFilterMap)
 
 
 
