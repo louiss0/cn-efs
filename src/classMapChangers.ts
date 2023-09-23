@@ -1,3 +1,4 @@
+import type { FilterMap } from "./classFilterMaps"
 
 
 const cssVariableWithOptionalPrefixedHintRE =
@@ -1125,8 +1126,14 @@ export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassM
 const variantGroupRE =
     /(?<variant>[a-z0-9\]\[&\-\.#@+),\/(:]+:)\((?<class_names>(?:[\w\-\]\[$.#),(%:\/]+)(?:\s[\w\-\]\[$.#)\/,(%:]+)+)\)/
 
+type PropsNeededFromSortedClasses = {
+    utility: SortedClasses["utility"]
+    customFiltered: SortedClasses["customFiltered"]
+    arbitraryProperties: SortedClasses["arbitraryProperties"]
+}
+
 export const attemptToChangeClassMapBasedOnIfItIsAVariantGroup =
-    (sortedClasses: SortedClasses, className: string) => {
+    ({ arbitraryProperties, customFiltered, utility }: PropsNeededFromSortedClasses, className: string, filterMap?: FilterMap) => {
 
 
 
@@ -1150,9 +1157,16 @@ export const attemptToChangeClassMapBasedOnIfItIsAVariantGroup =
             .map(className => `${variant}${className}`)
             .forEach((className) => {
 
-                attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(sortedClasses.utility, className)
-                attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(sortedClasses.utility, className)
-                attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty(sortedClasses.arbitraryProperties, className)
+                attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, className)
+                attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(utility, className)
+                attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty(arbitraryProperties, className)
+
+                if (filterMap) {
+
+                    attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(customFiltered, className, filterMap)
+
+                }
+
             })
 
 
