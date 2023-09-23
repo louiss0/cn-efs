@@ -1,7 +1,7 @@
 {
   "name": "@code-fixer-23/cnfs",
   "version": "1.0.0",
-  "description": "This is the repo for creating a  Class Name Filter Sorter",
+  "description": "This is the repo for creating a Class Name Filter Sorter",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
@@ -35,7 +35,14 @@
     "vite": "^4.4.9",
     "vitest": "^0.34.4"
   },
-  "keywords": [],
+  "keywords": [
+    "tailwindcss",
+    "unocss",
+    "css",
+    "className",
+    "classList",
+    "windicss"
+  ],
   "author": {
     "name": "Shelton Louis",
     "url": "https://github.com/louiss0"
