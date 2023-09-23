@@ -5,9 +5,9 @@ const cssVariableWithOptionalPrefixedHintRE =
 
 const checkIfStringIsACssVariableWithAnOptionalHint = (string: string) => cssVariableWithOptionalPrefixedHintRE.test(string)
 
-const cssTypeAndValueUtilityClassRE = /^(?<type>[a-z\][#&!:@]+(?:\\|-))(?<value>[\w\][$.#),\/\-(%:]+)$/
+const cssTypeAndValueUtilityClassRE = /^(?<type>[a-z\][#&!:]+-)(?<value>[\w\][$.#),\/\-(%:]+)$/
 
-const cssTypeSubTypeAndValueUtilityClassRE = /^(?<type>[a-z\][\\#&!:@]+-)(?<sub_type>[a-z]+-)(?<value>[\w\][$.#),\-(%:]+)$/
+const cssTypeSubTypeAndValueUtilityClassRE = /^(?<type>[a-z\][#&!:]+-)(?<sub_type>[a-z]+-)(?<value>[\w\][$.#),\-(%:]+)$/
 
 const properCSSDigitRE = /^(?<digit>\d{1,4}(?:[a-z]{2,4})?)$/
 
@@ -78,11 +78,11 @@ export class SortedClasses {
 
 
 type ClassMapChangerBasedOnClassName<T extends Map<string, Map<string | Omit<string, string>, string | undefined> | undefined>, U = undefined>
-    = U extends undefined ? (classNamesMap: T, className: string,) => void : (classNamesMap: T, className: string, data: U) => void
+    = U extends undefined ? (classMap: T, className: string,) => void : (classMap: T, className: string, data: U) => void
 
 
 export const attemptToChangeUtilityClassBasedOnTheTypeAndValue:
-    ClassMapChangerBasedOnClassName<SortedClasses["utility"]> = (classNamesMap, className) => {
+    ClassMapChangerBasedOnClassName<SortedClasses["utility"]> = (classMap, className) => {
 
 
 
@@ -96,6 +96,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValue:
 
 
             if (!type || !value) return
+
 
 
 
@@ -125,12 +126,12 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValue:
 
 
 
-            if (!classNamesMap.has(type)) {
+            if (!classMap.has(type)) {
 
 
                 if (valueIsAViableDigit) {
 
-                    classNamesMap.set(type, new Map([[viableUtilityClassMapKeys[0], value]]))
+                    classMap.set(type, new Map([[viableUtilityClassMapKeys[0], value]]))
 
 
 
@@ -141,7 +142,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValue:
 
                 if (valueIsAViableWord) {
 
-                    classNamesMap.set(type, new Map([[viableUtilityClassMapKeys[1], value]]))
+                    classMap.set(type, new Map([[viableUtilityClassMapKeys[1], value]]))
 
 
 
@@ -150,7 +151,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValue:
 
                 if (valueIsAViableColor) {
 
-                    classNamesMap.set(type, new Map([[viableUtilityClassMapKeys[2], value]]))
+                    classMap.set(type, new Map([[viableUtilityClassMapKeys[2], value]]))
 
 
 
@@ -159,7 +160,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValue:
 
                 if (arbitraryValueIsAViableNonColorFunction) {
 
-                    classNamesMap.set(type, new Map([[viableUtilityClassMapKeys[4], value]]))
+                    classMap.set(type, new Map([[viableUtilityClassMapKeys[4], value]]))
 
 
 
@@ -169,7 +170,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValue:
 
                 if (arbitraryValueIsAViableCSSVariable) {
 
-                    classNamesMap.set(type, new Map([[viableUtilityClassMapKeys[3], value]]))
+                    classMap.set(type, new Map([[viableUtilityClassMapKeys[3], value]]))
 
 
 
@@ -179,7 +180,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValue:
 
                 if (arbitraryValueIsASetOfArgs) {
 
-                    classNamesMap.set(type, new Map([[viableUtilityClassMapKeys[5], value]]))
+                    classMap.set(type, new Map([[viableUtilityClassMapKeys[5], value]]))
 
 
 
@@ -193,7 +194,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValue:
 
 
 
-            const result = classNamesMap.get(type)
+            const result = classMap.get(type)
 
 
 
@@ -316,7 +317,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValue:
             const fullClassType = `${type}${subType}`
 
 
-            const getCurrentClassNameMap = classNamesMap.has(type) || classNamesMap.has(fullClassType)
+            const getCurrentClassNameMap = classMap.has(type) || classMap.has(fullClassType)
 
 
             if (!getCurrentClassNameMap) {
@@ -325,7 +326,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValue:
 
                 if (valueIsAViableColor) {
 
-                    classNamesMap.set(`${type}`, new Map([[viableUtilityClassMapKeys[2], potentialColorRange]]))
+                    classMap.set(`${type}`, new Map([[viableUtilityClassMapKeys[2], potentialColorRange]]))
 
 
 
@@ -335,7 +336,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValue:
 
                 if (valueIsAViableDigit) {
 
-                    classNamesMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[0], value]]))
+                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[0], value]]))
 
 
 
@@ -347,7 +348,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValue:
 
                 if (valueOrArbitraryValueMatchSecondValueIsAViableWord) {
 
-                    classNamesMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[1], value]]))
+                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[1], value]]))
 
 
 
@@ -356,7 +357,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValue:
 
                 if (valueIsAViableFunction) {
 
-                    classNamesMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[4], value]]))
+                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[4], value]]))
 
 
 
@@ -366,7 +367,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValue:
 
                 if (arbitraryValueMatchSecondValueIsAViableCSSVariable) {
 
-                    classNamesMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[3], value]]))
+                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[3], value]]))
 
 
 
@@ -375,7 +376,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValue:
 
                 if (arbitraryValueMatchSecondValueIsASetOfArgs) {
 
-                    classNamesMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[5], value]]))
+                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[5], value]]))
 
 
 
@@ -392,7 +393,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValue:
 
 
 
-            const result = classNamesMap.get(type) || classNamesMap.get(`${type}${subType}`)
+            const result = classMap.get(type) || classMap.get(`${type}${subType}`)
 
 
             if (result) {
@@ -474,7 +475,7 @@ export const attemptToChangeUtilityClassBasedOnTheTypeAndValue:
 
 type TypeAndListClassMapChanger = ClassMapChangerBasedOnClassName<SortedClasses["customFiltered"], Record<string, Array<string>>>
 
-export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject: TypeAndListClassMapChanger = (classNamesMap, className, classTypeAndListObject) => {
+export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject: TypeAndListClassMapChanger = (classMap, className, classTypeAndListObject) => {
 
 
     Object.entries(classTypeAndListObject).forEach(([classType, classList]) => {
@@ -494,9 +495,9 @@ export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject: TypeA
 
         if (!classTypeAndValue) return
 
-        if (!classNamesMap.has(classType) && classList.includes(classTypeAndValue)) {
+        if (!classMap.has(classType) && classList.includes(classTypeAndValue)) {
 
-            classNamesMap.set(
+            classMap.set(
                 classType,
                 new Map([
                     [variant,
@@ -512,7 +513,7 @@ export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject: TypeA
         if (classList.includes(classTypeAndValue)) {
 
 
-            classNamesMap.get(classType,)
+            classMap.get(classType,)
                 ?.set(variant, classTypeAndValue)
 
 
@@ -544,7 +545,7 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapC
     SortedClasses["bem"],
     Array<string>
 > =
-    (classNamesMap, className, classNames) => {
+    (classMap, className, classNames) => {
 
 
         const blockAndElementClassNameMatch = className.match(aBlockElementClassName)
@@ -564,9 +565,9 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapC
             if (!lowerCaseWord || !element) return
 
 
-            if (!classNamesMap.has(lowerCaseWord)) {
+            if (!classMap.has(lowerCaseWord)) {
 
-                classNamesMap.set(
+                classMap.set(
                     lowerCaseWord,
                     new Map([
                         ["element", element],
@@ -578,7 +579,7 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapC
 
             }
 
-            classNamesMap.get(lowerCaseWord)
+            classMap.get(lowerCaseWord)
                 ?.set("element", element)
 
 
@@ -606,15 +607,15 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapC
             }
 
 
-            if (!classNamesMap.has(lowerCaseWord)) {
+            if (!classMap.has(lowerCaseWord)) {
 
-                classNamesMap.set(lowerCaseWord, new Map([["modifier", modifier]]))
+                classMap.set(lowerCaseWord, new Map([["modifier", modifier]]))
 
                 return
 
             }
 
-            classNamesMap.get(lowerCaseWord)?.set("modifier", modifier)
+            classMap.get(lowerCaseWord)?.set("modifier", modifier)
 
 
 
@@ -631,51 +632,488 @@ const arbitraryPropertyRE =
     /(?<variant>(?:(?:(?:[\&:{1,2}[a-z0-9\-]+(?:\([a-z0-9\+\-\_]+\))?)\]|[a-z0-9\-]+(?:\([a-z0-9\+\-\_]+\))?):)*)?\[(?<property_key>[a-z]+(?:\-[a-z]+)*:)(?<property_value>[_\-),.\/(a-z0-9]+)\]/
 
 
-export const attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty: ClassMapChangerBasedOnClassName<SortedClasses["arbitraryProperties"]> = (classMap, className) => {
+export const attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty: ClassMapChangerBasedOnClassName<SortedClasses["arbitraryProperties"]> =
+    (classMap, className) => {
 
 
-    const arbitraryPropertyKeyAndValueMatch = arbitraryPropertyRE.exec(className)
+        const arbitraryPropertyKeyAndValueMatch = arbitraryPropertyRE.exec(className)
 
-    if (!arbitraryPropertyKeyAndValueMatch) return
-
-
-    const [,
-        variant = "base",
-        propertyKey,
-        propertyValue
-    ] = arbitraryPropertyKeyAndValueMatch
+        if (!arbitraryPropertyKeyAndValueMatch) return
 
 
-
-    if (!propertyKey || !propertyValue) return
-
-
-    if (!classMap.has(propertyKey)) {
-
-
-        classMap.set(
+        const [,
+            variant = "base",
             propertyKey,
-            new Map([
-                [
-                    variant,
-                    propertyValue
-                ],
-            ]
-            )
-        )
+            propertyValue
+        ] = arbitraryPropertyKeyAndValueMatch
 
-        return
+
+
+        if (!propertyKey || !propertyValue) return
+
+
+        if (!classMap.has(propertyKey)) {
+
+
+            classMap.set(
+                propertyKey,
+                new Map([
+                    [
+                        variant,
+                        propertyValue
+                    ],
+                ]
+                )
+            )
+
+            return
+
+        }
+
+
+        classMap.get(propertyKey)?.set(variant, propertyValue)
+
+
+
+
+
 
     }
 
-
-    classMap.get(propertyKey)?.set(variant, propertyValue)
-
+const relationClassUtilityRE = /^(?<relationship>@?[a-z-]+\/)(?<name>[a-z]+)$/
 
 
+const relationalTypeAndValueUtilityClassRE =
+    /^(?<variant_and_group_name>@?[a-z-]+(?:\/[a-z]+):)(?<type>[a-z#&!]+-)(?<value>[\w\][$.#),\-(%:]+)$/
+
+const arbitraryRelationalTypeAndValueUtilityClassRE =
+    /^(?<group_name_and_variants>@?[a-z-]+-\[[\.a-z\-_]+\]:(?:[a-z-]+:)*)(?<type>[a-z#&!]+-)(?<value>[\w\][$.#),\-(%:]+)$/
+
+const relationalTypeSubTypeAndValueUtilityClassRE =
+    /^(?<variant_and_group_name>@?[a-z-]+(?:\/[a-z]+):)(?<type>[a-z#&!]+-)(?<sub_type>[a-z]+-)(?<value>[\w\][$.#),\-(%:]+)$/
+
+const arbitraryRelationalTypeSubTypeAndValueUtilityClassRE =
+    /^(?<group_name_and_variants>@?[a-z-]+-\[[\.a-z\-_]+\]:(?:[a-z-]+:)*)(?<type>[a-z#&!]+-)(?<sub_type>[a-z]+-)(?<value>[\w\][$.#),\-(%:]+)$/
+
+export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassMapChangerBasedOnClassName<SortedClasses["utility"]> =
+    (classMap, className) => {
 
 
 
-}
 
 
+
+        const relationClassUtilityMatch = className.match(relationClassUtilityRE)
+
+
+
+
+        if (relationClassUtilityMatch) {
+
+            const [, relationship, name] = relationClassUtilityMatch;
+
+
+            if (!relationship || !name) return
+
+            if (!classMap.has(relationship)) {
+
+                classMap.set(relationship, new Map([["word", name]]))
+
+                return
+            }
+
+            classMap.get(relationship)?.set("word", name)
+
+
+        }
+
+
+
+        const cssTypeValueUtilityClassMatch = className.match(relationalTypeAndValueUtilityClassRE)
+            || className.match(arbitraryRelationalTypeAndValueUtilityClassRE)
+
+
+
+
+        if (cssTypeValueUtilityClassMatch) {
+
+            const [, variant, type, value] = cssTypeValueUtilityClassMatch
+
+
+            if (!variant || !type || !value) return
+
+
+
+
+            const arbitraryValueMatchSecondValue = value.match(arbitraryValueRE)?.[1]
+
+            const arbitraryValueMatchSecondValueBoolValue = !!arbitraryValueMatchSecondValue
+
+            const valueIsAViableDigit = checkIfStringIsAProperDigit(value)
+                || arbitraryValueMatchSecondValue && checkIfStringIsAProperDigit(arbitraryValueMatchSecondValue)
+
+
+            const valueIsAViableWord = checkIfStringIsALowerCaseWord(value)
+                || arbitraryValueMatchSecondValueBoolValue && checkIfStringIsALowerCaseWord(arbitraryValueMatchSecondValue)
+
+            const arbitraryValueIsAViableNonColorFunction = arbitraryValueMatchSecondValueBoolValue
+                && checkIfStringIsAProperCSSNormalFunction(arbitraryValueMatchSecondValue)
+
+            const arbitraryValueIsASetOfArgs = arbitraryValueMatchSecondValueBoolValue
+                && checkIfStringIsASetOfArgs(arbitraryValueMatchSecondValue)
+
+            const arbitraryValueIsAViableCSSVariable = arbitraryValueMatchSecondValueBoolValue
+                && checkIfStringIsACssVariableWithAnOptionalHint(arbitraryValueMatchSecondValue)
+
+            const valueIsAViableColor = arbitraryValueMatchSecondValue
+                && checkIfStringIsAProperColor(arbitraryValueMatchSecondValue)
+
+
+
+
+            if (!classMap.has(type)) {
+
+
+                if (valueIsAViableDigit) {
+
+                    classMap.set(`${variant}${type}`, new Map([[viableUtilityClassMapKeys[0], value]]))
+
+
+
+                    return
+
+                }
+
+
+                if (valueIsAViableWord) {
+
+                    classMap.set(`${variant}${type}`, new Map([[viableUtilityClassMapKeys[1], value]]))
+
+
+
+                    return
+                }
+
+                if (valueIsAViableColor) {
+
+                    classMap.set(`${variant}${type}`, new Map([[viableUtilityClassMapKeys[2], value]]))
+
+
+
+                    return
+                }
+
+                if (arbitraryValueIsAViableNonColorFunction) {
+
+                    classMap.set(`${variant}${type}`, new Map([[viableUtilityClassMapKeys[4], value]]))
+
+
+
+                    return
+                }
+
+
+                if (arbitraryValueIsAViableCSSVariable) {
+
+                    classMap.set(`${variant}${type}`, new Map([[viableUtilityClassMapKeys[3], value]]))
+
+
+
+                    return
+                }
+
+
+                if (arbitraryValueIsASetOfArgs) {
+
+                    classMap.set(`${variant}${type}`, new Map([[viableUtilityClassMapKeys[5], value]]))
+
+
+
+                    return
+                }
+
+
+
+
+            }
+
+
+
+            const result = classMap.get(`${variant}${type}`)
+
+
+
+            if (result) {
+
+
+                if (valueIsAViableDigit) {
+
+                    result.set(viableUtilityClassMapKeys[0], value)
+
+
+
+                    return
+                }
+
+
+                if (valueIsAViableWord) {
+
+                    result.set(viableUtilityClassMapKeys[1], value)
+
+
+
+                    return
+
+                }
+
+                if (valueIsAViableColor) {
+
+                    result.set(viableUtilityClassMapKeys[2], value)
+
+
+
+                    return
+                }
+
+                if (arbitraryValueIsAViableNonColorFunction) {
+
+                    result.set(viableUtilityClassMapKeys[4], value)
+
+
+
+                    return
+                }
+
+                if (arbitraryValueIsAViableCSSVariable) {
+
+                    result.set(viableUtilityClassMapKeys[3], value)
+
+
+
+                    return
+                }
+
+                if (arbitraryValueIsASetOfArgs) {
+
+                    result.set(viableUtilityClassMapKeys[5], value)
+
+
+
+                    return
+                }
+
+
+
+
+
+
+            }
+
+        }
+
+
+
+
+        const cssTypeSubTypeAndValueUtilityClassMatch =
+            className.match(relationalTypeSubTypeAndValueUtilityClassRE)
+            || className.match(arbitraryRelationalTypeSubTypeAndValueUtilityClassRE)
+
+
+
+
+        if (cssTypeSubTypeAndValueUtilityClassMatch) {
+
+
+            const [, variant, type, subType, value] = cssTypeSubTypeAndValueUtilityClassMatch
+
+
+            if (!variant || !type || !subType || !value) return
+
+
+            const arbitraryValueMatch = value.match(arbitraryValueRE)
+
+            const arbitraryValueMatchSecondValue = arbitraryValueMatch?.[1]
+
+            const arbitraryValueMatchSecondValueBoolValue = !!arbitraryValueMatchSecondValue
+
+            const valueIsAViableDigit = checkIfStringIsAProperDigit(value)
+                || arbitraryValueMatchSecondValueBoolValue && checkIfStringIsAProperDigit(arbitraryValueMatchSecondValue)
+
+
+            const valueIsAViableFunction = arbitraryValueMatchSecondValueBoolValue
+                && checkIfStringIsAProperCSSNormalFunction(arbitraryValueMatchSecondValue)
+
+
+            const potentialColorRange = `${subType}${value}`
+
+            const valueIsAViableColor = colorRangeRE.test(potentialColorRange)
+
+
+            const valueOrArbitraryValueMatchSecondValueIsAViableWord = lowerCaseWordRE.test(value)
+                || arbitraryValueMatchSecondValueBoolValue && lowerCaseWordRE.test(arbitraryValueMatchSecondValue)
+
+            const arbitraryValueMatchSecondValueIsASetOfArgs = arbitraryValueMatchSecondValueBoolValue
+                && checkIfStringIsASetOfArgs(arbitraryValueMatchSecondValue)
+
+
+            const arbitraryValueMatchSecondValueIsAViableCSSVariable =
+                arbitraryValueMatchSecondValueBoolValue
+                && checkIfStringIsACssVariableWithAnOptionalHint(arbitraryValueMatchSecondValue)
+
+
+            const partialClassType = `${variant}${type}`
+
+            const fullClassType = `${variant}${type}${subType}`
+
+
+            const getCurrentClassNameMap = classMap.has(partialClassType) || classMap.has(fullClassType)
+
+
+            if (!getCurrentClassNameMap) {
+
+
+
+                if (valueIsAViableColor) {
+
+                    classMap.set(partialClassType, new Map([[viableUtilityClassMapKeys[2], potentialColorRange]]))
+
+
+
+                    return
+                }
+
+
+                if (valueIsAViableDigit) {
+
+                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[0], value]]))
+
+
+
+                    return
+
+                }
+
+
+
+                if (valueOrArbitraryValueMatchSecondValueIsAViableWord) {
+
+                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[1], value]]))
+
+
+
+                    return
+                }
+
+                if (valueIsAViableFunction) {
+
+                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[4], value]]))
+
+
+
+                    return
+                }
+
+
+                if (arbitraryValueMatchSecondValueIsAViableCSSVariable) {
+
+                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[3], value]]))
+
+
+
+                    return
+                }
+
+                if (arbitraryValueMatchSecondValueIsASetOfArgs) {
+
+                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[5], value]]))
+
+
+
+                    return
+                }
+
+
+
+
+
+
+
+            }
+
+
+
+            const result = classMap.get(type) || classMap.get(`${type}${subType}`)
+
+
+            if (result) {
+
+
+                if (valueIsAViableColor) {
+
+                    result.set(viableUtilityClassMapKeys[2], `${subType}${value}`)
+
+
+
+                    return
+                }
+
+                if (valueIsAViableDigit) {
+
+                    result.set(viableUtilityClassMapKeys[0], value)
+
+
+
+                    return
+                }
+
+
+
+                if (valueOrArbitraryValueMatchSecondValueIsAViableWord) {
+
+                    result.set(viableUtilityClassMapKeys[1], value)
+
+                    return
+
+                }
+
+                if (valueIsAViableFunction) {
+
+                    result.set(viableUtilityClassMapKeys[4], value)
+
+                    return
+                }
+
+                if (arbitraryValueMatchSecondValueIsAViableCSSVariable) {
+
+                    result.set(viableUtilityClassMapKeys[3], value)
+
+                    return
+                }
+
+                if (arbitraryValueMatchSecondValueIsASetOfArgs) {
+
+                    result.set(viableUtilityClassMapKeys[5], value)
+
+
+
+                    return
+                }
+
+
+
+
+
+
+
+            }
+
+
+
+
+        }
+
+
+
+
+
+    }
