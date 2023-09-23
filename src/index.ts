@@ -221,7 +221,7 @@ export const classNamesSorterAndFilter = (classNames: string, classTypesAndClass
 }
 
 
-export const tailwindOrWindiCSSClassFilterAndSorter = (classNames: string) => classNamesSorterAndFilter(classNames, TailwindOrWindiFilterMap)
+export const tailwindOrWindiCSSClassNamesSorterAndFilter = (classNames: string) => classNamesSorterAndFilter(classNames, TailwindOrWindiFilterMap)
 
 
 
