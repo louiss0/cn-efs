@@ -1,11 +1,11 @@
-import { classFilterAndSorter } from "."
+import { classNamesSorterAndFilter } from "."
 
 
 
 describe("Test class filters work as intended", () => {
 
 
-    describe("Testing classFilterAndSorter", () => {
+    describe("Testing classNamesSorterAndFilter", () => {
 
 
 
@@ -13,7 +13,7 @@ describe("Test class filters work as intended", () => {
 
             const classes = "outline-solid outline-1 outline-gray-600 outline-[#FFF333]"
 
-            const sortedClasses = classFilterAndSorter(classes)
+            const sortedClasses = classNamesSorterAndFilter(classes)
 
 
             expect(sortedClasses).not.toBe(classes)
@@ -38,7 +38,7 @@ describe("Test class filters work as intended", () => {
                 const classes = "random-solid random-[2_4_6] random-1 random-[#FFF333] random-[url(/foo)] random-[--foo]"
 
 
-                const sortedClasses = classFilterAndSorter(classes)
+                const sortedClasses = classNamesSorterAndFilter(classes)
 
                 expect(sortedClasses).toBe("random-1 random-solid random-[#FFF333] random-[url(/foo)] random-[--foo] random-[2_4_6]")
 
@@ -52,7 +52,7 @@ describe("Test class filters work as intended", () => {
 
             const bemClassesWithOnlyModifiers = "card card--foo card--baz"
 
-            const sortedClasses = classFilterAndSorter(bemClassesWithOnlyModifiers)
+            const sortedClasses = classNamesSorterAndFilter(bemClassesWithOnlyModifiers)
 
             expect(sortedClasses).toMatchInlineSnapshot('"card card--baz"')
 
@@ -65,7 +65,7 @@ describe("Test class filters work as intended", () => {
             const bemClassesWithOnlyElementsAndElementModifiers = "card card__title card__title--lg"
 
 
-            const sortedClasses = classFilterAndSorter(bemClassesWithOnlyElementsAndElementModifiers)
+            const sortedClasses = classNamesSorterAndFilter(bemClassesWithOnlyElementsAndElementModifiers)
 
 
             expect(sortedClasses).toBe("card__title--lg")
@@ -81,7 +81,7 @@ describe("Test class filters work as intended", () => {
 
 
 
-            expect(() => classFilterAndSorter(bemClassesWithOnlyModifiers))
+            expect(() => classNamesSorterAndFilter(bemClassesWithOnlyModifiers))
                 .toThrowErrorMatchingInlineSnapshot(`
                   "To have a modifier you must have the block card in the list of classes already.
                                       Please put the block as the class that requires the use of the modifier."
@@ -97,7 +97,7 @@ describe("Test class filters work as intended", () => {
             const classes = "[font-size:2px] [font-size:4px] [font-size:8px]"
 
 
-            const sortedClasses = classFilterAndSorter(classes)
+            const sortedClasses = classNamesSorterAndFilter(classes)
 
 
             expect(sortedClasses).toBe("[font-size:8px]")
@@ -110,7 +110,7 @@ describe("Test class filters work as intended", () => {
             const classes = "[font-size:2px] md:[font-size:4px] md:[font-size:8px] lg:[font-size:6px] lg:[font-size:7px]"
 
 
-            const sortedClasses = classFilterAndSorter(classes)
+            const sortedClasses = classNamesSorterAndFilter(classes)
 
 
             expect(sortedClasses).toBe("[font-size:2px] md:[font-size:8px] lg:[font-size:7px]")
@@ -130,7 +130,7 @@ describe("Test class filters work as intended", () => {
                 const classes = "absolute border-1 border-dashed border-gray-500 [font-size:2px] card card--large"
 
 
-                const sortedClasses = classFilterAndSorter(classes, { position: ["absolute", "fixed", "static"] })
+                const sortedClasses = classNamesSorterAndFilter(classes, { position: ["absolute", "fixed", "static"] })
 
                 expect(sortedClasses).toBe("card card--large [font-size:2px] border-1 border-dashed border-gray-500 absolute")
 
@@ -142,7 +142,7 @@ describe("Test class filters work as intended", () => {
 
 
 
-            expect(() => classFilterAndSorter("foo"))
+            expect(() => classNamesSorterAndFilter("foo"))
                 .toThrowErrorMatchingInlineSnapshot('"This string has no sets of classes please add spaces between classes that need to be sorted"')
 
         })
