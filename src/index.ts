@@ -72,7 +72,7 @@ function getClassNameMapCreator(classTypesAndClassNames?: Record<Lowercase<strin
 
 const moreThanOneSpaceRE = /\s+/
 
-export const classFilterAndSorter = (classNames: string, classTypesAndClassNames?: Record<Lowercase<string>, Array<Lowercase<string>>>) => {
+export const classNamesSorterAndFilter = (classNames: string, classTypesAndClassNames?: Record<Lowercase<string>, Array<Lowercase<string>>>) => {
 
 
     const splitClassNames = classNames.split(moreThanOneSpaceRE)
@@ -87,6 +87,7 @@ export const classFilterAndSorter = (classNames: string, classTypesAndClassNames
 
 
     let classNameMap
+
     try {
 
         classNameMap =
