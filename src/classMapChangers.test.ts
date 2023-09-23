@@ -1,12 +1,13 @@
 import {
     viableUtilityClassMapKeys,
     type ViableUtilityClassMapKeys,
-    attemptToChangeUtilityClassBasedOnTheTypeAndValue,
+    attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue,
     attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject,
     attemptToChangeClassNameMapAccordingToIfTheBEMConvention,
-    attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty,
+    attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty,
     SortedClasses,
     attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass,
+    attemptToChangeClassMapBasedOnIfItIsAVariantGroup,
 } from './classMapChangers';
 
 
@@ -41,7 +42,7 @@ describe("Test if all class map changers work", () => {
         it<TestContext>("doesn't change the map if there is a single word class", ({ utility }) => {
 
 
-            attemptToChangeUtilityClassBasedOnTheTypeAndValue(utility, "outline-")
+            attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, "outline-")
 
 
 
@@ -64,7 +65,7 @@ describe("Test if all class map changers work", () => {
                 it<TestContext>("changes the map when a class with a digit is passed in", ({ utility }) => {
 
 
-                    attemptToChangeUtilityClassBasedOnTheTypeAndValue(utility, "outline-0")
+                    attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, "outline-0")
 
 
                     expect(utility).toHaveLength(1)
@@ -80,7 +81,7 @@ describe("Test if all class map changers work", () => {
                     ({ utility }) => {
 
 
-                        attemptToChangeUtilityClassBasedOnTheTypeAndValue(utility, "outline-0")
+                        attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, "outline-0")
 
 
 
@@ -133,7 +134,7 @@ describe("Test if all class map changers work", () => {
                             ({ className, expected: { key, value } }) => {
 
 
-                                attemptToChangeUtilityClassBasedOnTheTypeAndValue(classMap, className)
+                                attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(classMap, className)
 
 
                                 expect(classMap.has(key)).toBeTruthy()
@@ -183,7 +184,7 @@ describe("Test if all class map changers work", () => {
                 ({ utility }) => {
 
 
-                    attemptToChangeUtilityClassBasedOnTheTypeAndValue(utility, "outline-solid")
+                    attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, "outline-solid")
 
 
                     expect(utility.has("outline-")).toBeTruthy()
@@ -207,7 +208,7 @@ describe("Test if all class map changers work", () => {
                 ({ utility }) => {
 
 
-                    attemptToChangeUtilityClassBasedOnTheTypeAndValue(utility, "grid-cols-[2fr_auto]")
+                    attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, "grid-cols-[2fr_auto]")
 
 
 
@@ -269,7 +270,7 @@ describe("Test if all class map changers work", () => {
                     ({ className, expected: { key, value } }) => {
 
 
-                        attemptToChangeUtilityClassBasedOnTheTypeAndValue(classMap, className)
+                        attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(classMap, className)
 
 
 
@@ -305,7 +306,7 @@ describe("Test if all class map changers work", () => {
                 ({ utility }) => {
 
 
-                    attemptToChangeUtilityClassBasedOnTheTypeAndValue(utility, "outline-gray-500")
+                    attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, "outline-gray-500")
 
 
 
@@ -361,7 +362,7 @@ describe("Test if all class map changers work", () => {
                     createTestMessageForTestingIfAClassNameChangesTheMapWithAnExpectedKeyAndAValueTHatIsAMapWithAnExpectedKeyAndValue("color"),
                     ({ className, expected: { key, value } }) => {
 
-                        attemptToChangeUtilityClassBasedOnTheTypeAndValue(classMap, className)
+                        attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(classMap, className)
 
 
                         expect(classMap.has(key)).toBeTruthy()
@@ -425,7 +426,7 @@ describe("Test if all class map changers work", () => {
                 ({ className, expected: { key, value } }) => {
 
 
-                    attemptToChangeUtilityClassBasedOnTheTypeAndValue(classMap, className)
+                    attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(classMap, className)
 
 
                     expect(classMap.has(key)).toBeTruthy()
@@ -493,7 +494,7 @@ describe("Test if all class map changers work", () => {
                 ({ className, expected: { key, value } }) => {
 
 
-                    attemptToChangeUtilityClassBasedOnTheTypeAndValue(classMap, className)
+                    attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(classMap, className)
 
 
                     expect(classMap.has(key)).toBeTruthy()
@@ -675,7 +676,7 @@ describe("Test if all class map changers work", () => {
             ({ arbitraryProperties }) => {
 
 
-                attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty(arbitraryProperties, "[font-size:2rem]")
+                attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty(arbitraryProperties, "[font-size:2rem]")
 
 
 
@@ -733,7 +734,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-                    attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty(classMap, className)
+                    attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty(classMap, className)
 
 
                     expect(classMap.has(key)).toBeTruthy()
@@ -786,7 +787,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-                    attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty(classMap, className)
+                    attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty(classMap, className)
 
 
                     expect(classMap.has(key)).toBeTruthy()
@@ -972,7 +973,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-        it<TestContext>("Works with relational variants that use the / syntax", ({ utility, }) => {
+        it<TestContext>("Works with relational variants that use the / syntax", ({ utility }) => {
 
 
             attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(utility, "peer-checked/draft:text-sky-500")
@@ -1005,6 +1006,86 @@ describe("Test if all class map changers work", () => {
     })
 
 
+
+    describe("Testing attemptToChangeClassMapBasedOnIfItIsAVariantGroup", () => {
+
+
+        it<TestContext>(
+            "works",
+            (context) => {
+
+                attemptToChangeClassMapBasedOnIfItIsAVariantGroup(
+                    context,
+                    "hover:(bg-red-500 text-gray-500)"
+                )
+
+                expect(context.utility.has("hover:bg-")).toBeTruthy()
+
+                expect(context.utility.has("hover:text-")).toBeTruthy()
+
+            })
+
+
+        it<TestContext>(
+            "Works with relational variants that use the / syntax",
+            (context) => {
+
+
+                attemptToChangeClassMapBasedOnIfItIsAVariantGroup(context, "peer-checked/draft:(text-sky-500 bg-gray-500)")
+
+
+                expect(context.utility.has("peer-checked/draft:text-")).toBeTruthy()
+
+                expect(context.utility.get("peer-checked/draft:text-")?.has("color")).toBeTruthy()
+
+                expect(context.utility.has("peer-checked/draft:bg-")).toBeTruthy()
+
+                expect(context.utility.get("peer-checked/draft:bg-")?.has("color")).toBeTruthy()
+
+
+
+            })
+
+
+        it<TestContext>(
+            "works with arbitrary relational variants",
+            (context) => {
+
+
+                attemptToChangeClassMapBasedOnIfItIsAVariantGroup(context, "group-[.is-published]:(opacity-50 text-sky-900)")
+
+
+                expect(context.utility.has("group-[.is-published]:opacity-")).toBeTruthy()
+
+                expect(context.utility.get("group-[.is-published]:opacity-")?.has("digit")).toBeTruthy()
+
+                expect(context.utility.has("group-[.is-published]:text-")).toBeTruthy()
+
+                expect(context.utility.get("group-[.is-published]:text-")?.has("color")).toBeTruthy()
+
+
+
+            })
+
+
+        it<TestContext>(
+            "works with utilities that have variants as prefixes",
+            (context) => {
+
+                attemptToChangeClassMapBasedOnIfItIsAVariantGroup(
+                    context,
+                    "hover:(focus:bg-red-500 peer-checked/main:text-gray-500)"
+                )
+
+                expect(context.utility.has("hover:focus:bg-")).toBeTruthy()
+
+                expect(context.utility.has("hover:peer-checked/main:text-")).toBeTruthy()
+
+            })
+
+
+
+    })
 
 
 
