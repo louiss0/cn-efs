@@ -104,9 +104,11 @@ function getClassNameMapCreator(
 
 
 
-const moreThanOneSpaceRE = /\s+/
 
 
+function isString(value: unknown): value is string {
+    return typeof value === "string"
+}
 
 export const classNamesSorterAndFilter = (
     classNames: string,
@@ -115,7 +117,7 @@ export const classNamesSorterAndFilter = (
 ) => {
 
 
-    const splitClassNames = classNames.split(moreThanOneSpaceRE)
+    const splitClassNames = classNames.split(/\s+/)
 
     if (splitClassNames.length < 2) {
 
@@ -296,13 +298,14 @@ export const classNamesSorterAndFilter = (
 
 
 
-    function isString(value: unknown): value is string {
-        return typeof value === "string"
-    }
+
 }
 
 
-export const tailwindOrWindiCSSClassNamesSorterAndFilter = (classNames: string) => classNamesSorterAndFilter(classNames, TailwindOrWindiFilterMap)
+const tailwindOrWindiSafeList = ["group", "peer", "@container", "content", "appearance-none"]
+
+export const tailwindOrWindiCSSClassNamesSorterAndFilter = (classNames: string) =>
+    classNamesSorterAndFilter(classNames, TailwindOrWindiFilterMap, tailwindOrWindiSafeList)
 
 
 

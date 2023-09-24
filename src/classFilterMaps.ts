@@ -19,7 +19,6 @@ export const TailwindOrWindiFilterMap = {
         "transition-shadow",
         "transition-transform",
     ],
-    appearance: ["appearance-none"],
     "screen-reader": ["sr-only", "not-sr-only",],
     "font-variant": [
         "normal-nums",
