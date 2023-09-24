@@ -73,7 +73,14 @@ export class SortedClasses {
 
 
 
+const variableHasAColorHint = (arbitraryValue: string) =>
+    cssVariableWithOptionalPrefixedHintRE.exec(arbitraryValue)?.groups?.["variable_hint"] === "color:"
 
+const variableHasALengthHint = (arbitraryValue: string) =>
+    cssVariableWithOptionalPrefixedHintRE.exec(arbitraryValue)?.groups?.["variable_hint"] === "length:"
+
+const variableHasAStringHint = (arbitraryValue: string) =>
+    cssVariableWithOptionalPrefixedHintRE.exec(arbitraryValue)?.groups?.["variable_hint"] === "string:"
 
 
 
@@ -107,10 +114,12 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
             const valueIsAViableDigit = checkIfStringIsAProperDigit(value)
                 || arbitraryValueMatchSecondValue && checkIfStringIsAProperDigit(arbitraryValueMatchSecondValue)
+                || arbitraryValueMatchSecondValue && variableHasALengthHint(arbitraryValueMatchSecondValue)
 
 
             const valueIsAViableWord = checkIfStringIsALowerCaseWord(value)
                 || arbitraryValueMatchSecondValueBoolValue && checkIfStringIsALowerCaseWord(arbitraryValueMatchSecondValue)
+                || arbitraryValueMatchSecondValueBoolValue && variableHasAStringHint(arbitraryValueMatchSecondValue)
 
             const arbitraryValueIsAViableNonColorFunction = arbitraryValueMatchSecondValueBoolValue
                 && checkIfStringIsAProperCSSNormalFunction(arbitraryValueMatchSecondValue)
@@ -123,8 +132,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
             const valueIsAViableColor = arbitraryValueMatchSecondValue
                 && checkIfStringIsAProperColor(arbitraryValueMatchSecondValue)
-
-
+                || arbitraryValueMatchSecondValueBoolValue && variableHasAColorHint(arbitraryValueMatchSecondValue)
 
 
             if (!classMap.has(type)) {
@@ -292,6 +300,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
             const valueIsAViableDigit = checkIfStringIsAProperDigit(value)
                 || arbitraryValueMatchSecondValueBoolValue && checkIfStringIsAProperDigit(arbitraryValueMatchSecondValue)
+                || arbitraryValueMatchSecondValueBoolValue && variableHasALengthHint(arbitraryValueMatchSecondValue)
 
 
             const valueIsAViableFunction = arbitraryValueMatchSecondValueBoolValue
@@ -305,6 +314,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
             const valueOrArbitraryValueMatchSecondValueIsAViableWord = lowerCaseWordRE.test(value)
                 || arbitraryValueMatchSecondValueBoolValue && lowerCaseWordRE.test(arbitraryValueMatchSecondValue)
+                || arbitraryValueMatchSecondValueBoolValue && variableHasALengthHint(arbitraryValueMatchSecondValue)
 
             const arbitraryValueMatchSecondValueIsASetOfArgs = arbitraryValueMatchSecondValueBoolValue
                 && checkIfStringIsASetOfArgs(arbitraryValueMatchSecondValue)
