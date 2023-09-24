@@ -147,3 +147,5 @@ It does not resolve conflicts based on symbols like.
 - `text-gray-500` vs `[color:#6b7280]` utility vs arbitrary property
 
 I have decided to do this because I don't think it's good practice to write utility classes inconsistently.
+
+We also don't have a cache. **When React rerenders all of the work will all be redone again**.
