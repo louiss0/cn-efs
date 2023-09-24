@@ -453,75 +453,83 @@ describe("Test if all class map changers work", () => {
         describe("It works well with variables", () => {
 
 
-            const classMap = new Map()
+            it<TestContext>("puts the value in map with a key called variable when key is not specified", ({ utility }) => {
+
+                const classNameAndExpectedKeyAndValue = {
+                    className: "bg-[--primary-color]",
+                    expected: {
+                        key: "bg-",
+                        value: "[--primary-color]"
+                    }
+                }
+
+                attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, classNameAndExpectedKeyAndValue.className)
+
+                expect(utility.has(classNameAndExpectedKeyAndValue.expected.key)).toBeTruthy()
+
+                expect(utility.get(classNameAndExpectedKeyAndValue.expected.key)?.has("variable")).toBeTruthy()
 
 
 
-            it.each(
-                [
-                    {
-                        className: "outline-[--gray-light-1]",
-                        expected: {
-                            key: "outline-",
-                            value: "[--gray-light-1]"
-                        }
-                    },
-                    {
-                        className: "font-size-[length:--step-2]",
-                        expected: {
-                            key: "font-size-",
-                            value: "[length:--step-2]"
-                        }
-                    },
-                    {
-                        className: "bg-[--primary-color]",
-                        expected: {
-                            key: "bg-",
-                            value: "[--primary-color]"
-                        }
-                    },
-                    {
-                        className: "border-[color:--gray-9]",
-                        expected: {
-                            key: "border-",
-                            value: "[color:--gray-9]"
-                        }
-                    },
-
-                ]
-            )(
-                createTestMessageForTestingIfAClassNameChangesTheMapWithAnExpectedKeyAndAValueTHatIsAMapWithAnExpectedKeyAndValue("variable"),
-                ({ className, expected: { key, value } }) => {
+            })
 
 
-                    attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(classMap, className)
+            it<TestContext>("puts the value in a map with a key called color when a variable is hinted with color:", ({ utility }) => {
+
+                const classNameAndExpectedKeyAndValue = {
+                    className: "border-[color:--gray-9]",
+                    expected: {
+                        key: "border-",
+                        value: "[color:--gray-9]"
+                    }
+                }
+                attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, classNameAndExpectedKeyAndValue.className)
+
+                expect(utility.has(classNameAndExpectedKeyAndValue.expected.key)).toBeTruthy()
+
+                expect(utility.get(classNameAndExpectedKeyAndValue.expected.key)?.has("color")).toBeTruthy()
 
 
-                    expect(classMap.has(key)).toBeTruthy()
+            })
 
+            it<TestContext>("puts the value in a map with a key called digit when a variable is hinted with length:", ({ utility }) => {
 
-                    const result = classMap.get(key)
+                const classNameAndExpectedKeyAndValue = {
+                    className: "font-size-[length:--step-2]",
+                    expected: {
+                        key: "font-size-",
+                        value: "[length:--step-2]"
+                    }
+                }
 
+                attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, classNameAndExpectedKeyAndValue.className)
 
+                expect(utility.has(classNameAndExpectedKeyAndValue.expected.key)).toBeTruthy()
 
-                    expect(Object.fromEntries(result))
-                        .toHaveProperty(viableUtilityClassMapKeys[3], value)
+                expect(utility.get(classNameAndExpectedKeyAndValue.expected.key)?.has("digit")).toBeTruthy()
 
-                    expect(Object.fromEntries(result))
-                        .not.toHaveProperty(viableUtilityClassMapKeys[5], value)
+            })
 
+            it<TestContext>("puts the value in a map with a key called word when a variable is hinted with string:", ({ utility }) => {
 
+                const classNameAndExpectedKeyAndValue = {
+                    className: "outline-[string:--line-type]",
+                    expected: {
+                        key: "outline-",
+                        value: "[string:--line-type]"
+                    }
+                }
 
-                })
+                attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, classNameAndExpectedKeyAndValue.className)
+
+                expect(utility.has(classNameAndExpectedKeyAndValue.expected.key)).toBeTruthy()
+
+                expect(utility.get(classNameAndExpectedKeyAndValue.expected.key)?.has("word")).toBeTruthy()
+
+            })
 
 
         })
-
-
-
-
-
-
 
 
 
@@ -529,285 +537,361 @@ describe("Test if all class map changers work", () => {
 
 
 
-    describe("Test attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject()", () => {
-
-
-        it<TestContext>("doesn't change the map if there is a single word class", ({ customFiltered }) => {
-
-
-            attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(customFiltered, "nice", {})
 
 
 
-            expect(customFiltered).toHaveLength(0)
+
+
+
+})
+
+
+
+describe("Test attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject()", () => {
+
+
+    it<TestContext>("doesn't change the map if there is a single word class", ({ customFiltered }) => {
+
+
+        attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(customFiltered, "nice", {})
+
+
+
+        expect(customFiltered).toHaveLength(0)
+
+
+
+    })
+
+
+
+    it<TestContext>(
+        `Changes the class Map by putting a key that is in the filter Object with a value that is 
+             one of the list of values in the Array that key accesses from the filter object.  
+            `,
+        ({ customFiltered }) => {
+
+
+            attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(
+                customFiltered,
+                "fixed",
+                {
+                    position: ["fixed", "absolute"]
+                }
+            )
+
+
+            expect(customFiltered.has("position")).toBeTruthy()
+
+            expect(customFiltered.get("position")?.get("base")).toBe("fixed")
 
 
 
         })
 
 
-
-        it<TestContext>(
-            `Changes the class Map by putting a key that is in the filter Object with a value that is 
-             one of the list of values in the Array that key accesses from the filter object.  
-            `,
-            ({ customFiltered }) => {
-
-
-                attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(
-                    customFiltered,
-                    "fixed",
-                    {
-                        position: ["fixed", "absolute"]
-                    }
-                )
-
-
-                expect(customFiltered.has("position")).toBeTruthy()
-
-                expect(customFiltered.get("position")?.get("base")).toBe("fixed")
-
-
-
-            })
-
-
-        it<TestContext>(
-            `When iterating through a list of class names.
+    it<TestContext>(
+        `When iterating through a list of class names.
             If a utility class is found in the filter object's list of classes.
             The key associated with the list where it is found will be used as a key in the
             map It's value will be a map with the key of base and the value being the class.     
             `,
-            ({ customFiltered }) => {
+        ({ customFiltered }) => {
 
 
-                const classNames = ["fixed", "absolute", "static"]
+            const classNames = ["fixed", "absolute", "static"]
 
 
-                const filterObject = {
-                    position: ["fixed", "absolute", "static", "relative", "sticky"]
-                };
+            const filterObject = {
+                position: ["fixed", "absolute", "static", "relative", "sticky"]
+            };
 
-                classNames.forEach((value) => {
+            classNames.forEach((value) => {
 
-                    attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(
-                        customFiltered,
-                        value,
-                        filterObject,
-                    )
-
-                })
-
-
-
-                expect(customFiltered.has("position")).toBeTruthy()
-
-                const variantAndClassMap = customFiltered.get("position")
-
-                expect(variantAndClassMap?.get("base")).toBe(classNames.at(-1))
-
-
+                attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(
+                    customFiltered,
+                    value,
+                    filterObject,
+                )
 
             })
 
 
-        it<TestContext>(
-            `When sorting based on class names if no variant is provided
+
+            expect(customFiltered.has("position")).toBeTruthy()
+
+            const variantAndClassMap = customFiltered.get("position")
+
+            expect(variantAndClassMap?.get("base")).toBe(classNames.at(-1))
+
+
+
+        })
+
+
+    it<TestContext>(
+        `When sorting based on class names if no variant is provided
             the default variant will be base and it's value the class
             when a it is provided then the key will be the variant
             and the value the   
             `,
-            ({ customFiltered }) => {
+        ({ customFiltered }) => {
 
 
-                const classNames = ["hidden", "md:block",]
+            const classNames = ["hidden", "md:block",]
 
 
-                const filterObject = {
-                    display: [
-                        "hidden",
-                        "block",
-                        "static",
-                        "relative",
-                        "sticky"
-                    ]
-                };
+            const filterObject = {
+                display: [
+                    "hidden",
+                    "block",
+                    "static",
+                    "relative",
+                    "sticky"
+                ]
+            };
 
-                classNames.forEach((value) => {
+            classNames.forEach((value) => {
 
-                    attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(
-                        customFiltered,
-                        value,
-                        filterObject,
-                    )
-
-                })
-
-
-
-                expect(customFiltered.has("display")).toBeTruthy()
-
-                const variantAndClassMap = customFiltered.get("display")
-
-                expect(variantAndClassMap?.get("base")).toBe("hidden")
-
-                expect(variantAndClassMap?.get("md:")).toBe("block")
-
-
+                attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(
+                    customFiltered,
+                    value,
+                    filterObject,
+                )
 
             })
 
 
 
+            expect(customFiltered.has("display")).toBeTruthy()
 
-    })
+            const variantAndClassMap = customFiltered.get("display")
+
+            expect(variantAndClassMap?.get("base")).toBe("hidden")
+
+            expect(variantAndClassMap?.get("md:")).toBe("block")
+
+
+
+        })
 
 
 
 
-    describe("Test attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty()", () => {
+})
 
 
 
-        it<TestContext>(
-            `The arbitraryProperties map has a key inserted that is the arbitrary property key and a value.
+
+describe("Test attemptToChangeClassNameMapAccordingToIfTheClassISAnArbitraryProperty()", () => {
+
+
+
+    it<TestContext>(
+        `The arbitraryProperties map has a key inserted that is the arbitrary property key and a value.
             That value is a map with a key called base and a value that is the arbitrary property value.
             `,
-            ({ arbitraryProperties }) => {
+        ({ arbitraryProperties }) => {
 
 
-                attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty(arbitraryProperties, "[font-size:2rem]")
+            attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty(arbitraryProperties, "[font-size:2rem]")
 
 
 
-                expect(arbitraryProperties.has("font-size:")).toBeTruthy()
+            expect(arbitraryProperties.has("font-size:")).toBeTruthy()
 
-                expect(arbitraryProperties.get("font-size:")?.get("base")).toBe("2rem")
+            expect(arbitraryProperties.get("font-size:")?.get("base")).toBe("2rem")
+
+
+
+        })
+
+    describe("It works with lots of arbitrary properties", () => {
+
+
+        const classMap = new Map()
+
+        it.each([
+            {
+                className: "[font-size:4rem]",
+                expected: {
+                    key: "font-size:",
+                    value: "4rem"
+                }
+            },
+            {
+                className: "[border:2px_solid_green]",
+                expected: {
+                    key: "border:",
+                    value: "2px_solid_green"
+                }
+            },
+            {
+                className: "[text-transform:uppercase]",
+                expected: {
+                    key: "text-transform:",
+                    value: "uppercase"
+                }
+            },
+            {
+                className: "[background-position-x:center]",
+                expected: {
+                    key: "background-position-x:",
+                    value: "center"
+                }
+            },
+            {
+                className: "[background-image:url(/img.jpg)]",
+                expected: {
+                    key: "background-image:",
+                    value: "url(/img.jpg)"
+                }
+            }
+        ])("For class $className I expect there to be a value with the key of $expected.key and the value $expected.value ",
+            ({ className, expected: { key, value } }) => {
+
+
+
+                attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty(classMap, className)
+
+
+                expect(classMap.has(key)).toBeTruthy()
+
+                expect(classMap.get(key).get("base")).toBe(value)
+
+
 
 
 
             })
 
-        describe("It works with lots of arbitrary properties", () => {
+    })
 
 
-            const classMap = new Map()
+    describe("It works with lots of arbitrary properties that have modifiers", () => {
 
-            it.each([
-                {
-                    className: "[font-size:4rem]",
-                    expected: {
-                        key: "font-size:",
-                        value: "4rem"
-                    }
-                },
-                {
-                    className: "[border:2px_solid_green]",
-                    expected: {
-                        key: "border:",
-                        value: "2px_solid_green"
-                    }
-                },
-                {
-                    className: "[text-transform:uppercase]",
-                    expected: {
-                        key: "text-transform:",
-                        value: "uppercase"
-                    }
-                },
-                {
-                    className: "[background-position-x:center]",
-                    expected: {
-                        key: "background-position-x:",
-                        value: "center"
-                    }
-                },
-                {
-                    className: "[background-image:url(/img.jpg)]",
-                    expected: {
-                        key: "background-image:",
-                        value: "url(/img.jpg)"
-                    }
+
+        const classMap = new Map()
+
+        it.each([
+            {
+                className: "sm:[font-size:4rem]",
+                expected: {
+                    key: "font-size:",
+                    variant: "sm:",
+                    value: "4rem"
                 }
-            ])("For class $className I expect there to be a value with the key of $expected.key and the value $expected.value ",
-                ({ className, expected: { key, value } }) => {
+            },
+            {
+                className: "md:[font-size:6rem]",
+                expected: {
+                    key: "font-size:",
+                    variant: "md:",
+                    value: "6rem"
+                }
+            },
+            {
+                className: "lg:hover:[font-size:6rem]",
+                expected: {
+                    key: "font-size:",
+                    variant: "lg:hover:",
+                    value: "6rem"
+                }
+            },
+
+        ])(
+            "For class $className I expect there to be a value with the key of $expected.key and the value $expected.value variant to be $expected.variant ",
+            ({ className, expected: { key, value, variant } }) => {
 
 
 
-                    attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty(classMap, className)
+                attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty(classMap, className)
 
 
-                    expect(classMap.has(key)).toBeTruthy()
-
-                    expect(classMap.get(key).get("base")).toBe(value)
+                expect(classMap.has(key)).toBeTruthy()
 
 
+                const variantAndValueMap = classMap.get(key);
+
+                expect(variantAndValueMap).toBeInstanceOf(Map)
+
+
+                expect(variantAndValueMap.get(variant)).toBe(value)
 
 
 
-                })
 
+
+
+            })
+
+    })
+
+
+
+})
+
+
+
+describe("Test attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged()", () => {
+
+
+    it<TestContext>("doesn't change the map if there is a single word class", ({ bem }) => {
+
+
+        attemptToChangeClassNameMapAccordingToIfTheBEMConvention(bem, "nice", [])
+
+
+
+        expect(bem).toHaveLength(0)
+
+
+
+    })
+
+
+    it<TestContext>("alters the BEM map when bem classes are encountered", ({ bem }) => {
+
+
+
+        const bemClasses = ["card", "card__title", "card__title--lg", "card--lg"];
+
+
+        bemClasses.forEach((className, _, array) => {
+
+            attemptToChangeClassNameMapAccordingToIfTheBEMConvention(bem, className, array)
         })
 
 
-        describe("It works with lots of arbitrary properties that have modifiers", () => {
+        expect(bem.has("card")).toBeTruthy()
+
+        const cardElementAndModifierMap = bem.get("card");
+
+        expect(cardElementAndModifierMap?.has("element")).toBeTruthy()
 
 
-            const classMap = new Map()
-
-            it.each([
-                {
-                    className: "sm:[font-size:4rem]",
-                    expected: {
-                        key: "font-size:",
-                        variant: "sm:",
-                        value: "4rem"
-                    }
-                },
-                {
-                    className: "md:[font-size:6rem]",
-                    expected: {
-                        key: "font-size:",
-                        variant: "md:",
-                        value: "6rem"
-                    }
-                },
-                {
-                    className: "lg:hover:[font-size:6rem]",
-                    expected: {
-                        key: "font-size:",
-                        variant: "lg:hover:",
-                        value: "6rem"
-                    }
-                },
-
-            ])(
-                "For class $className I expect there to be a value with the key of $expected.key and the value $expected.value variant to be $expected.variant ",
-                ({ className, expected: { key, value, variant } }) => {
-
-
-
-                    attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty(classMap, className)
-
-
-                    expect(classMap.has(key)).toBeTruthy()
-
-
-                    const variantAndValueMap = classMap.get(key);
-
-                    expect(variantAndValueMap).toBeInstanceOf(Map)
-
-
-                    expect(variantAndValueMap.get(variant)).toBe(value)
+        expect(cardElementAndModifierMap?.has("modifier")).toBeTruthy()
 
 
 
 
+    })
 
 
-                })
+    it<TestContext>("adds an  element to the map when a lower_case_word and two underscores are encountered", ({ bem }) => {
 
-        })
+
+        // const bemClasses = ["card",  "card__title--lg", "card--lg"];
+
+
+        attemptToChangeClassNameMapAccordingToIfTheBEMConvention(bem, "card__title", [])
+
+        const cardElementAndModifierMap = bem.get("card");
+
+        expect(cardElementAndModifierMap?.has("element")).toBeTruthy()
+
+        expect(cardElementAndModifierMap?.get("element")).toBe("__title")
+
 
 
 
@@ -815,58 +899,42 @@ describe("Test if all class map changers work", () => {
 
 
 
-    describe("Test attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged()", () => {
+    it<TestContext>(
+        `When a lower_case_word is encountered with two underscores.
+             The map is changed to have a key with the word on the left of the two underscores as a key.
+             The value is a Map called that has a key called element with value that is the two underscores plus the word.  
+            `,
+        ({ bem }) => {
 
 
-        it<TestContext>("doesn't change the map if there is a single word class", ({ bem }) => {
+            const bemClasses = ["card", "card__title--lg", "card--lg"];
 
 
-            attemptToChangeClassNameMapAccordingToIfTheBEMConvention(bem, "nice", [])
-
-
-
-            expect(bem).toHaveLength(0)
-
-
-
-        })
-
-
-        it<TestContext>("alters the BEM map when bem classes are encountered", ({ bem }) => {
-
-
-
-            const bemClasses = ["card", "card__title", "card__title--lg", "card--lg"];
-
-
-            bemClasses.forEach((className, _, array) => {
-
-                attemptToChangeClassNameMapAccordingToIfTheBEMConvention(bem, className, array)
-            })
-
-
-            expect(bem.has("card")).toBeTruthy()
+            attemptToChangeClassNameMapAccordingToIfTheBEMConvention(bem, "card__title", bemClasses)
 
             const cardElementAndModifierMap = bem.get("card");
 
             expect(cardElementAndModifierMap?.has("element")).toBeTruthy()
 
-
-            expect(cardElementAndModifierMap?.has("modifier")).toBeTruthy()
+            expect(cardElementAndModifierMap?.get("element")).toBe("__title")
 
 
 
 
         })
 
+    it<TestContext>(
+        `When a lower_case_word is encountered with two dashes.
+             The map is changed to have a key with the word on the left of the two dashes as a key.
+             The value is a Map called that has a key called element with value that is the two dashes plus the word.  
+            `,
+        ({ bem }) => {
 
-        it<TestContext>("adds an  element to the map when a lower_case_word and two underscores are encountered", ({ bem }) => {
+
+            const bemClasses = ["card", "card__title--lg", "card--lg"];
 
 
-            // const bemClasses = ["card",  "card__title--lg", "card--lg"];
-
-
-            attemptToChangeClassNameMapAccordingToIfTheBEMConvention(bem, "card__title", [])
+            attemptToChangeClassNameMapAccordingToIfTheBEMConvention(bem, "card__title", bemClasses)
 
             const cardElementAndModifierMap = bem.get("card");
 
@@ -881,54 +949,26 @@ describe("Test if all class map changers work", () => {
 
 
 
-        it<TestContext>(
-            `When a lower_case_word is encountered with two underscores.
-             The map is changed to have a key with the word on the left of the two underscores as a key.
-             The value is a Map called that has a key called element with value that is the two underscores plus the word.  
-            `,
-            ({ bem }) => {
 
-
-                const bemClasses = ["card", "card__title--lg", "card--lg"];
-
-
-                attemptToChangeClassNameMapAccordingToIfTheBEMConvention(bem, "card__title", bemClasses)
-
-                const cardElementAndModifierMap = bem.get("card");
-
-                expect(cardElementAndModifierMap?.has("element")).toBeTruthy()
-
-                expect(cardElementAndModifierMap?.get("element")).toBe("__title")
+})
 
 
 
 
-            })
-
-        it<TestContext>(
-            `When a lower_case_word is encountered with two dashes.
-             The map is changed to have a key with the word on the left of the two dashes as a key.
-             The value is a Map called that has a key called element with value that is the two dashes plus the word.  
-            `,
-            ({ bem }) => {
-
-
-                const bemClasses = ["card", "card__title--lg", "card--lg"];
-
-
-                attemptToChangeClassNameMapAccordingToIfTheBEMConvention(bem, "card__title", bemClasses)
-
-                const cardElementAndModifierMap = bem.get("card");
-
-                expect(cardElementAndModifierMap?.has("element")).toBeTruthy()
-
-                expect(cardElementAndModifierMap?.get("element")).toBe("__title")
+describe("Testing attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass", () => {
 
 
 
+    it<TestContext>("works with container queries", ({ utility }) => {
 
-            })
 
+        attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(utility, "@container/main")
+
+
+
+        expect(utility.has("@container/")).toBeTruthy()
+
+        expect(utility.get("@container/")?.has("word")).toBeTruthy()
 
 
 
@@ -936,160 +976,138 @@ describe("Test if all class map changers work", () => {
 
 
 
+    it<TestContext>("works with named groups", ({ utility }) => {
 
-    describe("Testing attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass", () => {
-
-
-
-        it<TestContext>("works with container queries", ({ utility }) => {
+        attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(utility, "group/main")
 
 
-            attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(utility, "@container/main")
+        expect(utility.has("group/")).toBeTruthy()
 
+        expect(utility.get("group/")?.has("word")).toBeTruthy()
 
-
-            expect(utility.has("@container/")).toBeTruthy()
-
-            expect(utility.get("@container/")?.has("word")).toBeTruthy()
-
-
-
-        })
-
-
-
-        it<TestContext>("works with named groups", ({ utility }) => {
-
-            attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(utility, "group/main")
-
-
-            expect(utility.has("group/")).toBeTruthy()
-
-            expect(utility.get("group/")?.has("word")).toBeTruthy()
-
-
-
-        })
-
-
-
-        it<TestContext>("Works with relational variants that use the / syntax", ({ utility }) => {
-
-
-            attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(utility, "peer-checked/draft:text-sky-500")
-
-
-            expect(utility.has("peer-checked/draft:text-")).toBeTruthy()
-
-            expect(utility.get("peer-checked/draft:text-")?.has("color")).toBeTruthy()
-
-
-
-        })
-
-
-        it<TestContext>("Works with arbitrary relational variants", ({ utility, }) => {
-
-
-            attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(utility, "group-[.is-published]:opacity-50")
-
-
-            expect(utility.has("group-[.is-published]:opacity-")).toBeTruthy()
-
-            expect(utility.get("group-[.is-published]:opacity-")?.has("digit")).toBeTruthy()
-
-
-
-        })
 
 
     })
 
 
 
-    describe("Testing attemptToChangeClassMapBasedOnIfItIsAVariantGroup", () => {
+    it<TestContext>("Works with relational variants that use the / syntax", ({ utility }) => {
 
 
-        it<TestContext>(
-            "works",
-            (context) => {
-
-                attemptToChangeClassMapBasedOnIfItIsAVariantGroup(
-                    context,
-                    "hover:(bg-red-500 text-gray-500)"
-                )
-
-                expect(context.utility.has("hover:bg-")).toBeTruthy()
-
-                expect(context.utility.has("hover:text-")).toBeTruthy()
-
-            })
+        attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(utility, "peer-checked/draft:text-sky-500")
 
 
-        it<TestContext>(
-            "Works with relational variants that use the / syntax",
-            (context) => {
+        expect(utility.has("peer-checked/draft:text-")).toBeTruthy()
 
-
-                attemptToChangeClassMapBasedOnIfItIsAVariantGroup(context, "peer-checked/draft:(text-sky-500 bg-gray-500)")
-
-
-                expect(context.utility.has("peer-checked/draft:text-")).toBeTruthy()
-
-                expect(context.utility.get("peer-checked/draft:text-")?.has("color")).toBeTruthy()
-
-                expect(context.utility.has("peer-checked/draft:bg-")).toBeTruthy()
-
-                expect(context.utility.get("peer-checked/draft:bg-")?.has("color")).toBeTruthy()
-
-
-
-            })
-
-
-        it<TestContext>(
-            "works with arbitrary relational variants",
-            (context) => {
-
-
-                attemptToChangeClassMapBasedOnIfItIsAVariantGroup(context, "group-[.is-published]:(opacity-50 text-sky-900)")
-
-
-                expect(context.utility.has("group-[.is-published]:opacity-")).toBeTruthy()
-
-                expect(context.utility.get("group-[.is-published]:opacity-")?.has("digit")).toBeTruthy()
-
-                expect(context.utility.has("group-[.is-published]:text-")).toBeTruthy()
-
-                expect(context.utility.get("group-[.is-published]:text-")?.has("color")).toBeTruthy()
-
-
-
-            })
-
-
-        it<TestContext>(
-            "works with utilities that have variants as prefixes",
-            (context) => {
-
-                attemptToChangeClassMapBasedOnIfItIsAVariantGroup(
-                    context,
-                    "hover:(focus:bg-red-500 peer-checked/main:text-gray-500)"
-                )
-
-                expect(context.utility.has("hover:focus:bg-")).toBeTruthy()
-
-                expect(context.utility.has("hover:peer-checked/main:text-")).toBeTruthy()
-
-            })
+        expect(utility.get("peer-checked/draft:text-")?.has("color")).toBeTruthy()
 
 
 
     })
+
+
+    it<TestContext>("Works with arbitrary relational variants", ({ utility, }) => {
+
+
+        attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(utility, "group-[.is-published]:opacity-50")
+
+
+        expect(utility.has("group-[.is-published]:opacity-")).toBeTruthy()
+
+        expect(utility.get("group-[.is-published]:opacity-")?.has("digit")).toBeTruthy()
+
+
+
+    })
+
+
+})
+
+
+
+describe("Testing attemptToChangeClassMapBasedOnIfItIsAVariantGroup", () => {
+
+
+    it<TestContext>(
+        "works",
+        (context) => {
+
+            attemptToChangeClassMapBasedOnIfItIsAVariantGroup(
+                context,
+                "hover:(bg-red-500 text-gray-500)"
+            )
+
+            expect(context.utility.has("hover:bg-")).toBeTruthy()
+
+            expect(context.utility.has("hover:text-")).toBeTruthy()
+
+        })
+
+
+    it<TestContext>(
+        "Works with relational variants that use the / syntax",
+        (context) => {
+
+
+            attemptToChangeClassMapBasedOnIfItIsAVariantGroup(context, "peer-checked/draft:(text-sky-500 bg-gray-500)")
+
+
+            expect(context.utility.has("peer-checked/draft:text-")).toBeTruthy()
+
+            expect(context.utility.get("peer-checked/draft:text-")?.has("color")).toBeTruthy()
+
+            expect(context.utility.has("peer-checked/draft:bg-")).toBeTruthy()
+
+            expect(context.utility.get("peer-checked/draft:bg-")?.has("color")).toBeTruthy()
+
+
+
+        })
+
+
+    it<TestContext>(
+        "works with arbitrary relational variants",
+        (context) => {
+
+
+            attemptToChangeClassMapBasedOnIfItIsAVariantGroup(context, "group-[.is-published]:(opacity-50 text-sky-900)")
+
+
+            expect(context.utility.has("group-[.is-published]:opacity-")).toBeTruthy()
+
+            expect(context.utility.get("group-[.is-published]:opacity-")?.has("digit")).toBeTruthy()
+
+            expect(context.utility.has("group-[.is-published]:text-")).toBeTruthy()
+
+            expect(context.utility.get("group-[.is-published]:text-")?.has("color")).toBeTruthy()
+
+
+
+        })
+
+
+    it<TestContext>(
+        "works with utilities that have variants as prefixes",
+        (context) => {
+
+            attemptToChangeClassMapBasedOnIfItIsAVariantGroup(
+                context,
+                "hover:(focus:bg-red-500 peer-checked/main:text-gray-500)"
+            )
+
+            expect(context.utility.has("hover:focus:bg-")).toBeTruthy()
+
+            expect(context.utility.has("hover:peer-checked/main:text-")).toBeTruthy()
+
+        })
 
 
 
 })
+
+
+
+
 
 
 
