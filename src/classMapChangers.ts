@@ -14,6 +14,7 @@ const properCSSDigitRE = /^(?<digit>\d{1,4}(?:[a-z]{2,4})?)$/
 
 const checkIfStringIsAProperDigit = (string: string) => properCSSDigitRE.test(string)
 
+const utilityClassPrefixedWithExclamationMarkOrADashAfterAColonRE = /(?<prefix>!|-)[a-z#&:\]\[]+/
 
 const colorRangeRE = /(?<color>[a-z]+)-(?<range>[1-9]00|9?50)/
 
@@ -70,7 +71,6 @@ export class SortedClasses {
 
     public readonly customFiltered = new Map<string, Map<StringOrOmitFromString<"base">, string | undefined> | undefined>();
 
-
     public readonly safeListed: Array<string> = []
 
 
@@ -89,7 +89,9 @@ const variableHasAStringHint = (arbitraryValue: string) =>
     cssVariableWithOptionalPrefixedHintRE.exec(arbitraryValue)?.groups?.["variable_hint"] === "string:"
 
 
-
+const prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType =
+    (utilityClassType: string, utilityClassTypeValue: string) =>
+        `${utilityClassType.match(utilityClassPrefixedWithExclamationMarkOrADashAfterAColonRE)?.[1] ?? ""}${utilityClassTypeValue}`
 
 type ClassMapChangerBasedOnClassName<T extends Map<string, Map<string | Omit<string, string>, string | undefined> | undefined>, U = undefined>
     = U extends undefined ? (classMap: T, className: string,) => void : (classMap: T, className: string, data: U) => void
@@ -146,7 +148,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                 if (valueIsAViableDigit) {
 
-                    classMap.set(type, new Map([[viableUtilityClassMapKeys[0], value]]))
+                    classMap.set(type, new Map([[viableUtilityClassMapKeys[0], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value)]]))
 
 
 
@@ -157,7 +159,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                 if (valueIsAViableWord) {
 
-                    classMap.set(type, new Map([[viableUtilityClassMapKeys[1], value]]))
+                    classMap.set(type, new Map([[viableUtilityClassMapKeys[1], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value)]]))
 
 
 
@@ -166,7 +168,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                 if (valueIsAViableColor) {
 
-                    classMap.set(type, new Map([[viableUtilityClassMapKeys[2], value]]))
+                    classMap.set(type, new Map([[viableUtilityClassMapKeys[2], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value)]]))
 
 
 
@@ -175,7 +177,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                 if (arbitraryValueIsAViableNonColorFunction) {
 
-                    classMap.set(type, new Map([[viableUtilityClassMapKeys[4], value]]))
+                    classMap.set(type, new Map([[viableUtilityClassMapKeys[4], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value)]]))
 
 
 
@@ -185,7 +187,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                 if (arbitraryValueIsAViableCSSVariable) {
 
-                    classMap.set(type, new Map([[viableUtilityClassMapKeys[3], value]]))
+                    classMap.set(type, new Map([[viableUtilityClassMapKeys[3], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value)]]))
 
 
 
@@ -195,7 +197,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                 if (arbitraryValueIsASetOfArgs) {
 
-                    classMap.set(type, new Map([[viableUtilityClassMapKeys[5], value]]))
+                    classMap.set(type, new Map([[viableUtilityClassMapKeys[5], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value)]]))
 
 
 
@@ -218,7 +220,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                 if (valueIsAViableDigit) {
 
-                    result.set(viableUtilityClassMapKeys[0], value)
+                    result.set(viableUtilityClassMapKeys[0], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value))
 
 
 
@@ -228,7 +230,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                 if (valueIsAViableWord) {
 
-                    result.set(viableUtilityClassMapKeys[1], value)
+                    result.set(viableUtilityClassMapKeys[1], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value))
 
 
 
@@ -238,7 +240,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                 if (valueIsAViableColor) {
 
-                    result.set(viableUtilityClassMapKeys[2], value)
+                    result.set(viableUtilityClassMapKeys[2], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value))
 
 
 
@@ -247,7 +249,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                 if (arbitraryValueIsAViableNonColorFunction) {
 
-                    result.set(viableUtilityClassMapKeys[4], value)
+                    result.set(viableUtilityClassMapKeys[4], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value))
 
 
 
@@ -256,7 +258,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                 if (arbitraryValueIsAViableCSSVariable) {
 
-                    result.set(viableUtilityClassMapKeys[3], value)
+                    result.set(viableUtilityClassMapKeys[3], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value))
 
 
 
@@ -265,7 +267,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                 if (arbitraryValueIsASetOfArgs) {
 
-                    result.set(viableUtilityClassMapKeys[5], value)
+                    result.set(viableUtilityClassMapKeys[5], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value))
 
 
 
@@ -343,7 +345,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                 if (valueIsAViableColor) {
 
-                    classMap.set(`${type}`, new Map([[viableUtilityClassMapKeys[2], potentialColorRange]]))
+                    classMap.set(`${type}`, new Map([[viableUtilityClassMapKeys[2], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, potentialColorRange)]]))
 
 
 
@@ -353,7 +355,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                 if (valueIsAViableDigit) {
 
-                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[0], value]]))
+                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[0], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value)]]))
 
 
 
@@ -365,7 +367,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                 if (valueOrArbitraryValueMatchSecondValueIsAViableWord) {
 
-                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[1], value]]))
+                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[1], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value)]]))
 
 
 
@@ -374,7 +376,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                 if (valueIsAViableFunction) {
 
-                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[4], value]]))
+                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[4], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value)]]))
 
 
 
@@ -384,7 +386,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                 if (arbitraryValueMatchSecondValueIsAViableCSSVariable) {
 
-                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[3], value]]))
+                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[3], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value)]]))
 
 
 
@@ -393,7 +395,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                 if (arbitraryValueMatchSecondValueIsASetOfArgs) {
 
-                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[5], value]]))
+                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[5], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value)]]))
 
 
 
@@ -418,7 +420,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                 if (valueIsAViableColor) {
 
-                    result.set(viableUtilityClassMapKeys[2], `${subType}${value}`)
+                    result.set(viableUtilityClassMapKeys[2], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, `${subType}${value}`))
 
 
 
@@ -427,7 +429,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                 if (valueIsAViableDigit) {
 
-                    result.set(viableUtilityClassMapKeys[0], value)
+                    result.set(viableUtilityClassMapKeys[0], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value))
 
 
 
@@ -438,7 +440,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                 if (valueOrArbitraryValueMatchSecondValueIsAViableWord) {
 
-                    result.set(viableUtilityClassMapKeys[1], value)
+                    result.set(viableUtilityClassMapKeys[1], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value))
 
                     return
 
@@ -446,21 +448,21 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                 if (valueIsAViableFunction) {
 
-                    result.set(viableUtilityClassMapKeys[4], value)
+                    result.set(viableUtilityClassMapKeys[4], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value))
 
                     return
                 }
 
                 if (arbitraryValueMatchSecondValueIsAViableCSSVariable) {
 
-                    result.set(viableUtilityClassMapKeys[3], value)
+                    result.set(viableUtilityClassMapKeys[3], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value))
 
                     return
                 }
 
                 if (arbitraryValueMatchSecondValueIsASetOfArgs) {
 
-                    result.set(viableUtilityClassMapKeys[5], value)
+                    result.set(viableUtilityClassMapKeys[5], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value))
 
 
 
@@ -796,7 +798,7 @@ export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassM
 
                 if (valueIsAViableDigit) {
 
-                    classMap.set(`${variant}${type}`, new Map([[viableUtilityClassMapKeys[0], value]]))
+                    classMap.set(`${variant}${type}`, new Map([[viableUtilityClassMapKeys[0], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value)]]))
 
 
 
@@ -807,7 +809,7 @@ export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassM
 
                 if (valueIsAViableWord) {
 
-                    classMap.set(`${variant}${type}`, new Map([[viableUtilityClassMapKeys[1], value]]))
+                    classMap.set(`${variant}${type}`, new Map([[viableUtilityClassMapKeys[1], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value)]]))
 
 
 
@@ -816,7 +818,7 @@ export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassM
 
                 if (valueIsAViableColor) {
 
-                    classMap.set(`${variant}${type}`, new Map([[viableUtilityClassMapKeys[2], value]]))
+                    classMap.set(`${variant}${type}`, new Map([[viableUtilityClassMapKeys[2], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value)]]))
 
 
 
@@ -825,7 +827,7 @@ export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassM
 
                 if (arbitraryValueIsAViableNonColorFunction) {
 
-                    classMap.set(`${variant}${type}`, new Map([[viableUtilityClassMapKeys[4], value]]))
+                    classMap.set(`${variant}${type}`, new Map([[viableUtilityClassMapKeys[4], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value)]]))
 
 
 
@@ -835,7 +837,7 @@ export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassM
 
                 if (arbitraryValueIsAViableCSSVariable) {
 
-                    classMap.set(`${variant}${type}`, new Map([[viableUtilityClassMapKeys[3], value]]))
+                    classMap.set(`${variant}${type}`, new Map([[viableUtilityClassMapKeys[3], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value)]]))
 
 
 
@@ -845,7 +847,7 @@ export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassM
 
                 if (arbitraryValueIsASetOfArgs) {
 
-                    classMap.set(`${variant}${type}`, new Map([[viableUtilityClassMapKeys[5], value]]))
+                    classMap.set(`${variant}${type}`, new Map([[viableUtilityClassMapKeys[5], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value)]]))
 
 
 
@@ -868,7 +870,7 @@ export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassM
 
                 if (valueIsAViableDigit) {
 
-                    result.set(viableUtilityClassMapKeys[0], value)
+                    result.set(viableUtilityClassMapKeys[0], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value))
 
 
 
@@ -878,7 +880,7 @@ export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassM
 
                 if (valueIsAViableWord) {
 
-                    result.set(viableUtilityClassMapKeys[1], value)
+                    result.set(viableUtilityClassMapKeys[1], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value))
 
 
 
@@ -888,7 +890,7 @@ export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassM
 
                 if (valueIsAViableColor) {
 
-                    result.set(viableUtilityClassMapKeys[2], value)
+                    result.set(viableUtilityClassMapKeys[2], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value))
 
 
 
@@ -897,7 +899,7 @@ export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassM
 
                 if (arbitraryValueIsAViableNonColorFunction) {
 
-                    result.set(viableUtilityClassMapKeys[4], value)
+                    result.set(viableUtilityClassMapKeys[4], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value))
 
 
 
@@ -906,7 +908,7 @@ export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassM
 
                 if (arbitraryValueIsAViableCSSVariable) {
 
-                    result.set(viableUtilityClassMapKeys[3], value)
+                    result.set(viableUtilityClassMapKeys[3], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value))
 
 
 
@@ -915,7 +917,7 @@ export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassM
 
                 if (arbitraryValueIsASetOfArgs) {
 
-                    result.set(viableUtilityClassMapKeys[5], value)
+                    result.set(viableUtilityClassMapKeys[5], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value))
 
 
 
@@ -1005,7 +1007,7 @@ export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassM
 
                 if (valueIsAViableDigit) {
 
-                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[0], value]]))
+                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[0], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value)]]))
 
 
 
@@ -1017,7 +1019,7 @@ export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassM
 
                 if (valueOrArbitraryValueMatchSecondValueIsAViableWord) {
 
-                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[1], value]]))
+                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[1], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value)]]))
 
 
 
@@ -1026,7 +1028,7 @@ export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassM
 
                 if (valueIsAViableFunction) {
 
-                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[4], value]]))
+                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[4], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value)]]))
 
 
 
@@ -1036,7 +1038,7 @@ export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassM
 
                 if (arbitraryValueMatchSecondValueIsAViableCSSVariable) {
 
-                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[3], value]]))
+                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[3], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value)]]))
 
 
 
@@ -1045,7 +1047,7 @@ export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassM
 
                 if (arbitraryValueMatchSecondValueIsASetOfArgs) {
 
-                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[5], value]]))
+                    classMap.set(fullClassType, new Map([[viableUtilityClassMapKeys[5], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value)]]))
 
 
 
@@ -1079,7 +1081,7 @@ export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassM
 
                 if (valueIsAViableDigit) {
 
-                    result.set(viableUtilityClassMapKeys[0], value)
+                    result.set(viableUtilityClassMapKeys[0], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value))
 
 
 
@@ -1090,7 +1092,7 @@ export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassM
 
                 if (valueOrArbitraryValueMatchSecondValueIsAViableWord) {
 
-                    result.set(viableUtilityClassMapKeys[1], value)
+                    result.set(viableUtilityClassMapKeys[1], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value))
 
                     return
 
@@ -1098,21 +1100,21 @@ export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassM
 
                 if (valueIsAViableFunction) {
 
-                    result.set(viableUtilityClassMapKeys[4], value)
+                    result.set(viableUtilityClassMapKeys[4], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value))
 
                     return
                 }
 
                 if (arbitraryValueMatchSecondValueIsAViableCSSVariable) {
 
-                    result.set(viableUtilityClassMapKeys[3], value)
+                    result.set(viableUtilityClassMapKeys[3], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value))
 
                     return
                 }
 
                 if (arbitraryValueMatchSecondValueIsASetOfArgs) {
 
-                    result.set(viableUtilityClassMapKeys[5], value)
+                    result.set(viableUtilityClassMapKeys[5], prefixValueIfAExclamationPointOrDashIsFoundInAUtilityClassType(type, value))
 
 
 

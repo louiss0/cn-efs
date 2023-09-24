@@ -18,6 +18,8 @@ export type ClassFilterAndSorter = typeof classNamesSorterAndFilter
 
 
 
+const utilityClassVariantPrefixAndTypeRE = /(?<variant>[a-z0-9)\-(\]\[&,]+:)?(?<prefix>!|-)(?<type>[a-z\-]+-)/
+
 
 function getClassNameMapCreator(
     classTypesAndClassNames?: Record<Lowercase<string>, Array<Lowercase<string>>>,
@@ -216,8 +218,38 @@ export const classNamesSorterAndFilter = (
 
             const utilityClassesCreatedFromDefinedValuesFromTheUtilityValueMap =
                 valuesFromUtilityValueMap
-                    .filter(value => typeof value === "string")
-                    .map((value) => `${utility}${value} `)
+                    .filter(isString)
+                    .map((value) => {
+
+
+                        const utilityClassVariantAndTypeGroups =
+                            utilityClassVariantPrefixAndTypeRE.exec(utility)?.groups
+
+                        if (utilityClassVariantAndTypeGroups) {
+
+
+                            const { variant, type, prefix } = utilityClassVariantAndTypeGroups
+
+
+                            if (!type || !prefix) return `${utility}${value} `
+
+
+                            return !variant
+                                ? `${prefix}${type}${value} `
+                                : `${variant}${prefix}${type}${value} `
+
+
+                        }
+
+
+
+                        return `${utility}${value} `
+
+
+
+
+
+                    })
 
             sortString = sortString.concat(
                 ...utilityClassesCreatedFromDefinedValuesFromTheUtilityValueMap
@@ -263,6 +295,10 @@ export const classNamesSorterAndFilter = (
     return sortString.trimEnd()
 
 
+
+    function isString(value: unknown): value is string {
+        return typeof value === "string"
+    }
 }
 
 
