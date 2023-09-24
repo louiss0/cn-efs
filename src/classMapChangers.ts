@@ -69,6 +69,12 @@ export class SortedClasses {
     public readonly utility = new Map<string, Map<ViableUtilityClassMapKeys, string | undefined> | undefined>();
 
     public readonly customFiltered = new Map<string, Map<StringOrOmitFromString<"base">, string | undefined> | undefined>();
+
+
+    public readonly safeListed: Array<string> = []
+
+
+
 }
 
 

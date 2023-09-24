@@ -18,11 +18,43 @@ export type ClassFilterAndSorter = typeof classNamesSorterAndFilter
 
 
 
-function getClassNameMapCreator(classTypesAndClassNames?: Record<Lowercase<string>, Array<Lowercase<string>>>) {
+
+function getClassNameMapCreator(
+    classTypesAndClassNames?: Record<Lowercase<string>, Array<Lowercase<string>>>,
+    safelist?: Array<string>
+) {
 
     return (carry: SortedClasses, value: string, _: number, array: Array<string>) => {
 
 
+
+
+        if (safelist) {
+
+
+
+            if (safelist.includes(value) && !carry.safeListed.includes(value)) {
+
+
+                carry.safeListed.push(value)
+
+            }
+
+            if (safelist.includes(value) && carry.safeListed.includes(value)) {
+
+
+                throw new Error(
+                    `You have this class in the safelist and as a class name.
+                     Classes that are safe listed are not filtered just prepended
+                     to the start result of this function.
+                     If you want them filtered then please use a filter map instead.
+                    `
+                )
+
+            }
+
+
+        }
 
 
         if (classTypesAndClassNames) {
@@ -72,7 +104,13 @@ function getClassNameMapCreator(classTypesAndClassNames?: Record<Lowercase<strin
 
 const moreThanOneSpaceRE = /\s+/
 
-export const classNamesSorterAndFilter = (classNames: string, classTypesAndClassNames?: Record<Lowercase<string>, Array<Lowercase<string>>>) => {
+
+
+export const classNamesSorterAndFilter = (
+    classNames: string,
+    classTypesAndClassNames?: Record<Lowercase<string>, Array<Lowercase<string>>>,
+    safelist?: Array<string>
+) => {
 
 
     const splitClassNames = classNames.split(moreThanOneSpaceRE)
@@ -92,7 +130,7 @@ export const classNamesSorterAndFilter = (classNames: string, classTypesAndClass
 
         classNameMap =
             splitClassNames.reduce(
-                getClassNameMapCreator(classTypesAndClassNames),
+                getClassNameMapCreator(classTypesAndClassNames, safelist),
                 new SortedClasses()
             )
     } catch (error) {
@@ -213,6 +251,13 @@ export const classNamesSorterAndFilter = (classNames: string, classTypesAndClass
     }
 
 
+    if (classNameMap.safeListed.length !== 0) {
+
+
+
+        sortString = `${classNameMap.safeListed.join(" ")}${sortString}`
+
+    }
 
 
     return sortString.trimEnd()
