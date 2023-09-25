@@ -510,6 +510,7 @@ describe("Test if all class map changers work", () => {
 
             })
 
+
             it<TestContext>("puts the value in a map with a key called word when a variable is hinted with string:", ({ utility }) => {
 
                 const classNameAndExpectedKeyAndValue = {
@@ -537,7 +538,58 @@ describe("Test if all class map changers work", () => {
 
 
 
+    describe("It works with ! and - prefixes ", () => {
 
+        it<TestContext>(
+            "The - prefix is inserted as a prefix to the value when a - is put in a utility class",
+            ({ utility }) => {
+
+                attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, "-z-index-1")
+
+
+                expect(utility.get("z-index-")?.get("digit")).toBeTruthy()
+
+
+            })
+
+    })
+
+
+
+    describe("It works with relational variants", () => {
+
+        it<TestContext>("Works with relational variants that use the / syntax", ({ utility }) => {
+
+
+            attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, "peer-checked/draft:text-sky-500")
+
+
+            expect(utility.has("peer-checked/draft:text-")).toBeTruthy()
+
+            expect(utility.get("peer-checked/draft:text-")?.has("color")).toBeTruthy()
+
+
+
+        })
+
+
+        it<TestContext>("Works with arbitrary relational variants", ({ utility, }) => {
+
+
+            attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, "group-[.is-published]:opacity-50")
+
+
+            expect(utility.has("group-[.is-published]:opacity-")).toBeTruthy()
+
+            expect(utility.get("group-[.is-published]:opacity-")?.has("digit")).toBeTruthy()
+
+
+
+        })
+
+
+
+    })
 
 
 
@@ -674,6 +726,9 @@ describe("Test attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject()", 
 
 
         })
+
+
+
 
 
 
@@ -991,35 +1046,6 @@ describe("Testing attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass", 
 
 
 
-    it<TestContext>("Works with relational variants that use the / syntax", ({ utility }) => {
-
-
-        attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(utility, "peer-checked/draft:text-sky-500")
-
-
-        expect(utility.has("peer-checked/draft:text-")).toBeTruthy()
-
-        expect(utility.get("peer-checked/draft:text-")?.has("color")).toBeTruthy()
-
-
-
-    })
-
-
-    it<TestContext>("Works with arbitrary relational variants", ({ utility, }) => {
-
-
-        attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(utility, "group-[.is-published]:opacity-50")
-
-
-        expect(utility.has("group-[.is-published]:opacity-")).toBeTruthy()
-
-        expect(utility.get("group-[.is-published]:opacity-")?.has("digit")).toBeTruthy()
-
-
-
-    })
-
 
 })
 
@@ -1092,7 +1118,7 @@ describe("Testing attemptToChangeClassMapBasedOnIfItIsAVariantGroup", () => {
 
             attemptToChangeClassMapBasedOnIfItIsAVariantGroup(
                 context,
-                "hover:(focus:bg-red-500 peer-checked/main:text-gray-500)"
+                "hover:(focus:bg-500 peer-checked/main:text-gray-500)"
             )
 
             expect(context.utility.has("hover:focus:bg-")).toBeTruthy()

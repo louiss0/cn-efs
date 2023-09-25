@@ -54,6 +54,8 @@ describe("Test class filters work as intended", () => {
 
             const sortedClasses = classNamesSorterAndFilter(bemClassesWithOnlyModifiers)
 
+
+
             expect(sortedClasses).toMatchInlineSnapshot('"card card--baz"')
 
 
@@ -152,5 +154,12 @@ describe("Test class filters work as intended", () => {
 
 
 
-
 })
+
+
+
+
+
+
+
+

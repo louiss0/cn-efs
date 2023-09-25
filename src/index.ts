@@ -18,9 +18,6 @@ export type ClassFilterAndSorter = typeof classNamesSorterAndFilter
 
 
 
-const utilityClassVariantPrefixAndTypeRE = /(?<variant>[a-z0-9)\-(\]\[&,]+:)?(?<prefix>!|-)(?<type>[a-z\-]+-)/
-
-
 function getClassNameMapCreator(
     classTypesAndClassNames?: Record<Lowercase<string>, Array<Lowercase<string>>>,
     safelist?: Array<string>
@@ -153,7 +150,10 @@ export const classNamesSorterAndFilter = (
 
     if (classNameMap.bem.size !== 0) {
 
+
+
         for (const [block, value] of classNameMap.bem) {
+
 
 
             const modifier = value?.get("modifier")
@@ -167,7 +167,7 @@ export const classNamesSorterAndFilter = (
 
             if (element) {
 
-                sortString = sortString.concat(`${block}${element}`)
+                sortString = sortString.concat(`${block}${element} `)
             }
 
 
@@ -201,6 +201,12 @@ export const classNamesSorterAndFilter = (
 
     if (classNameMap.utility.size !== 0) {
 
+
+        const valueIsPrefixedWithAnExclamationMarkOrDashRE = /^(?<prefix>(-|!))(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d]+)$/
+
+        const valueIsAUtilityClassVariantAndTypeRE = /^(?<variant>[a-z0-9\][#\.&:\-\)"=(\/]+:)?(?<type>[a-z\-]+-)$/
+
+
         for (const [utility, utilityValueMap] of classNameMap.utility) {
 
 
@@ -221,37 +227,13 @@ export const classNamesSorterAndFilter = (
             const utilityClassesCreatedFromDefinedValuesFromTheUtilityValueMap =
                 valuesFromUtilityValueMap
                     .filter(isString)
-                    .map((value) => {
-
-
-                        const utilityClassVariantAndTypeGroups =
-                            utilityClassVariantPrefixAndTypeRE.exec(utility)?.groups
-
-                        if (utilityClassVariantAndTypeGroups) {
-
-
-                            const { variant, type, prefix } = utilityClassVariantAndTypeGroups
-
-
-                            if (!type || !prefix) return `${utility}${value} `
-
-
-                            return !variant
-                                ? `${prefix}${type}${value} `
-                                : `${variant}${prefix}${type}${value} `
-
-
-                        }
-
-
-
-                        return `${utility}${value} `
-
-
-
-
-
-                    })
+                    .map(
+                        getCreateUtilityClassesBasedOnIfTheValueHasAPrefix(
+                            valueIsPrefixedWithAnExclamationMarkOrDashRE,
+                            valueIsAUtilityClassVariantAndTypeRE,
+                            utility
+                        )
+                    )
 
             sortString = sortString.concat(
                 ...utilityClassesCreatedFromDefinedValuesFromTheUtilityValueMap
@@ -275,7 +257,7 @@ export const classNamesSorterAndFilter = (
             for (const [variant, className] of filterClassVariantsAndValues) {
 
 
-                sortString = sortString.concat(`${variant === "base" ? "" : variant}${className}`)
+                sortString = sortString.concat(`${variant === "base" ? "" : variant}${className} `)
 
             }
 
@@ -289,7 +271,7 @@ export const classNamesSorterAndFilter = (
 
 
 
-        sortString = `${classNameMap.safeListed.join(" ")}${sortString}`
+        sortString = `${classNameMap.safeListed.join(" ")}${sortString} `
 
     }
 
@@ -299,6 +281,63 @@ export const classNamesSorterAndFilter = (
 
 
 
+
+    function getCreateUtilityClassesBasedOnIfTheValueHasAPrefix(valueIsPrefixedWithAnExclamationMarkOrDashRE: RegExp, valueIsAUtilityClassVariantAndTypeRE: RegExp, utility: string) {
+        return (classValue: string) => {
+
+
+            const prefixAndValueGroup = valueIsPrefixedWithAnExclamationMarkOrDashRE.exec(classValue)?.groups
+
+            const utilityAndClassValueWithASpace = `${utility}${classValue} `
+
+            if (!prefixAndValueGroup) {
+
+                return utilityAndClassValueWithASpace
+
+            }
+
+
+            const { prefix, value } = prefixAndValueGroup
+
+
+
+            if (!prefix || !value) {
+
+
+
+                return utilityAndClassValueWithASpace
+
+
+            }
+
+
+            const valueIsAUtilityClassVariantAndTypeGroup = valueIsAUtilityClassVariantAndTypeRE.exec(utility)?.groups
+
+
+            if (!valueIsAUtilityClassVariantAndTypeGroup) {
+
+                return utilityAndClassValueWithASpace
+
+            }
+
+
+            const { variant, type } = valueIsAUtilityClassVariantAndTypeGroup as {
+                variant?: string
+                type: string
+            }
+
+
+
+            return variant
+                ? `${variant}${prefix}${type}${value} `
+                : `${prefix}${type}${value} `
+
+
+
+
+
+        }
+    }
 }
 
 
