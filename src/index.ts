@@ -14,7 +14,7 @@ import {
 
 
 
-export type ClassFilterAndSorter = typeof classNamesSorterAndFilter
+export type ClassNamesSorterAndFilter = typeof classNamesSorterAndFilter
 
 
 
