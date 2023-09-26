@@ -94,7 +94,7 @@ const variableHasAStringHint = (arbitraryValue: string) =>
 
 
 type ClassMapChangerBasedOnClassName<T extends Map<string, Map<string | Omit<string, string>, string | undefined> | undefined>, U = undefined>
-    = U extends undefined ? (classMap: T, className: string,) => void : (classMap: T, className: string, data: U) => void
+    = U extends undefined ? (classMap: T, className: string,) => boolean : (classMap: T, className: string, data: U) => boolean
 
 
 export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
@@ -106,14 +106,15 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
 
 
-        if (!cssTypeValueUtilityClassMatchGroups) return
+
+        if (!cssTypeValueUtilityClassMatchGroups) return false
 
 
 
         const { type, value, variant = "", subtype = "", prefix = "", } = cssTypeValueUtilityClassMatchGroups
 
 
-        if (!type || !value) return
+        if (!type || !value) return false
 
 
 
@@ -179,13 +180,13 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                     const { color, range } = colorRangeGroups
 
-                    if (!color || !range) return
+                    if (!color || !range) return false
 
 
 
                     classMap.set(classVariantAndType, new Map([[viableUtilityClassMapKeys[2], `${prefix}${color}${range}`]]))
 
-                    return
+                    return true
 
                 }
 
@@ -193,7 +194,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                 classMap.set(classVariantAndType, new Map([[viableUtilityClassMapKeys[2], prefixAndClassValue]]))
 
-                return
+                return true
 
             }
 
@@ -205,7 +206,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
                 classMap.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[0], prefixAndClassValue]]))
 
 
-                return
+                return true
 
             }
 
@@ -226,7 +227,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
                             new Map([[viableUtilityClassMapKeys[1], `${prefix}${first_word}${middle_words}${last_word}`]])
                         )
 
-                        return
+                        return true
                     }
 
                     classMap.get(classVariantAndType)?.set(
@@ -235,14 +236,14 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
                     )
 
 
-                    return
+                    return true
                 }
 
                 classMap.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[1], prefixAndClassValue]]))
 
 
 
-                return
+                return true
             }
 
 
@@ -253,7 +254,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
                 classMap.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[4], prefixAndClassValue]]))
 
 
-                return
+                return true
             }
 
 
@@ -263,7 +264,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
 
 
-                return
+                return true
             }
 
 
@@ -276,7 +277,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
 
 
-                return
+                return true
             }
 
 
@@ -299,7 +300,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                     result.set(viableUtilityClassMapKeys[2], prefixAndClassValue)
 
-                    return
+                    return true
 
                 }
 
@@ -307,7 +308,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
                 result.set(viableUtilityClassMapKeys[2], `${colorRangeGroups.color}${colorRangeGroups.range}`)
 
 
-                return
+                return true
 
             }
 
@@ -317,7 +318,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
                 result.set(viableUtilityClassMapKeys[0], prefixAndClassValue)
 
-                return
+                return true
             }
 
 
@@ -327,7 +328,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
 
 
-                return
+                return true
 
             }
 
@@ -339,7 +340,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
 
 
-                return
+                return true
             }
 
             if (arbitraryValueIsAViableCSSVariable) {
@@ -348,7 +349,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
 
 
-                return
+                return true
             }
 
             if (arbitraryValueIsASetOfArgs) {
@@ -357,12 +358,15 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
 
 
-                return
+                return true
             }
 
 
 
         }
+
+
+        return false
 
 
     }
@@ -374,44 +378,49 @@ type TypeAndListClassMapChanger = ClassMapChangerBasedOnClassName<SortedClasses[
 export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject: TypeAndListClassMapChanger = (classMap, className, classTypeAndListObject) => {
 
 
+
+    let classMapHasChanged = false
+
     Object.entries(classTypeAndListObject).forEach(([classType, classList]) => {
 
 
 
-        const utilityClassVariantAndSelfMatch = utilityClassVariantAndSelfRE.exec(className)
+        const utilityClassVariantAndSelfGroups = utilityClassVariantAndSelfRE.exec(className)?.groups
 
 
-        if (!utilityClassVariantAndSelfMatch) return
+        if (!utilityClassVariantAndSelfGroups) return
 
 
-        const [, variant = "base", classTypeAndValue] = utilityClassVariantAndSelfMatch
+        const { variant = "base", class_type_and_value } = utilityClassVariantAndSelfGroups
 
 
 
 
-        if (!classTypeAndValue) return
+        if (!class_type_and_value) return
 
-        if (!classMap.has(classType) && classList.includes(classTypeAndValue)) {
+        if (!classMap.has(classType) && classList.includes(class_type_and_value)) {
 
             classMap.set(
                 classType,
                 new Map([
-                    [variant,
-                        classTypeAndValue
+                    [
+                        variant,
+                        class_type_and_value
                     ],
                 ])
             )
 
-            return
+            classMapHasChanged = true
         }
 
 
-        if (classList.includes(classTypeAndValue)) {
+        if (classList.includes(class_type_and_value)) {
 
 
             classMap.get(classType,)
-                ?.set(variant, classTypeAndValue)
+                ?.set(variant, class_type_and_value)
 
+            classMapHasChanged = true
 
         }
 
@@ -424,6 +433,7 @@ export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject: TypeA
 
     })
 
+    return classMapHasChanged
 
 }
 
@@ -457,7 +467,7 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapC
                 element,
             } = blockAndElementClassNameGroups
 
-            if (!lower_case_word || !element) return
+            if (!lower_case_word || !element) return false
 
 
             if (!classMap.has(lower_case_word)) {
@@ -470,7 +480,7 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapC
                     ])
                 )
 
-                return
+                return true
 
             }
 
@@ -478,6 +488,7 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapC
                 ?.set("element", element)
 
 
+            return true
 
         }
 
@@ -488,7 +499,7 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapC
 
 
 
-            if (!lower_case_word || !modifier) return
+            if (!lower_case_word || !modifier) return false
 
 
             if (!classNames.includes(lower_case_word)) {
@@ -505,7 +516,7 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapC
 
                 classMap.set(lower_case_word, new Map([["modifier", modifier]]))
 
-                return
+                return true
 
             }
 
@@ -514,11 +525,13 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapC
 
 
 
+            return true
 
 
         }
 
 
+        return false
 
 
     }
@@ -533,7 +546,7 @@ export const attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProper
 
         const arbitraryPropertyKeyAndValueMatch = arbitraryPropertyRE.exec(className)
 
-        if (!arbitraryPropertyKeyAndValueMatch) return
+        if (!arbitraryPropertyKeyAndValueMatch) return false
 
 
         const [,
@@ -544,7 +557,7 @@ export const attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProper
 
 
 
-        if (!propertyKey || !propertyValue) return
+        if (!propertyKey || !propertyValue) return false
 
 
         if (!classMap.has(propertyKey)) {
@@ -561,7 +574,7 @@ export const attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProper
                 )
             )
 
-            return
+            return true
 
         }
 
@@ -569,6 +582,7 @@ export const attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProper
         classMap.get(propertyKey)?.set(variant, propertyValue)
 
 
+        return true
 
 
 
@@ -592,24 +606,25 @@ export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassM
 
 
 
-        if (relationClassUtilityMatch) {
-
-            const [, relationship, name] = relationClassUtilityMatch;
+        if (!relationClassUtilityMatch) return false
 
 
-            if (!relationship || !name) return
-
-            if (!classMap.has(relationship)) {
-
-                classMap.set(relationship, new Map([["word", name]]))
-
-                return
-            }
-
-            classMap.get(relationship)?.set("word", name)
+        const [, relationship, name] = relationClassUtilityMatch;
 
 
+        if (!relationship || !name) return false
+
+        if (!classMap.has(relationship)) {
+
+            classMap.set(relationship, new Map([["word", name]]))
+
+            return true
         }
+
+        classMap.get(relationship)?.set("word", name)
+
+        return true
+
 
 
     }
@@ -625,14 +640,17 @@ type PropsNeededFromSortedClasses = {
 }
 
 export const attemptToChangeClassMapBasedOnIfItIsAVariantGroup =
-    ({ arbitraryProperties, customFiltered, utility }: PropsNeededFromSortedClasses, className: string, filterMap?: FilterMap) => {
+    ({ arbitraryProperties, customFiltered, utility }: PropsNeededFromSortedClasses, className: string, filterMap?: FilterMap): boolean => {
 
 
+
+
+        let classMapHasChanged = false
 
         const variantGroupMatch = variantGroupRE.exec(className)
 
 
-        if (!variantGroupMatch) return
+        if (!variantGroupMatch) return classMapHasChanged
 
 
 
@@ -640,7 +658,7 @@ export const attemptToChangeClassMapBasedOnIfItIsAVariantGroup =
         const [, variant, classNames] = variantGroupMatch
 
 
-        if (!variant || !classNames) return
+        if (!variant || !classNames) return classMapHasChanged
 
         const splitClassNames = classNames?.split(/\s/)
 
@@ -649,18 +667,46 @@ export const attemptToChangeClassMapBasedOnIfItIsAVariantGroup =
             .map(className => `${variant}${className}`)
             .forEach((className) => {
 
-                attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, className)
-                attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(utility, className)
-                attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty(arbitraryProperties, className)
+                const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValueResult =
+                    attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, className)
 
+                if (attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValueResult) {
+
+                    classMapHasChanged = true
+                    return
+                }
+
+                const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClassResult =
+                    attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(utility, className)
+
+                if (attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClassResult) {
+
+                    classMapHasChanged = true
+                    return
+                }
+
+                const attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryPropertyResult = attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty(arbitraryProperties, className)
+
+                if (attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryPropertyResult) {
+
+                    classMapHasChanged = true
+                    return
+                }
                 if (filterMap) {
 
-                    attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(customFiltered, className, filterMap)
+                    const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectResult = attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(customFiltered, className, filterMap)
 
+                    if (attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectResult) {
+
+                        classMapHasChanged = true
+                        return
+                    }
                 }
 
             })
 
+
+        return classMapHasChanged
 
 
     };
