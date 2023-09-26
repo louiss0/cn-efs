@@ -8,8 +8,7 @@ const checkIfStringIsACssVariableWithAnOptionalHint = (string: string) => cssVar
 
 
 const cssTypeAndValueUtilityClassRE =
-    /^(?<variant>[a-z0-9\][#\.&:\-\)"=(\/]+:)?(?<prefix>!|-)?(?<type>(?:[a-z]+-)(?:[a-z]+-)*)(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d]+)$/
-
+    /^(?<variant>[a-z0-9\][#\.&:\-\)"=(\/]+:)?(?<prefix>!|-)?(?<type>[a-z]+-)(?<subtype>(?:[a-z]+-)*)?(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d]+)$/
 
 
 const properCSSDigitRE = /^(?<digit>\d{1,4}(?:[a-z]{2,4})?)$/
@@ -17,7 +16,7 @@ const properCSSDigitRE = /^(?<digit>\d{1,4}(?:[a-z]{2,4})?)$/
 const checkIfStringIsAProperDigit = (string: string) => properCSSDigitRE.test(string)
 
 
-const colorRangeRE = /^(?<class_type>[\w]+-)(?:(?<color>[a-z]+-)(?<range>[0-9]{2,4}))$/
+const colorRangeRE = /^(?<color>[a-z]+-)(?<range>[0-9]{2,4})$/
 
 const hexColorRE = /^(?<hex_color>#[A-Fa-f0-9]{3,6})$/
 
@@ -40,6 +39,9 @@ const checkIfStringIsAProperCSSNormalFunction = (string: string) =>
 const arbitraryValueRE = /^\[(?<value>[\w\-),%!\/($.:#]+)\]$/
 
 const lowerCaseWordRE = /^(?<lower_case_word>[a-z]+)$/
+
+
+const dashedLowerCaseWordRE = /(?<first_word>[a-z]+-)(?<middle_words>(?:[a-z]+-)+)?(?<last_word>[a-z]+)/
 
 
 const checkIfStringIsALowerCaseWord = (string: string) => lowerCaseWordRE.test(string)
@@ -104,245 +106,264 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 
 
 
-        if (cssTypeValueUtilityClassMatchGroups) {
-
-
-            const { variant = "", type, value, prefix = "" } = cssTypeValueUtilityClassMatchGroups
-
-
-            if (!type || !value) return
+        if (!cssTypeValueUtilityClassMatchGroups) return
 
 
 
-
-            const arbitraryValueMatchSecondValue = value.match(arbitraryValueRE)?.[1]
-
-            const arbitraryValueMatchSecondValueBoolValue = !!arbitraryValueMatchSecondValue
-
-            const valueIsAViableDigit = checkIfStringIsAProperDigit(value)
-                || arbitraryValueMatchSecondValue && checkIfStringIsAProperDigit(arbitraryValueMatchSecondValue)
-                || arbitraryValueMatchSecondValue && variableHasALengthHint(arbitraryValueMatchSecondValue)
+        const { type, value, variant = "", subtype = "", prefix = "", } = cssTypeValueUtilityClassMatchGroups
 
 
-            const valueIsAViableWord = checkIfStringIsALowerCaseWord(value)
-                || arbitraryValueMatchSecondValueBoolValue && checkIfStringIsALowerCaseWord(arbitraryValueMatchSecondValue)
-                || arbitraryValueMatchSecondValueBoolValue && variableHasAStringHint(arbitraryValueMatchSecondValue)
-
-            const arbitraryValueIsAViableNonColorFunction =
-                arbitraryValueMatchSecondValueBoolValue && checkIfStringIsAProperCSSNormalFunction(arbitraryValueMatchSecondValue)
-
-            const arbitraryValueIsASetOfArgs =
-                arbitraryValueMatchSecondValueBoolValue && checkIfStringIsASetOfArgs(arbitraryValueMatchSecondValue)
-
-            const arbitraryValueIsAViableCSSVariable =
-                arbitraryValueMatchSecondValueBoolValue && checkIfStringIsACssVariableWithAnOptionalHint(arbitraryValueMatchSecondValue)
-
-            const valueIsAViableColor =
-                arbitraryValueMatchSecondValue && checkIfStringIsAProperColor(arbitraryValueMatchSecondValue)
-                || arbitraryValueMatchSecondValueBoolValue && variableHasAColorHint(arbitraryValueMatchSecondValue)
-                || isAColorRange(`${type}${value}`)
-
-
-            const variantAndClassType = `${variant}${type}`
-
-
-            if (prefix === "-" && !valueIsAViableDigit) {
-
-                throw new Error(`The ${prefix} only works with digits don't use it on classes that aren't numbers`)
-            }
-
-            const prefixAndClassValue = `${prefix}${value}`
-
-            const colorRangeGroups = colorRangeRE.exec(`${type}${value}`)?.groups
+        if (!type || !value) return
 
 
 
+        const classVariantAndType = `${variant}${type}`
 
-            if (!classMap.has(variantAndClassType)) {
+        const classVariantTypeAndSubtype = `${variant}${type}${subtype}`
 
+        const prefixAndClassValue = `${prefix}${value}`
 
-                if (valueIsAViableColor) {
-
-                    if (colorRangeGroups) {
-
-
-                        const { class_type, color, range } = colorRangeGroups
-
-                        if (!class_type || !color || !range) return
-
-
-                        if (!classMap.has(class_type)) {
-
-                            classMap.set(
-                                `${variant}${class_type}`,
-                                new Map([
-                                    [
-                                        viableUtilityClassMapKeys[2],
-                                        `${prefix}${color}${range}`
-                                    ]
-                                ])
-                            )
-
-                            return
-                        }
-
-
-                        classMap.get(`${variant}${class_type}`)?.set("color", `${prefix}${color}${range}`)
-
-                        return
-
-                    }
+        const subTypeAndValue = `${subtype}${value}`
 
 
 
-                    classMap.set(variantAndClassType, new Map([[viableUtilityClassMapKeys[2], prefixAndClassValue]]))
+        const arbitraryValueMatchSecondValue = value.match(arbitraryValueRE)?.[1]
+
+        const arbitraryValueMatchSecondValueBoolValue = !!arbitraryValueMatchSecondValue
+
+        const valueIsAViableDigit = checkIfStringIsAProperDigit(value)
+            || arbitraryValueMatchSecondValue && checkIfStringIsAProperDigit(arbitraryValueMatchSecondValue)
+            || arbitraryValueMatchSecondValue && variableHasALengthHint(arbitraryValueMatchSecondValue)
+
+
+        const valueIsAViableWord = checkIfStringIsALowerCaseWord(value)
+            || arbitraryValueMatchSecondValueBoolValue && checkIfStringIsALowerCaseWord(arbitraryValueMatchSecondValue)
+            || arbitraryValueMatchSecondValueBoolValue && variableHasAStringHint(arbitraryValueMatchSecondValue)
+
+        const arbitraryValueIsAViableNonColorFunction =
+            arbitraryValueMatchSecondValueBoolValue && checkIfStringIsAProperCSSNormalFunction(arbitraryValueMatchSecondValue)
+
+        const arbitraryValueIsASetOfArgs =
+            arbitraryValueMatchSecondValueBoolValue && checkIfStringIsASetOfArgs(arbitraryValueMatchSecondValue)
+
+        const arbitraryValueIsAViableCSSVariable =
+            arbitraryValueMatchSecondValueBoolValue && checkIfStringIsACssVariableWithAnOptionalHint(arbitraryValueMatchSecondValue)
+
+        const valueIsAViableColor =
+            arbitraryValueMatchSecondValue && checkIfStringIsAProperColor(arbitraryValueMatchSecondValue)
+            || arbitraryValueMatchSecondValueBoolValue && variableHasAColorHint(arbitraryValueMatchSecondValue)
+            || isAColorRange(`${subtype}${value}`)
+
+
+
+        if (prefix === "-" && !valueIsAViableDigit) {
+
+            throw new Error(`The ${prefix} only works with digits don't use it on classes that aren't numbers`)
+        }
+
+
+        const colorRangeGroups = colorRangeRE.exec(subTypeAndValue)?.groups
+
+
+        const dashedLowerCaseWordGroups = dashedLowerCaseWordRE.exec(subTypeAndValue)?.groups
+
+
+        if (!classMap.has(classVariantAndType)) {
+
+
+            if (valueIsAViableColor) {
+
+
+                if (colorRangeGroups) {
+
+
+                    const { color, range } = colorRangeGroups
+
+                    if (!color || !range) return
+
+
+
+                    classMap.set(classVariantAndType, new Map([[viableUtilityClassMapKeys[2], `${prefix}${color}${range}`]]))
 
                     return
 
                 }
 
 
-                if (valueIsAViableDigit) {
 
-                    classMap.set(variantAndClassType, new Map([[viableUtilityClassMapKeys[0], prefixAndClassValue]]))
+                classMap.set(classVariantAndType, new Map([[viableUtilityClassMapKeys[2], prefixAndClassValue]]))
 
-
-
-                    return
-
-                }
-
-
-                if (valueIsAViableWord) {
-
-                    classMap.set(variantAndClassType, new Map([[viableUtilityClassMapKeys[1], prefixAndClassValue]]))
-
-
-
-                    return
-                }
-
-
-
-                if (arbitraryValueIsAViableNonColorFunction) {
-
-                    classMap.set(variantAndClassType, new Map([[viableUtilityClassMapKeys[4], prefixAndClassValue]]))
-
-
-
-                    return
-                }
-
-
-                if (arbitraryValueIsAViableCSSVariable) {
-
-                    classMap.set(variantAndClassType, new Map([[viableUtilityClassMapKeys[3], prefixAndClassValue]]))
-
-
-
-                    return
-                }
-
-
-                if (arbitraryValueIsASetOfArgs) {
-
-                    classMap.set(variantAndClassType, new Map([[viableUtilityClassMapKeys[5], prefixAndClassValue]]))
-
-
-
-                    return
-                }
-
-
-
+                return
 
             }
 
 
+            if (valueIsAViableDigit) {
 
 
 
-            const result = colorRangeGroups?.class_type && classMap.get(colorRangeGroups?.class_type)
-                || classMap.get(variantAndClassType)
+                classMap.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[0], prefixAndClassValue]]))
 
 
-            if (result) {
+                return
 
-                if (valueIsAViableColor) {
+            }
 
-                    if (!colorRangeGroups) {
 
-                        result.set(viableUtilityClassMapKeys[2], prefixAndClassValue)
+            if (valueIsAViableWord) {
+
+
+                if (dashedLowerCaseWordGroups) {
+
+
+                    const { first_word, middle_words = "", last_word } = dashedLowerCaseWordGroups
+
+
+                    if (first_word && last_word) {
+
+                        classMap.set(
+                            classVariantAndType,
+                            new Map([[viableUtilityClassMapKeys[1], `${prefix}${first_word}${middle_words}${last_word}`]])
+                        )
+
                         return
                     }
 
-
-                    result.set(viableUtilityClassMapKeys[2], `${colorRangeGroups.color}${colorRangeGroups.range}`)
-
-
-                    return
-
-                }
-
-
-
-                if (valueIsAViableDigit) {
-
-                    result.set(viableUtilityClassMapKeys[0], prefixAndClassValue)
-
+                    classMap.get(classVariantAndType)?.set(
+                        viableUtilityClassMapKeys[1],
+                        `${prefix}${first_word}${middle_words}${last_word}`
+                    )
 
 
                     return
                 }
 
-
-                if (valueIsAViableWord) {
-
-                    result.set(viableUtilityClassMapKeys[1], prefixAndClassValue)
+                classMap.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[1], prefixAndClassValue]]))
 
 
 
-                    return
-
-                }
-
-
-
-                if (arbitraryValueIsAViableNonColorFunction) {
-
-                    result.set(viableUtilityClassMapKeys[4], prefixAndClassValue)
-
-
-
-                    return
-                }
-
-                if (arbitraryValueIsAViableCSSVariable) {
-
-                    result.set(viableUtilityClassMapKeys[3], prefixAndClassValue)
-
-
-
-                    return
-                }
-
-                if (arbitraryValueIsASetOfArgs) {
-
-                    result.set(viableUtilityClassMapKeys[5], prefixAndClassValue)
-
-
-
-                    return
-                }
-
-
-
-
-
-
+                return
             }
+
+
+
+            if (arbitraryValueIsAViableNonColorFunction) {
+
+
+                classMap.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[4], prefixAndClassValue]]))
+
+
+                return
+            }
+
+
+            if (arbitraryValueIsAViableCSSVariable) {
+
+                classMap.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[3], prefixAndClassValue]]))
+
+
+
+                return
+            }
+
+
+
+
+            if (arbitraryValueIsASetOfArgs) {
+
+
+                classMap.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[5], prefixAndClassValue]]))
+
+
+
+                return
+            }
+
+
+
 
         }
+
+
+
+
+
+        const result = classMap.get(classVariantAndType) || classMap.get(classVariantTypeAndSubtype)
+
+
+        if (result) {
+
+            if (valueIsAViableColor) {
+
+                if (!colorRangeGroups) {
+
+                    result.set(viableUtilityClassMapKeys[2], prefixAndClassValue)
+
+                    return
+
+                }
+
+
+                result.set(viableUtilityClassMapKeys[2], `${colorRangeGroups.color}${colorRangeGroups.range}`)
+
+
+                return
+
+            }
+
+
+
+            if (valueIsAViableDigit) {
+
+                result.set(viableUtilityClassMapKeys[0], prefixAndClassValue)
+
+                return
+            }
+
+
+            if (valueIsAViableWord) {
+
+                result.set(viableUtilityClassMapKeys[1], prefixAndClassValue)
+
+
+
+                return
+
+            }
+
+
+
+            if (arbitraryValueIsAViableNonColorFunction) {
+
+                result.set(viableUtilityClassMapKeys[4], prefixAndClassValue)
+
+
+
+                return
+            }
+
+            if (arbitraryValueIsAViableCSSVariable) {
+
+                result.set(viableUtilityClassMapKeys[3], prefixAndClassValue)
+
+
+
+                return
+            }
+
+            if (arbitraryValueIsASetOfArgs) {
+
+                result.set(viableUtilityClassMapKeys[5], prefixAndClassValue)
+
+
+
+                return
+            }
+
+
+
+        }
+
 
     }
 
