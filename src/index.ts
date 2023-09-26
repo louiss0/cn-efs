@@ -18,12 +18,13 @@ export type ClassFilterAndSorter = typeof classNamesSorterAndFilter
 
 
 
-function getClassNameMapCreator(
+function getSortClassesBasedOnClassType(
     classTypesAndClassNames?: Record<Lowercase<string>, Array<Lowercase<string>>>,
     safelist?: Array<string>
 ) {
 
     return (carry: SortedClasses, value: string, _: number, array: Array<string>) => {
+
 
 
 
@@ -37,6 +38,7 @@ function getClassNameMapCreator(
 
                 carry.safeListed.push(value)
 
+                return carry
             }
 
             if (safelist.includes(value) && carry.safeListed.includes(value)) {
@@ -58,26 +60,33 @@ function getClassNameMapCreator(
 
         if (classTypesAndClassNames) {
 
-            attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(
+            const result = attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(
                 carry.customFiltered,
                 value,
                 classTypesAndClassNames
             )
 
+            if (result) return carry
+
+
         }
 
 
 
-        attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(carry.utility, value)
+        if (attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(carry.utility, value))
+            return carry
 
 
-        attemptToChangeClassNameMapAccordingToIfTheBEMConvention(carry.bem, value, array)
+        if (attemptToChangeClassNameMapAccordingToIfTheBEMConvention(carry.bem, value, array))
+            return carry
 
 
-        attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty(carry.arbitraryProperties, value)
+        if (attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty(carry.arbitraryProperties, value))
+            return carry
 
 
-        attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(carry.utility, value)
+        if (attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(carry.utility, value))
+            return carry
 
 
         const { customFiltered, utility, arbitraryProperties } = carry
@@ -131,7 +140,7 @@ export const classNamesSorterAndFilter = (
 
         classNameMap =
             splitClassNames.reduce(
-                getClassNameMapCreator(classTypesAndClassNames, safelist),
+                getSortClassesBasedOnClassType(classTypesAndClassNames, safelist),
                 new SortedClasses()
             )
     } catch (error) {
