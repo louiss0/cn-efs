@@ -1,11 +1,13 @@
-import { classNamesSorterAndFilter } from "."
+import { getClassNamesEvaluatorFilterAndSorter } from "."
 
 
 
 describe("Test class filters work as intended", () => {
 
 
-    describe("Testing classNamesSorterAndFilter", () => {
+    const classNamesEvaluatorSorterAndFilter = getClassNamesEvaluatorFilterAndSorter()
+
+    describe("Testing classNamesEvaluatorSorterAndFilter", () => {
 
 
 
@@ -13,7 +15,7 @@ describe("Test class filters work as intended", () => {
 
             const classes = "outline-solid outline-1 outline-gray-600 outline-[#FFF333]"
 
-            const sortedClasses = classNamesSorterAndFilter(classes)
+            const sortedClasses = classNamesEvaluatorSorterAndFilter(classes)
 
 
             expect(sortedClasses).not.toBe(classes)
@@ -38,7 +40,7 @@ describe("Test class filters work as intended", () => {
                 const classes = "random-solid random-[2_4_6] random-1 random-[#FFF333] random-[url(/foo)] random-[--foo]"
 
 
-                const sortedClasses = classNamesSorterAndFilter(classes)
+                const sortedClasses = classNamesEvaluatorSorterAndFilter(classes)
 
                 expect(sortedClasses).toBe("random-1 random-solid random-[#FFF333] random-[url(/foo)] random-[--foo] random-[2_4_6]")
 
@@ -52,7 +54,7 @@ describe("Test class filters work as intended", () => {
 
             const bemClassesWithOnlyModifiers = "card card--foo card--baz"
 
-            const sortedClasses = classNamesSorterAndFilter(bemClassesWithOnlyModifiers)
+            const sortedClasses = classNamesEvaluatorSorterAndFilter(bemClassesWithOnlyModifiers)
 
 
 
@@ -67,7 +69,7 @@ describe("Test class filters work as intended", () => {
             const bemClassesWithOnlyElementsAndElementModifiers = "card card__title card__title--lg"
 
 
-            const sortedClasses = classNamesSorterAndFilter(bemClassesWithOnlyElementsAndElementModifiers)
+            const sortedClasses = classNamesEvaluatorSorterAndFilter(bemClassesWithOnlyElementsAndElementModifiers)
 
 
             expect(sortedClasses).toBe("card__title--lg")
@@ -83,7 +85,7 @@ describe("Test class filters work as intended", () => {
 
 
 
-            expect(() => classNamesSorterAndFilter(bemClassesWithOnlyModifiers))
+            expect(() => classNamesEvaluatorSorterAndFilter(bemClassesWithOnlyModifiers))
                 .toThrowErrorMatchingInlineSnapshot(`
                   "To have a modifier you must have the block card in the list of classes already.
                                       Please put the block as the class that requires the use of the modifier."
@@ -99,7 +101,7 @@ describe("Test class filters work as intended", () => {
             const classes = "[font-size:2px] [font-size:4px] [font-size:8px]"
 
 
-            const sortedClasses = classNamesSorterAndFilter(classes)
+            const sortedClasses = classNamesEvaluatorSorterAndFilter(classes)
 
 
             expect(sortedClasses).toBe("[font-size:8px]")
@@ -112,7 +114,7 @@ describe("Test class filters work as intended", () => {
             const classes = "[font-size:2px] md:[font-size:4px] md:[font-size:8px] lg:[font-size:6px] lg:[font-size:7px]"
 
 
-            const sortedClasses = classNamesSorterAndFilter(classes)
+            const sortedClasses = classNamesEvaluatorSorterAndFilter(classes)
 
 
             expect(sortedClasses).toBe("[font-size:2px] md:[font-size:8px] lg:[font-size:7px]")
@@ -132,7 +134,7 @@ describe("Test class filters work as intended", () => {
                 const classes = "absolute border-1 border-dashed border-gray-500 [font-size:2px] card card--large"
 
 
-                const sortedClasses = classNamesSorterAndFilter(classes, { position: ["absolute", "fixed", "static"] })
+                const sortedClasses = getClassNamesEvaluatorFilterAndSorter({ classNamesAndTypes: { position: ["absolute", "fixed", "static"] } })(classes)
 
                 expect(sortedClasses).toBe("card card--large [font-size:2px] border-1 border-dashed border-gray-500 absolute")
 
@@ -144,7 +146,7 @@ describe("Test class filters work as intended", () => {
 
 
 
-            expect(() => classNamesSorterAndFilter("foo"))
+            expect(() => classNamesEvaluatorSorterAndFilter("foo"))
                 .toThrowErrorMatchingInlineSnapshot('"This string has no sets of classes please add spaces between classes that need to be sorted"')
 
         })

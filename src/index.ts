@@ -1,4 +1,5 @@
 
+import clsx from "clsx"
 import { TailwindOrWindiFilterMap } from "./classFilterMaps"
 import {
     SortedClasses,
@@ -14,7 +15,7 @@ import {
 
 
 
-export type ClassNamesSorterAndFilter = typeof classNamesSorterAndFilter
+type ClassNamesSorterAndFilter = typeof classNamesSorterAndFilter
 
 
 
@@ -116,7 +117,7 @@ function isString(value: unknown): value is string {
     return typeof value === "string"
 }
 
-export const classNamesSorterAndFilter = (
+const classNamesSorterAndFilter = (
     classNames: string,
     classTypesAndClassNames?: Record<Lowercase<string>, Array<Lowercase<string>>>,
     safelist?: Array<string>
@@ -350,14 +351,24 @@ export const classNamesSorterAndFilter = (
 }
 
 
+type GetClassNamesEvaluatorSorterAndFilterOptions = {
+    classNamesAndTypes?: Parameters<ClassNamesSorterAndFilter>[1]
+    safelist?: Parameters<ClassNamesSorterAndFilter>[2]
+}
+
+export const getClassNamesEvaluatorFilterAndSorter =
+    (options?: GetClassNamesEvaluatorSorterAndFilterOptions) =>
+        (...args: Parameters<typeof clsx>) =>
+            classNamesSorterAndFilter(clsx(...args), options?.classNamesAndTypes, options?.safelist)
+
+export const classNamesEvaluatorFilterAndSorter = getClassNamesEvaluatorFilterAndSorter();
+
+
 const tailwindOrWindiSafeList = ["group", "peer", "@container", "content", "appearance-none"]
 
-export const tailwindOrWindiCSSClassNamesSorterAndFilter = (classNames: string) =>
-    classNamesSorterAndFilter(classNames, TailwindOrWindiFilterMap, tailwindOrWindiSafeList)
-
-
-
-
+export const tailwindOrWindiCSSEvaluatorSorterAndFilter =
+    (...args: Parameters<typeof clsx>) =>
+        getClassNamesEvaluatorFilterAndSorter({ classNamesAndTypes: TailwindOrWindiFilterMap, safelist: tailwindOrWindiSafeList })(...args)
 
 
 
