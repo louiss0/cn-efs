@@ -49,5 +49,8 @@
   "author": {
     "name": "Shelton Louis",
     "url": "https://github.com/louiss0"
+  },
+  "dependencies": {
+    "clsx": "^2.0.0"
   }
 }
