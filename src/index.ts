@@ -1,6 +1,6 @@
 
 import clsx from "clsx"
-import { TailwindOrWindiFilterMap } from "./classFilterMaps"
+import { TailwindOrWindiFilterObject } from "./classFilterObjects"
 import {
     SortedClasses,
     attemptToChangeClassNameMapAccordingToIfTheBEMConvention,
@@ -352,14 +352,14 @@ const classNamesSorterAndFilter = (
 
 
 type GetClassNamesEvaluatorSorterAndFilterOptions = {
-    classNamesAndTypes?: Parameters<ClassNamesSorterAndFilter>[1]
+    filterObject?: Parameters<ClassNamesSorterAndFilter>[1]
     safelist?: Parameters<ClassNamesSorterAndFilter>[2]
 }
 
 export const getClassNamesEvaluatorFilterAndSorter =
     (options?: GetClassNamesEvaluatorSorterAndFilterOptions) =>
         (...args: Parameters<typeof clsx>) =>
-            classNamesSorterAndFilter(clsx(...args), options?.classNamesAndTypes, options?.safelist)
+            classNamesSorterAndFilter(clsx(...args), options?.filterObject, options?.safelist)
 
 export const classNamesEvaluatorFilterAndSorter = getClassNamesEvaluatorFilterAndSorter();
 
@@ -368,7 +368,7 @@ const tailwindOrWindiSafeList = ["group", "peer", "@container", "content", "appe
 
 export const tailwindOrWindiCSSEvaluatorSorterAndFilter =
     (...args: Parameters<typeof clsx>) =>
-        getClassNamesEvaluatorFilterAndSorter({ classNamesAndTypes: TailwindOrWindiFilterMap, safelist: tailwindOrWindiSafeList })(...args)
+        getClassNamesEvaluatorFilterAndSorter({ filterObject: TailwindOrWindiFilterObject, safelist: tailwindOrWindiSafeList })(...args)
 
 
 

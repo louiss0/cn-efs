@@ -1,9 +1,9 @@
 
 
 
-export type FilterMap = Record<Lowercase<string>, Array<Lowercase<string>>>;
+export type FilterObject = Record<Lowercase<string>, Array<Lowercase<string>>>;
 
-export const TailwindOrWindiFilterMap = {
+export const TailwindOrWindiFilterObject = {
     grayscale: ["grayscale-0", "grayscale"],
     invert: ["invert-0", "invert"],
     display: [
@@ -61,5 +61,5 @@ export const TailwindOrWindiFilterMap = {
     "text-overflow": ["truncate", "text-ellipsis", "text-clip"],
     "text-transform": ["uppercase", "lowercase", "normal-case", "capitalize",],
     "font-smoothing": ["antialiased", "subpixels-antialiased"],
-} satisfies FilterMap
+} satisfies FilterObject
 

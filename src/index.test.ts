@@ -134,7 +134,7 @@ describe("Test class filters work as intended", () => {
                 const classes = "absolute border-1 border-dashed border-gray-500 [font-size:2px] card card--large"
 
 
-                const sortedClasses = getClassNamesEvaluatorFilterAndSorter({ classNamesAndTypes: { position: ["absolute", "fixed", "static"] } })(classes)
+                const sortedClasses = getClassNamesEvaluatorFilterAndSorter({ filterObject: { position: ["absolute", "fixed", "static"] } })(classes)
 
                 expect(sortedClasses).toBe("card card--large [font-size:2px] border-1 border-dashed border-gray-500 absolute")
 
