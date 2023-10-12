@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Made the names shorter for class name evaluators and sorters to align with library theme.
+
+### Removed
+
+- file for filter objects
+
 ## [1.0.0] - 2023-09-27
 
 Initial release.
