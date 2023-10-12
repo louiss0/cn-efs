@@ -1,5 +1,5 @@
-import type { FilterMap } from "./classFilterMaps"
 
+type FilterObject = Record<Lowercase<string>, Array<Lowercase<string>>>;
 
 const cssVariableWithOptionalPrefixedHintRE =
     /^(?<variable_hint>[a-z]+:)?(?<variable_value>--_?[a-z0-9]+(?:(?:-|_)[a-z0-9]+)*)$/
@@ -640,7 +640,7 @@ type PropsNeededFromSortedClasses = {
 }
 
 export const attemptToChangeClassMapBasedOnIfItIsAVariantGroup =
-    ({ arbitraryProperties, customFiltered, utility }: PropsNeededFromSortedClasses, className: string, filterMap?: FilterMap): boolean => {
+    ({ arbitraryProperties, customFiltered, utility }: PropsNeededFromSortedClasses, className: string, filterObject?: FilterObject): boolean => {
 
 
 
@@ -651,9 +651,6 @@ export const attemptToChangeClassMapBasedOnIfItIsAVariantGroup =
 
 
         if (!variantGroupMatch) return classMapHasChanged
-
-
-
 
         const [, variant, classNames] = variantGroupMatch
 
@@ -692,9 +689,9 @@ export const attemptToChangeClassMapBasedOnIfItIsAVariantGroup =
                     classMapHasChanged = true
                     return
                 }
-                if (filterMap) {
+                if (filterObject) {
 
-                    const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectResult = attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(customFiltered, className, filterMap)
+                    const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectResult = attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(customFiltered, className, filterObject)
 
                     if (attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectResult) {
 

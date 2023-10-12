@@ -20,9 +20,9 @@ To use this library you need to think about what framework you are using.
 - Tailwind or Windi CSS
 
 ```js
-import {tailwindOrWindiCSSEvaluatorSorterAndFilter} from "@code-fixer-23/cn-efs"
+import {tailwindOrWindiClassNamesEFS} from "@code-fixer-23/cn-efs"
 
-tailwindOrWindiCSSEvaluatorSorterAndFilter("bg-gray-500 bg-gray-700")
+tailwindOrWindiClassNamesEFS("bg-gray-500 bg-gray-700")
 
 ```
 
@@ -31,7 +31,7 @@ tailwindOrWindiCSSEvaluatorSorterAndFilter("bg-gray-500 bg-gray-700")
 ```js
 import {classNamesEvaluatorFilterAndSorter} from "@code-fixer-23/cn-efs"
 
-tailwindOrWindiCSSEvaluatorSorterAndFilter("card card--md card--lg") 
+tailwindOrWindiClassNamesEFS("card card--md card--lg") 
 ```
 
 ## Guide

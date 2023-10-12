@@ -1,6 +1,5 @@
 
 import clsx from "clsx"
-import { TailwindOrWindiFilterObject } from "./classFilterObjects"
 import {
     SortedClasses,
     attemptToChangeClassNameMapAccordingToIfTheBEMConvention,
@@ -12,11 +11,7 @@ import {
 } from "./classMapChangers"
 
 
-
-
-
 type ClassNamesSorterAndFilter = typeof classNamesSorterAndFilter
-
 
 
 function getSortClassesBasedOnClassType(
@@ -291,8 +286,10 @@ const classNamesSorterAndFilter = (
 
 
 
-
-    function getCreateUtilityClassesBasedOnIfTheValueHasAPrefix(valueIsPrefixedWithAnExclamationMarkOrDashRE: RegExp, valueIsAUtilityClassVariantAndTypeRE: RegExp, utility: string) {
+    function getCreateUtilityClassesBasedOnIfTheValueHasAPrefix(
+        valueIsPrefixedWithAnExclamationMarkOrDashRE: RegExp,
+        valueIsAUtilityClassVariantAndTypeRE: RegExp,
+        utility: string) {
         return (classValue: string) => {
 
 
@@ -351,24 +348,85 @@ const classNamesSorterAndFilter = (
 }
 
 
-type GetClassNamesEvaluatorSorterAndFilterOptions = {
+type GetClassNamesEvaluatorFilterAndSorterOptions = {
     filterObject?: Parameters<ClassNamesSorterAndFilter>[1]
     safelist?: Parameters<ClassNamesSorterAndFilter>[2]
 }
 
 export const getClassNamesEvaluatorFilterAndSorter =
-    (options?: GetClassNamesEvaluatorSorterAndFilterOptions) =>
+    (options?: GetClassNamesEvaluatorFilterAndSorterOptions) =>
         (...args: Parameters<typeof clsx>) =>
             classNamesSorterAndFilter(clsx(...args), options?.filterObject, options?.safelist)
 
-export const classNamesEvaluatorFilterAndSorter = getClassNamesEvaluatorFilterAndSorter();
+export const classNamesEFS = getClassNamesEvaluatorFilterAndSorter();
 
 
 const tailwindOrWindiSafeList = ["group", "peer", "@container", "content", "appearance-none"]
 
-export const tailwindOrWindiCSSEvaluatorSorterAndFilter =
-    (...args: Parameters<typeof clsx>) =>
-        getClassNamesEvaluatorFilterAndSorter({ filterObject: TailwindOrWindiFilterObject, safelist: tailwindOrWindiSafeList })(...args)
+type FilterObject = Record<Lowercase<string>, Array<Lowercase<string>>>;
+
+const TailwindOrWindiFilterObject = {
+    grayscale: ["grayscale-0", "grayscale"],
+    invert: ["invert-0", "invert"],
+    display: [
+        "flex",
+        "inline-flex",
+        "grid",
+        "inline-grid",
+        "block",
+        "inline",
+        "inline-block",
+        "hidden",
+        "table",
+        "inline-table",
+        "table-caption",
+        "table-cell",
+        "table-column",
+        "table-column-group",
+        "table-footer-group",
+        "table-header-group",
+        "table-row-group",
+        "table-row",
+        "flow-root",
+        "contents",
+        "list-item",
+    ],
+    position: ["absolute", "fixed", "static", "relative", "sticky"],
+    sepia: ["sepia-0", "sepia"],
+    italic: ["italic", "not-italic"],
+    transition: [
+        "transition",
+        "transition-all",
+        "transition-colors",
+        "transition-opacity",
+        "transition-shadow",
+        "transition-transform",
+    ],
+    visibility: ["visible", "invisible", "collapse"],
+    "screen-reader": ["sr-only", "not-sr-only",],
+    "font-variant": [
+        "normal-nums",
+        "ordinal",
+        "slashed-zero",
+        "lining-nums",
+        "oldstyle-nums",
+        "proportional-nums",
+        "tabular-nums",
+        "diagonal-fractions",
+        "stacked-fractions",
+    ],
+
+    "border-collapse": ["border-collapse", "border-separate"],
+    "backdrop-grayscale": ["backdrop-grayscale", "backdrop-grayscale-0"],
+    "backdrop-invert": ["backdrop-invert", "backdrop-invert-0"],
+    "backdrop-sepia": ["backdrop-sepia", "backdrop-sepia-0"],
+    "text-overflow": ["truncate", "text-ellipsis", "text-clip"],
+    "text-transform": ["uppercase", "lowercase", "normal-case", "capitalize",],
+    "font-smoothing": ["antialiased", "subpixels-antialiased"],
+} satisfies FilterObject
+
+export const tailwindOrWindiClassNamesEFS = (...args: Parameters<typeof clsx>) =>
+    getClassNamesEvaluatorFilterAndSorter({ filterObject: TailwindOrWindiFilterObject, safelist: tailwindOrWindiSafeList })(...args)
 
 
 
