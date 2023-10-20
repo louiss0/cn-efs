@@ -583,6 +583,35 @@ describe("Test if all class map changers work", () => {
             })
 
 
+            it<TestContext>("Works with arbitrary pseudo class variants", ({ utility, }) => {
+
+
+                attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, "[&:nth-child(3)]:opacity-50")
+
+
+                expect(utility.has("[&:nth-child(3)]:opacity-")).toBeTruthy()
+
+                expect(utility.get("[&:nth-child(3)]:opacity-")?.has("digit")).toBeTruthy()
+
+
+
+            })
+
+
+            it<TestContext>("Works with is or where selectors", ({ utility, }) => {
+
+
+                attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, "[&:is(:hover,:focus)]:opacity-50")
+
+
+                expect(utility.has("[&:is(:hover,:focus)]:opacity-")).toBeTruthy()
+
+                expect(utility.get("[&:is(:hover,:focus)]:opacity-")?.has("digit")).toBeTruthy()
+
+
+
+            })
+
 
         })
 
@@ -1122,6 +1151,44 @@ describe("Testing attemptToChangeClassMapBasedOnIfItIsAVariantGroup", () => {
             expect(context.utility.has("hover:focus:bg-")).toBeTruthy()
 
             expect(context.utility.has("hover:peer-checked/main:text-")).toBeTruthy()
+
+        })
+
+
+        it<TestContext>("Works with arbitrary pseudo class variants", (context) => {
+
+
+            attemptToChangeClassMapBasedOnIfItIsAVariantGroup(context, "[&:nth-child(3)]:(opacity-50 border-gray-500)")
+
+
+            expect(context.utility.has("[&:nth-child(3)]:opacity-")).toBeTruthy()
+
+            expect(context.utility.get("[&:nth-child(3)]:opacity-")?.has("digit")).toBeTruthy()
+            
+            expect(context.utility.has("[&:nth-child(3)]:border-")).toBeTruthy()
+
+            expect(context.utility.get("[&:nth-child(3)]:border-")?.has("color")).toBeTruthy()
+
+
+
+        })
+
+
+        it<TestContext>("Works with is or where selectors", (context) => {
+
+
+            attemptToChangeClassMapBasedOnIfItIsAVariantGroup(context, "[&:is(:hover,:focus)]:(opacity-50 bg-gray-900)")
+
+
+            expect(context.utility.has("[&:is(:hover,:focus)]:opacity-")).toBeTruthy()
+
+            expect(context.utility.get("[&:is(:hover,:focus)]:opacity-")?.has("digit")).toBeTruthy()
+           
+            expect(context.utility.has("[&:is(:hover,:focus)]:bg-")).toBeTruthy()
+
+            expect(context.utility.get("[&:is(:hover,:focus)]:bg-")?.has("color")).toBeTruthy()
+
+
 
         })
 
