@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.1.1] - 2023-10-20
+
 ### Fixed
 
 - classes with underscores and commas were filtered out. 
