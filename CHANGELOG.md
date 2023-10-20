@@ -2,9 +2,13 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- classes with underscores and commas were filtered out. 
+
 ## [1.1.0] - 2023-10-12
 
-### Changed
+### Changedga
 
 - Made the names shorter for class name evaluators and sorters to align with library theme.
 
