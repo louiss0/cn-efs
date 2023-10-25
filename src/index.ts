@@ -3,7 +3,7 @@ import clsx from "clsx"
 import {
     SortedClasses,
     attemptToChangeClassNameMapAccordingToIfTheBEMConvention,
-    attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue,
+    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue,
     attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject,
     attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty,
     attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass,
@@ -69,7 +69,7 @@ function getSortClassesBasedOnClassType(
 
 
 
-        if (attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(carry.utility, value))
+        if (attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(carry.tailwindCSSUtility, value))
             return carry
 
 
@@ -81,11 +81,11 @@ function getSortClassesBasedOnClassType(
             return carry
 
 
-        if (attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(carry.utility, value))
+        if (attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(carry.tailwindCSSUtility, value))
             return carry
 
 
-        const { customFiltered, utility, arbitraryProperties } = carry
+        const { customFiltered, tailwindCSSUtility: utility, arbitraryProperties } = carry
 
         attemptToChangeClassMapBasedOnIfItIsAVariantGroup(
             {
@@ -204,7 +204,7 @@ const classNamesSorterAndFilter = (
 
     }
 
-    if (classNameMap.utility.size !== 0) {
+    if (classNameMap.tailwindCSSUtility.size !== 0) {
 
 
         const valueIsPrefixedWithAnExclamationMarkOrDashRE = /^(?<prefix>(-|!))(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d]+)$/
@@ -212,7 +212,7 @@ const classNamesSorterAndFilter = (
         const valueIsAUtilityClassVariantAndTypeRE = /^(?<variant>[a-z0-9\][#\.&:\-\)"=(\/]+:)?(?<type>[a-z\-]+-)$/
 
 
-        for (const [utility, utilityValueMap] of classNameMap.utility) {
+        for (const [utility, utilityValueMap] of classNameMap.tailwindCSSUtility) {
 
 
             if (!utilityValueMap) continue;

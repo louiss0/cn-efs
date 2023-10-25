@@ -1,7 +1,7 @@
 import {
     viableUtilityClassMapKeys,
     type ViableUtilityClassMapKeys,
-    attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue,
+    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue,
     attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject,
     attemptToChangeClassNameMapAccordingToIfTheBEMConvention,
     attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty,
@@ -39,10 +39,10 @@ describe("Test if all class map changers work", () => {
     describe("Test attemptToChangeUtilityClassBasedOnTheTypeAndValue()", () => {
 
 
-        it<TestContext>("doesn't change the map if there is a single word class", ({ utility }) => {
+        it<TestContext>("doesn't change the map if there is a single word class", ({ tailwindCSSUtility: utility }) => {
 
 
-            attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, "outline-")
+            attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "outline-")
 
 
 
@@ -62,10 +62,10 @@ describe("Test if all class map changers work", () => {
             () => {
 
 
-                it<TestContext>("changes the map when a class with a digit is passed in", ({ utility }) => {
+                it<TestContext>("changes the map when a class with a digit is passed in", ({ tailwindCSSUtility: utility }) => {
 
 
-                    attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, "outline-0")
+                    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "outline-0")
 
 
                     expect(utility).toHaveLength(1)
@@ -78,10 +78,10 @@ describe("Test if all class map changers work", () => {
 
                 it<TestContext>(
                     `${insertMessagePrefix} called digit with it as the value when the value is a number.`,
-                    ({ utility }) => {
+                    ({ tailwindCSSUtility: utility }) => {
 
 
-                        attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, "outline-0")
+                        attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "outline-0")
 
 
 
@@ -134,7 +134,7 @@ describe("Test if all class map changers work", () => {
                             ({ className, expected: { key, value } }) => {
 
 
-                                attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(classMap, className)
+                                attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(classMap, className)
 
 
                                 expect(classMap.has(key)).toBeTruthy()
@@ -181,10 +181,10 @@ describe("Test if all class map changers work", () => {
 
             it<TestContext>(
                 `${insertMessagePrefix} called word with it as the value when the value is a word.`,
-                ({ utility }) => {
+                ({ tailwindCSSUtility: utility }) => {
 
 
-                    attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, "outline-solid")
+                    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "outline-solid")
 
 
                     expect(utility.has("outline-")).toBeTruthy()
@@ -205,10 +205,10 @@ describe("Test if all class map changers work", () => {
 
             it<TestContext>(
                 `${insertMessagePrefix} called args with it as the value when multiple args are passed.`,
-                ({ utility }) => {
+                ({ tailwindCSSUtility: utility }) => {
 
 
-                    attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, "grid-cols-[2fr_auto]")
+                    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "grid-cols-[2fr_auto]")
 
 
 
@@ -270,7 +270,7 @@ describe("Test if all class map changers work", () => {
                     ({ className, expected: { key, value } }) => {
 
 
-                        attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(classMap, className)
+                        attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(classMap, className)
 
 
 
@@ -303,10 +303,10 @@ describe("Test if all class map changers work", () => {
 
             it<TestContext>(
                 `${insertMessagePrefix} called color with it as the value when the value is a color-range.`,
-                ({ utility }) => {
+                ({ tailwindCSSUtility: utility }) => {
 
 
-                    attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, "outline-gray-500")
+                    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "outline-gray-500")
 
 
 
@@ -362,7 +362,7 @@ describe("Test if all class map changers work", () => {
                     createTestMessageForTestingIfAClassNameChangesTheMapWithAnExpectedKeyAndAValueTHatIsAMapWithAnExpectedKeyAndValue("color"),
                     ({ className, expected: { key, value } }) => {
 
-                        attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(classMap, className)
+                        attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(classMap, className)
 
 
                         expect(classMap.has(key)).toBeTruthy()
@@ -426,7 +426,7 @@ describe("Test if all class map changers work", () => {
                 ({ className, expected: { key, value } }) => {
 
 
-                    attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(classMap, className)
+                    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(classMap, className)
 
 
                     expect(classMap.has(key)).toBeTruthy()
@@ -453,7 +453,7 @@ describe("Test if all class map changers work", () => {
         describe("It works well with variables", () => {
 
 
-            it<TestContext>("puts the value in map with a key called variable when key is not specified", ({ utility }) => {
+            it<TestContext>("puts the value in map with a key called variable when key is not specified", ({ tailwindCSSUtility: utility }) => {
 
                 const classNameAndExpectedKeyAndValue = {
                     className: "bg-[--primary-color]",
@@ -463,7 +463,7 @@ describe("Test if all class map changers work", () => {
                     }
                 }
 
-                attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, classNameAndExpectedKeyAndValue.className)
+                attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, classNameAndExpectedKeyAndValue.className)
 
                 expect(utility.has(classNameAndExpectedKeyAndValue.expected.key)).toBeTruthy()
 
@@ -474,7 +474,7 @@ describe("Test if all class map changers work", () => {
             })
 
 
-            it<TestContext>("puts the value in a map with a key called color when a variable is hinted with color:", ({ utility }) => {
+            it<TestContext>("puts the value in a map with a key called color when a variable is hinted with color:", ({ tailwindCSSUtility: utility }) => {
 
                 const classNameAndExpectedKeyAndValue = {
                     className: "border-[color:--gray-9]",
@@ -483,7 +483,7 @@ describe("Test if all class map changers work", () => {
                         value: "[color:--gray-9]"
                     }
                 }
-                attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, classNameAndExpectedKeyAndValue.className)
+                attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, classNameAndExpectedKeyAndValue.className)
 
                 expect(utility.has(classNameAndExpectedKeyAndValue.expected.key)).toBeTruthy()
 
@@ -492,7 +492,7 @@ describe("Test if all class map changers work", () => {
 
             })
 
-            it<TestContext>("puts the value in a map with a key called digit when a variable is hinted with length:", ({ utility }) => {
+            it<TestContext>("puts the value in a map with a key called digit when a variable is hinted with length:", ({ tailwindCSSUtility: utility }) => {
 
                 const classNameAndExpectedKeyAndValue = {
                     className: "font-size-[length:--step-2]",
@@ -502,7 +502,7 @@ describe("Test if all class map changers work", () => {
                     }
                 }
 
-                attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, classNameAndExpectedKeyAndValue.className)
+                attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, classNameAndExpectedKeyAndValue.className)
 
                 expect(utility.has(classNameAndExpectedKeyAndValue.expected.key)).toBeTruthy()
 
@@ -511,7 +511,7 @@ describe("Test if all class map changers work", () => {
             })
 
 
-            it<TestContext>("puts the value in a map with a key called word when a variable is hinted with string:", ({ utility }) => {
+            it<TestContext>("puts the value in a map with a key called word when a variable is hinted with string:", ({ tailwindCSSUtility: utility }) => {
 
                 const classNameAndExpectedKeyAndValue = {
                     className: "outline-[string:--line-type]",
@@ -521,7 +521,7 @@ describe("Test if all class map changers work", () => {
                     }
                 }
 
-                attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, classNameAndExpectedKeyAndValue.className)
+                attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, classNameAndExpectedKeyAndValue.className)
 
                 expect(utility.has(classNameAndExpectedKeyAndValue.expected.key)).toBeTruthy()
 
@@ -537,9 +537,9 @@ describe("Test if all class map changers work", () => {
 
             it<TestContext>(
                 "The - prefix is inserted as a prefix to the value when a - is put in a utility class",
-                ({ utility }) => {
+                ({ tailwindCSSUtility: utility }) => {
 
-                    attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, "-z-index-1")
+                    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "-z-index-1")
 
 
                     expect(utility.get("z-index-")?.get("digit")).toBeTruthy()
@@ -553,10 +553,10 @@ describe("Test if all class map changers work", () => {
 
         describe("It works with relational variants", () => {
 
-            it<TestContext>("Works with relational variants that use the / syntax", ({ utility }) => {
+            it<TestContext>("Works with relational variants that use the / syntax", ({ tailwindCSSUtility: utility }) => {
 
 
-                attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, "peer-checked/draft:text-sky-500")
+                attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "peer-checked/draft:text-sky-500")
 
 
                 expect(utility.has("peer-checked/draft:text-")).toBeTruthy()
@@ -568,10 +568,10 @@ describe("Test if all class map changers work", () => {
             })
 
 
-            it<TestContext>("Works with arbitrary relational variants", ({ utility, }) => {
+            it<TestContext>("Works with arbitrary relational variants", ({ tailwindCSSUtility: utility, }) => {
 
 
-                attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, "group-[.is-published]:opacity-50")
+                attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "group-[.is-published]:opacity-50")
 
 
                 expect(utility.has("group-[.is-published]:opacity-")).toBeTruthy()
@@ -583,10 +583,10 @@ describe("Test if all class map changers work", () => {
             })
 
 
-            it<TestContext>("Works with arbitrary pseudo class variants", ({ utility, }) => {
+            it<TestContext>("Works with arbitrary pseudo class variants", ({ tailwindCSSUtility: utility, }) => {
 
 
-                attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, "[&:nth-child(3)]:opacity-50")
+                attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "[&:nth-child(3)]:opacity-50")
 
 
                 expect(utility.has("[&:nth-child(3)]:opacity-")).toBeTruthy()
@@ -598,10 +598,10 @@ describe("Test if all class map changers work", () => {
             })
 
 
-            it<TestContext>("Works with is or where selectors", ({ utility, }) => {
+            it<TestContext>("Works with is or where selectors", ({ tailwindCSSUtility: utility, }) => {
 
 
-                attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue(utility, "[&:is(:hover,:focus)]:opacity-50")
+                attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "[&:is(:hover,:focus)]:opacity-50")
 
 
                 expect(utility.has("[&:is(:hover,:focus)]:opacity-")).toBeTruthy()
@@ -1041,7 +1041,7 @@ describe("Testing attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass", 
 
 
 
-    it<TestContext>("works with container queries", ({ utility }) => {
+    it<TestContext>("works with container queries", ({ tailwindCSSUtility: utility }) => {
 
 
         attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(utility, "@container/main")
@@ -1058,7 +1058,7 @@ describe("Testing attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass", 
 
 
 
-    it<TestContext>("works with named groups", ({ utility }) => {
+    it<TestContext>("works with named groups", ({ tailwindCSSUtility: utility }) => {
 
         attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(utility, "group/main")
 
@@ -1090,9 +1090,9 @@ describe("Testing attemptToChangeClassMapBasedOnIfItIsAVariantGroup", () => {
                 "hover:(bg-red-500 text-gray-500)"
             )
 
-            expect(context.utility.has("hover:bg-")).toBeTruthy()
+            expect(context.tailwindCSSUtility.has("hover:bg-")).toBeTruthy()
 
-            expect(context.utility.has("hover:text-")).toBeTruthy()
+            expect(context.tailwindCSSUtility.has("hover:text-")).toBeTruthy()
 
         })
 
@@ -1105,13 +1105,13 @@ describe("Testing attemptToChangeClassMapBasedOnIfItIsAVariantGroup", () => {
             attemptToChangeClassMapBasedOnIfItIsAVariantGroup(context, "peer-checked/draft:(text-sky-500 bg-gray-500)")
 
 
-            expect(context.utility.has("peer-checked/draft:text-")).toBeTruthy()
+            expect(context.tailwindCSSUtility.has("peer-checked/draft:text-")).toBeTruthy()
 
-            expect(context.utility.get("peer-checked/draft:text-")?.has("color")).toBeTruthy()
+            expect(context.tailwindCSSUtility.get("peer-checked/draft:text-")?.has("color")).toBeTruthy()
 
-            expect(context.utility.has("peer-checked/draft:bg-")).toBeTruthy()
+            expect(context.tailwindCSSUtility.has("peer-checked/draft:bg-")).toBeTruthy()
 
-            expect(context.utility.get("peer-checked/draft:bg-")?.has("color")).toBeTruthy()
+            expect(context.tailwindCSSUtility.get("peer-checked/draft:bg-")?.has("color")).toBeTruthy()
 
 
 
@@ -1126,13 +1126,13 @@ describe("Testing attemptToChangeClassMapBasedOnIfItIsAVariantGroup", () => {
             attemptToChangeClassMapBasedOnIfItIsAVariantGroup(context, "group-[.is-published]:(opacity-50 text-sky-900)")
 
 
-            expect(context.utility.has("group-[.is-published]:opacity-")).toBeTruthy()
+            expect(context.tailwindCSSUtility.has("group-[.is-published]:opacity-")).toBeTruthy()
 
-            expect(context.utility.get("group-[.is-published]:opacity-")?.has("digit")).toBeTruthy()
+            expect(context.tailwindCSSUtility.get("group-[.is-published]:opacity-")?.has("digit")).toBeTruthy()
 
-            expect(context.utility.has("group-[.is-published]:text-")).toBeTruthy()
+            expect(context.tailwindCSSUtility.has("group-[.is-published]:text-")).toBeTruthy()
 
-            expect(context.utility.get("group-[.is-published]:text-")?.has("color")).toBeTruthy()
+            expect(context.tailwindCSSUtility.get("group-[.is-published]:text-")?.has("color")).toBeTruthy()
 
 
 
@@ -1148,49 +1148,49 @@ describe("Testing attemptToChangeClassMapBasedOnIfItIsAVariantGroup", () => {
                 "hover:(focus:bg-500 peer-checked/main:text-gray-500)"
             )
 
-            expect(context.utility.has("hover:focus:bg-")).toBeTruthy()
+            expect(context.tailwindCSSUtility.has("hover:focus:bg-")).toBeTruthy()
 
-            expect(context.utility.has("hover:peer-checked/main:text-")).toBeTruthy()
-
-        })
-
-
-        it<TestContext>("Works with arbitrary pseudo class variants", (context) => {
-
-
-            attemptToChangeClassMapBasedOnIfItIsAVariantGroup(context, "[&:nth-child(3)]:(opacity-50 border-gray-500)")
-
-
-            expect(context.utility.has("[&:nth-child(3)]:opacity-")).toBeTruthy()
-
-            expect(context.utility.get("[&:nth-child(3)]:opacity-")?.has("digit")).toBeTruthy()
-            
-            expect(context.utility.has("[&:nth-child(3)]:border-")).toBeTruthy()
-
-            expect(context.utility.get("[&:nth-child(3)]:border-")?.has("color")).toBeTruthy()
-
-
+            expect(context.tailwindCSSUtility.has("hover:peer-checked/main:text-")).toBeTruthy()
 
         })
 
 
-        it<TestContext>("Works with is or where selectors", (context) => {
+    it<TestContext>("Works with arbitrary pseudo class variants", (context) => {
 
 
-            attemptToChangeClassMapBasedOnIfItIsAVariantGroup(context, "[&:is(:hover,:focus)]:(opacity-50 bg-gray-900)")
+        attemptToChangeClassMapBasedOnIfItIsAVariantGroup(context, "[&:nth-child(3)]:(opacity-50 border-gray-500)")
 
 
-            expect(context.utility.has("[&:is(:hover,:focus)]:opacity-")).toBeTruthy()
+        expect(context.tailwindCSSUtility.has("[&:nth-child(3)]:opacity-")).toBeTruthy()
 
-            expect(context.utility.get("[&:is(:hover,:focus)]:opacity-")?.has("digit")).toBeTruthy()
-           
-            expect(context.utility.has("[&:is(:hover,:focus)]:bg-")).toBeTruthy()
+        expect(context.tailwindCSSUtility.get("[&:nth-child(3)]:opacity-")?.has("digit")).toBeTruthy()
 
-            expect(context.utility.get("[&:is(:hover,:focus)]:bg-")?.has("color")).toBeTruthy()
+        expect(context.tailwindCSSUtility.has("[&:nth-child(3)]:border-")).toBeTruthy()
+
+        expect(context.tailwindCSSUtility.get("[&:nth-child(3)]:border-")?.has("color")).toBeTruthy()
 
 
 
-        })
+    })
+
+
+    it<TestContext>("Works with is or where selectors", (context) => {
+
+
+        attemptToChangeClassMapBasedOnIfItIsAVariantGroup(context, "[&:is(:hover,:focus)]:(opacity-50 bg-gray-900)")
+
+
+        expect(context.tailwindCSSUtility.has("[&:is(:hover,:focus)]:opacity-")).toBeTruthy()
+
+        expect(context.tailwindCSSUtility.get("[&:is(:hover,:focus)]:opacity-")?.has("digit")).toBeTruthy()
+
+        expect(context.tailwindCSSUtility.has("[&:is(:hover,:focus)]:bg-")).toBeTruthy()
+
+        expect(context.tailwindCSSUtility.get("[&:is(:hover,:focus)]:bg-")?.has("color")).toBeTruthy()
+
+
+
+    })
 
 
 
