@@ -23,7 +23,7 @@ const tailwindCSSTypeAndValueUtilityClassRE =
     /^(?<variant>[a-z0-9\][#\.&:\-\)",_=(\/]+:)?(?<prefix>!|-)?(?<type>[a-z]+-)(?<subtype>(?:[a-z]+-)*)?(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d]+)$/
 
 const bootstrapCSSTypeAndValueUtilityClassRE =
-    /^?(?<type>[a-z]+-)(?<subtype>(?:[a-z]+-)*)?(?<breakpoint>[a-z]+-)(?<value>[a-z0-9]+)(?<state>-[a-z]+)$/
+    /^(?<type>[a-z]+-)(?<subtype>(?:[a-z]+-)*)?(?<breakpoint>[a-z]+-)(?<value>[a-z0-9]+)(?<state>-[a-z]+)$/
 
 
 const properCSSDigitRE = /^(?<digit>\d{1,4}(?:[a-z]{2,4})?)$/
@@ -85,13 +85,14 @@ type StringOrOmitFromString<T extends string> = T | Omit<string, T>
 
 export class SortedClasses {
 
+
     public readonly bem = new Map<string, Map<ViableBemClassMapKeys, string | undefined> | undefined>();
 
     public readonly arbitraryProperties = new Map<string, Map<StringOrOmitFromString<"base">, string | undefined> | undefined>();
 
     public readonly tailwindCSSUtility = new Map<string, Map<ViableUtilityClassMapKeys, string | undefined> | undefined>();
 
-    public readonly bootstrapCSSUtility = new Map<string, Map<Extract<ViableUtilityClassMapKeys, "word" | "digit" | "color">, string | undefined> | undefined>();
+    public readonly bootstrapCSSUtility = new Map<string, Map<Extract<ViableUtilityClassMapKeys, "word" | "digit">, Map<string, string> | undefined> | undefined>();
 
     public readonly customFiltered = new Map<string, Map<StringOrOmitFromString<"base">, string | undefined> | undefined>();
 
@@ -104,13 +105,13 @@ export class SortedClasses {
 
 
 
-type ClassMapChangerBasedOnClassName<T extends Map<string, Map<string | Omit<string, string>, string | undefined> | undefined>, U = undefined>
+type ClassMapChangerBasedOnClassName<T extends Map<string, Map<string | Omit<string, string>, string | Map<string, string> | undefined> | undefined>, U = undefined>
     = U extends undefined ? (classMap: T, className: string,) => boolean : (classMap: T, className: string, data: U) => boolean
 
 
-// TODO: Think about how the state is supposed to be fetched and changed based on value.
 
 export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue: ClassMapChangerBasedOnClassName<SortedClasses["bootstrapCSSUtility"]> = (classMap, className) => {
+
 
     const cssTypeValueUtilityClassMatchGroups = bootstrapCSSTypeAndValueUtilityClassRE.exec(className)?.groups
 
@@ -121,16 +122,16 @@ export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndVal
 
 
 
-    const { type, value, breakpoint = "", state = "", subtype = "", } = cssTypeValueUtilityClassMatchGroups
+    const { type, value, breakpoint = "", state = "base", subtype = "", } = cssTypeValueUtilityClassMatchGroups
 
 
     if (!type || !value) return false
 
 
 
-    const classBreakpointAndType = `${type}${breakpoint}`
+    const classTypeAndBreakpoint = `${type}${breakpoint}`
 
-    const classBreakpointTypeAndSubtype = `${type}${subtype}${breakpoint}`
+    const classTypeSubtypeAndBreakpoint = `${type}${subtype}${breakpoint}`
 
     const valueAndState = `${value}${state}`
 
@@ -140,44 +141,8 @@ export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndVal
 
     const valueIsAViableWord = checkIfStringIsALowerCaseWord(value)
 
-    const valueIsAViableColor = isAColorRange(`${subtype}${value}`)
-
-
-
-    const colorRangeGroups = colorRangeRE.exec(valueAndState)?.groups
-
 
     const dashedLowerCaseWordGroups = dashedLowerCaseWordRE.exec(valueAndState)?.groups
-
-
-
-    if (valueIsAViableColor) {
-
-
-        if (colorRangeGroups) {
-
-
-            const { color, range } = colorRangeGroups
-
-            if (!color || !range) return false
-
-
-
-            classMap.set(classBreakpointAndType, new Map([[viableUtilityClassMapKeys[2], `${color}${range}`]]))
-
-            return true
-
-        }
-
-
-
-        classMap.set(classBreakpointAndType, new Map([[viableUtilityClassMapKeys[2], valueAndState]]))
-
-        return true
-
-    }
-
-
 
 
 
@@ -185,7 +150,7 @@ export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndVal
 
 
 
-        classMap.set(classBreakpointTypeAndSubtype, new Map([[viableUtilityClassMapKeys[0], valueAndState]]))
+        classMap.set(classTypeSubtypeAndBreakpoint, new Map([[viableUtilityClassMapKeys[0], new Map().set(state, value)]]))
 
 
         return true
@@ -204,24 +169,36 @@ export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndVal
 
             if (first_word && last_word) {
 
-                classMap.set(
-                    classBreakpointAndType,
-                    new Map([[viableUtilityClassMapKeys[1], `${first_word}${middle_words}${last_word}`]])
-                )
+                classMap
+                    .set(
+                        classTypeAndBreakpoint,
+                        new Map([[
+                            viableUtilityClassMapKeys[1],
+                            new Map().set(state, `${first_word}${middle_words}${last_word}`)
+                        ]])
+                    )
 
                 return true
             }
 
-            classMap.get(classBreakpointAndType)?.set(
-                viableUtilityClassMapKeys[1],
-                `${first_word}${middle_words}${last_word}`
-            )
+            classMap
+                .get(classTypeAndBreakpoint)
+                ?.set(
+                    viableUtilityClassMapKeys[1],
+                    new Map().set(state, `${first_word}${middle_words}${last_word}`)
+                )
 
 
             return true
         }
 
-        classMap.set(classBreakpointTypeAndSubtype, new Map([[viableUtilityClassMapKeys[1], valueAndState]]))
+        classMap.set(
+            classTypeSubtypeAndBreakpoint,
+            new Map([[
+                viableUtilityClassMapKeys[1],
+                new Map().set(state, value)
+            ]])
+        )
 
 
 
@@ -231,45 +208,18 @@ export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndVal
 
 
 
-    const result = classMap.get(classBreakpointAndType) || classMap.get(classBreakpointTypeAndSubtype)
+    const result = classMap.get(classTypeAndBreakpoint) || classMap.get(classTypeSubtypeAndBreakpoint)
 
 
     if (result) {
 
 
 
-        if (valueIsAViableColor) {
-
-
-            if (colorRangeGroups) {
-
-
-                const { color, range } = colorRangeGroups
-
-                if (!color || !range) return false
-
-
-
-                classMap.set(classBreakpointTypeAndSubtype, new Map([[viableUtilityClassMapKeys[2], `${color}${range}${state}`]]))
-
-                return true
-
-            }
-
-
-
-            classMap.set(classBreakpointTypeAndSubtype, new Map([[viableUtilityClassMapKeys[2], valueAndState]]))
-
-            return true
-
-        }
-
-
 
 
         if (valueIsAViableDigit) {
 
-            result.set(viableUtilityClassMapKeys[0], valueAndState)
+            result.get(viableUtilityClassMapKeys[0])?.set(state, value)
 
             return true
         }
@@ -277,7 +227,7 @@ export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndVal
 
         if (valueIsAViableWord) {
 
-            result.set(viableUtilityClassMapKeys[1], valueAndState)
+            result.get(viableUtilityClassMapKeys[1])?.set(state, value)
 
 
 
@@ -833,13 +783,13 @@ const variantGroupRE =
     /(?<variant>[a-z0-9\]\[&\-\.#@+),\_\/(:]+:)\((?<class_names>(?:[\w\-\]\[$.#),(%:\/]+)(?:\s[\w\-\]\[$.#)\/,(%:]+)+)\)/
 
 type PropsNeededFromSortedClasses = {
-    utility: SortedClasses["tailwindCSSUtility"]
+    tailwindCSSUtility: SortedClasses["tailwindCSSUtility"]
     customFiltered: SortedClasses["customFiltered"]
     arbitraryProperties: SortedClasses["arbitraryProperties"]
 }
 
 export const attemptToChangeClassMapBasedOnIfItIsAVariantGroup =
-    ({ arbitraryProperties, customFiltered, utility }: PropsNeededFromSortedClasses, className: string, filterObject?: FilterObject): boolean => {
+    ({ arbitraryProperties, customFiltered, tailwindCSSUtility, }: PropsNeededFromSortedClasses, className: string, filterObject?: FilterObject): boolean => {
 
 
 
@@ -864,7 +814,7 @@ export const attemptToChangeClassMapBasedOnIfItIsAVariantGroup =
             .forEach((className) => {
 
                 const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValueResult =
-                    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, className)
+                    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, className)
 
                 if (attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValueResult) {
 
@@ -873,7 +823,7 @@ export const attemptToChangeClassMapBasedOnIfItIsAVariantGroup =
                 }
 
                 const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClassResult =
-                    attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(utility, className)
+                    attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(tailwindCSSUtility, className)
 
                 if (attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClassResult) {
 
