@@ -22,9 +22,13 @@ const variableHasAStringHint = (arbitraryValue: string) =>
 const tailwindCSSTypeAndValueUtilityClassRE =
     /^(?<variant>[a-z0-9\][#\.&:\-\)",_=(\/]+:)?(?<prefix>!|-)?(?<type>[a-z]+-)(?<subtype>(?:[a-z]+-)*)?(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d]+)$/
 
-const bootstrapCSSTypeAndValueUtilityClassRE =
-    /^(?<type>[a-z]+-)(?<subtype>(?:[a-z]+-)*)?(?<breakpoint>[a-z]+-)(?<value>[a-z0-9]+)(?<state>-[a-z]+)$/
 
+
+// const bootstrapCSSTypeAndValueUtilityClassRE =
+//     /^(?<type>[a-z]+)-(?<value>[a-z0-9]+)(?<state>-[a-z]+)?$/
+
+const bootstrapCSSTypeBreakpointAndValueUtilityClassRE =
+    /^(?<type>[a-z]+|[a-z]+-[a-z]+)(?<breakpoint>-[a-z]+)?-(?<value>[a-z0-9]+)(?<state>-[a-z]+)?$/
 
 const properCSSDigitRE = /^(?<digit>\d{1,4}(?:[a-z]{2,4})?)$/
 
@@ -113,7 +117,9 @@ type ClassMapChangerBasedOnClassName<T extends Map<string, Map<string | Omit<str
 export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue: ClassMapChangerBasedOnClassName<SortedClasses["bootstrapCSSUtility"]> = (classMap, className) => {
 
 
-    const cssTypeValueUtilityClassMatchGroups = bootstrapCSSTypeAndValueUtilityClassRE.exec(className)?.groups
+    const cssTypeValueUtilityClassMatchGroups =
+        bootstrapCSSTypeBreakpointAndValueUtilityClassRE.exec(className)?.groups
+    // || bootstrapCSSTypeAndValueUtilityClassRE.exec(className)?.groups
 
 
 
@@ -121,20 +127,13 @@ export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndVal
     if (!cssTypeValueUtilityClassMatchGroups) return false
 
 
-
-    const { type, value, breakpoint = "", state = "base", subtype = "", } = cssTypeValueUtilityClassMatchGroups
+    const { type, value, breakpoint = "", state = "base" } = cssTypeValueUtilityClassMatchGroups
 
 
     if (!type || !value) return false
 
 
-
     const classTypeAndBreakpoint = `${type}${breakpoint}`
-
-    const classTypeSubtypeAndBreakpoint = `${type}${subtype}${breakpoint}`
-
-    const valueAndState = `${value}${state}`
-
 
     const valueIsAViableDigit = checkIfStringIsAProperDigit(value)
 
@@ -142,80 +141,48 @@ export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndVal
     const valueIsAViableWord = checkIfStringIsALowerCaseWord(value)
 
 
-    const dashedLowerCaseWordGroups = dashedLowerCaseWordRE.exec(valueAndState)?.groups
 
 
 
-    if (valueIsAViableDigit) {
+    if (!classMap.has(classTypeAndBreakpoint)) {
+
+
+        if (valueIsAViableDigit) {
 
 
 
-        classMap.set(classTypeSubtypeAndBreakpoint, new Map([[viableUtilityClassMapKeys[0], new Map().set(state, value)]]))
+            classMap.set(classTypeAndBreakpoint, new Map([[viableUtilityClassMapKeys[0], new Map().set(state, value)]]))
 
 
-        return true
+            return true
 
-    }
-
-
-    if (valueIsAViableWord) {
+        }
 
 
-        if (dashedLowerCaseWordGroups) {
+        if (valueIsAViableWord) {
 
 
-            const { first_word, middle_words = "", last_word } = dashedLowerCaseWordGroups
 
-
-            if (first_word && last_word) {
-
-                classMap
-                    .set(
-                        classTypeAndBreakpoint,
-                        new Map([[
-                            viableUtilityClassMapKeys[1],
-                            new Map().set(state, `${first_word}${middle_words}${last_word}`)
-                        ]])
-                    )
-
-                return true
-            }
-
-            classMap
-                .get(classTypeAndBreakpoint)
-                ?.set(
+            classMap.set(
+                classTypeAndBreakpoint,
+                new Map([[
                     viableUtilityClassMapKeys[1],
-                    new Map().set(state, `${first_word}${middle_words}${last_word}`)
-                )
+                    new Map().set(state, value)
+                ]])
+            )
+
 
 
             return true
         }
 
-        classMap.set(
-            classTypeSubtypeAndBreakpoint,
-            new Map([[
-                viableUtilityClassMapKeys[1],
-                new Map().set(state, value)
-            ]])
-        )
 
-
-
-        return true
     }
 
-
-
-
-    const result = classMap.get(classTypeAndBreakpoint) || classMap.get(classTypeSubtypeAndBreakpoint)
+    const result = classMap.get(classTypeAndBreakpoint)
 
 
     if (result) {
-
-
-
-
 
         if (valueIsAViableDigit) {
 
@@ -234,9 +201,6 @@ export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndVal
             return true
 
         }
-
-
-
 
     }
 
