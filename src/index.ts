@@ -85,11 +85,11 @@ function getSortClassesBasedOnClassType(
             return carry
 
 
-        const { customFiltered, tailwindCSSUtility: utility, arbitraryProperties } = carry
+        const { customFiltered, tailwindCSSUtility, arbitraryProperties } = carry
 
         attemptToChangeClassMapBasedOnIfItIsAVariantGroup(
             {
-                utility,
+                tailwindCSSUtility,
                 arbitraryProperties,
                 customFiltered
             },
