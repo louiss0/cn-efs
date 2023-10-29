@@ -12,7 +12,7 @@ import {
 } from "./classMapChangers"
 
 
-type ClassNamesSorterAndFilter = typeof classNamesSorterAndFilter
+type ClassNamesSorterAndFilter = typeof classNamesFilterAndSorter
 
 
 function getSortClassesBasedOnClassType(
@@ -117,7 +117,7 @@ function isString(value: unknown): value is string {
     return typeof value === "string"
 }
 
-const classNamesSorterAndFilter = (
+const classNamesFilterAndSorter = (
     classNames: string,
     classTypesAndClassNames?: Record<Lowercase<string>, Array<Lowercase<string>>>,
     safelist?: Array<string>
@@ -410,7 +410,7 @@ type GetClassNamesEvaluatorFilterAndSorterOptions = {
 export const getClassNamesEvaluatorFilterAndSorter =
     (options?: GetClassNamesEvaluatorFilterAndSorterOptions) =>
         (...args: Parameters<typeof clsx>) =>
-            classNamesSorterAndFilter(clsx(...args), options?.filterObject, options?.safelist)
+            classNamesFilterAndSorter(clsx(...args), options?.filterObject, options?.safelist)
 
 export const classNamesEFS = getClassNamesEvaluatorFilterAndSorter();
 
@@ -479,8 +479,11 @@ const TailwindOrWindiFilterObject = {
     "font-smoothing": ["antialiased", "subpixels-antialiased"],
 } satisfies FilterObject
 
-export const tailwindOrWindiClassNamesEFS = (...args: Parameters<typeof clsx>) =>
+export const tailwindOrWindi_CN_EFS = (...args: Parameters<typeof clsx>) =>
     getClassNamesEvaluatorFilterAndSorter({ filterObject: TailwindOrWindiFilterObject, safelist: tailwindOrWindiSafeList })(...args)
 
+export const bootstrapClassNamesEFS = (params) => {
+
+};
 
 

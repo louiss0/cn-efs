@@ -20,9 +20,9 @@ To use this library you need to think about what framework you are using.
 - Tailwind or Windi CSS
 
 ```js
-import {tailwindOrWindiClassNamesEFS} from "@code-fixer-23/cn-efs"
+import {tailwindOrWindi_CN_EFS} from "@code-fixer-23/cn-efs"
 
-tailwindOrWindiClassNamesEFS("bg-gray-500 bg-gray-700")
+tailwindOrWindi_CN_EFS("bg-gray-500 bg-gray-700")
 
 ```
 
@@ -31,14 +31,28 @@ tailwindOrWindiClassNamesEFS("bg-gray-500 bg-gray-700")
 ```js
 import {classNamesEvaluatorFilterAndSorter} from "@code-fixer-23/cn-efs"
 
-tailwindOrWindiClassNamesEFS("card card--md card--lg") 
+classNamesEvaluatorFilterAndSorter("card card--md card--lg") 
 ```
+
+- Bootstrap
+
+```js
+import {classNamesEvaluatorFilterAndSorter} from "@code-fixer-23/cn-efs"
+
+classNamesEvaluatorFilterAndSorter("card card--md card--lg") 
+```
+
+**Warning If you are using Bootstrap don't add any breakpoints when configuring.**
+I tried to make this library work with out this `(?<breakpoint>-(?:sm|md|lg|xl|xxl))`
+regex but could not. I know that most people like to stick to the defaults.
+This should be a small problem **but if you want to help me please talk to the
+bootstrap people or be a part of this [discussion](https://github.com/orgs/twbs/discussions/39338)**.
 
 ## Guide
 
 This library works by first checking if all the classes passed to it are truthy by using.
 `clsx` then it will filter all the classes based on their structure.
-It does this filtering checking the structure of the class and placing it in a map based on it's structure.  
+It does this filtering checking the structure of the class and placing it in a map based on it's structure.
 It knows what to do based on what kind of class is written. Utility classes are usually written like these.
 
 ```txt
