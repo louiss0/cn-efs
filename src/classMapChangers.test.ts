@@ -258,7 +258,7 @@ describe("Test if all class map changers work", () => {
                     mapStructureExpectation("g-col-1", "g-col", "digit", "base", "1"),
                     mapStructureExpectation("g-col-md-3", "g-col-md", "digit", "base", "3"),
                     mapStructureExpectation("bg-lg-black-hover", "bg-lg", "word", "-hover", "black"),
-                    mapStructureExpectation("bg-``green``-focus", "bg", "word", "-focus", "green"),
+                    mapStructureExpectation("bg-green-focus", "bg", "word", "-focus", "green"),
                 ])(
                     `For $input expect classType to be $expected.classType
                      key in the map to be $expected.key and value to be $expected.value
