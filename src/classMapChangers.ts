@@ -23,12 +23,13 @@ const tailwindCSSTypeAndValueUtilityClassRE =
     /^(?<variant>[a-z0-9\][#\.&:\-\)",_=(\/]+:)?(?<prefix>!|-)?(?<type>[a-z]+-)(?<subtype>(?:[a-z]+-)*)?(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d]+)$/
 
 
-
-// const bootstrapCSSTypeAndValueUtilityClassRE =
-//     /^(?<type>[a-z]+)-(?<value>[a-z0-9]+)(?<state>-[a-z]+)?$/
-
 const bootstrapCSSTypeBreakpointAndValueUtilityClassRE =
-    /^(?<type>[a-z]+|[a-z]+-[a-z]+)(?<breakpoint>-[a-z]+)?-(?<value>[a-z0-9]+)(?<state>-[a-z]+)?$/
+    /^(?<type>[a-z]+|[a-z]+-[a-z]+)(?<breakpoint>-(?:sm|md|lg|xl|xxl))?-(?<value>[a-z0-9]+)(?<state>-[a-z]+)?$/
+
+const bootstrapCSSTypeBreakpointAndValueAsColorUtilityClassRE =
+    /^(?<type>[a-z]+|[a-z]+-[a-z]+)(?<breakpoint>-(?:sm|md|lg|xl|xxl))?-(?<value>(?:(?:(?:prim|second|terti)ary)|info|light|dark|danger|warning)+(?:-emphasis|-subtle)?)(?<state>-[a-z]+)?$/
+
+
 
 const properCSSDigitRE = /^(?<digit>\d{1,4}(?:[a-z]{2,4})?)$/
 
@@ -109,7 +110,8 @@ export class SortedClasses {
 
 
 
-type ClassMapChangerBasedOnClassName<T extends Map<string, Map<string | Omit<string, string>, string | Map<string, string> | undefined> | undefined>, U = undefined>
+type ClassMapChangerBasedOnClassName<T extends Map<string, Map<string | Omit<string, string>, string | Map<string, string> | undefined> | undefined>,
+    U = undefined>
     = U extends undefined ? (classMap: T, className: string,) => boolean : (classMap: T, className: string, data: U) => boolean
 
 
@@ -117,10 +119,8 @@ type ClassMapChangerBasedOnClassName<T extends Map<string, Map<string | Omit<str
 export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue: ClassMapChangerBasedOnClassName<SortedClasses["bootstrapCSSUtility"]> = (classMap, className) => {
 
 
-    const cssTypeValueUtilityClassMatchGroups =
-        bootstrapCSSTypeBreakpointAndValueUtilityClassRE.exec(className)?.groups
-    // || bootstrapCSSTypeAndValueUtilityClassRE.exec(className)?.groups
-
+    const cssTypeValueUtilityClassMatchGroups = bootstrapCSSTypeBreakpointAndValueUtilityClassRE.exec(className)?.groups
+        || bootstrapCSSTypeBreakpointAndValueAsColorUtilityClassRE.exec(className)?.groups
 
 
 
@@ -139,7 +139,6 @@ export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndVal
 
 
     const valueIsAViableWord = checkIfStringIsALowerCaseWord(value)
-
 
 
 
