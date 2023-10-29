@@ -482,8 +482,49 @@ const TailwindOrWindiFilterObject = {
 export const tailwindOrWindi_CN_EFS = (...args: Parameters<typeof clsx>) =>
     getClassNamesEvaluatorFilterAndSorter({ filterObject: TailwindOrWindiFilterObject, safelist: tailwindOrWindiSafeList })(...args)
 
-export const bootstrapClassNamesEFS = (params) => {
+const bootstrapFilterObject = {
+    visibility: ["visible", "invisible", "collapse"],
+    layout: ["d-flex", "grid"],
+    stack: ["vstack", "hstack"]
+} satisfies FilterObject
 
-};
+
+const bootstrapSafeList = [
+    "border",
+    "shadow",
+    "rounded",
+    "alert",
+    "container",
+    "row",
+    "col",
+    "table",
+    "figure",
+    "accordion",
+    "open",
+    "badge",
+    "breadcrumb",
+    "btn",
+    "card",
+    "carousel",
+    "slide",
+    "open",
+    "dropdown",
+    "list-group",
+    "modal",
+    "navbar",
+    "offcanvas",
+    "pagination",
+    "placeholder",
+    "toast",
+    "clearfix",
+    "nav",
+]
+
+export const bootstrap_CN_EFS = (...args: Parameters<typeof clsx>) =>
+    getClassNamesEvaluatorFilterAndSorter({
+        filterObject: bootstrapFilterObject,
+        safelist: bootstrapSafeList
+    })(...args)
+
 
 
