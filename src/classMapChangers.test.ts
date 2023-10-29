@@ -97,7 +97,7 @@ describe("Test if all class map changers work", () => {
                         expect(res).toBeInstanceOf(Map)
 
 
-                        const digitMap = res?.get("digit");
+                        const digitMap = res?.get("digitMap");
 
                         expect(digitMap).toBeInstanceOf(Map)
 
@@ -139,9 +139,9 @@ describe("Test if all class map changers work", () => {
 
                 const outlineClassType = bootstrapCSSUtility.get("outline")
 
-                expect(outlineClassType?.get("digit")?.has("-hover")).toBeTruthy()
+                expect(outlineClassType?.get("digitMap")?.has("-hover")).toBeTruthy()
 
-                expect(outlineClassType?.get("digit")?.get("-hover")).toBe("0")
+                expect(outlineClassType?.get("digitMap")?.get("-hover")).toBe("0")
 
 
 
@@ -161,13 +161,13 @@ describe("Test if all class map changers work", () => {
 
 
 
-                expect(outlineClassType?.get("digit")?.has("-hover")).toBeTruthy()
+                expect(outlineClassType?.get("digitMap")?.has("-hover")).toBeTruthy()
 
-                expect(outlineClassType?.get("digit")?.get("-hover")).toBe("0")
+                expect(outlineClassType?.get("digitMap")?.get("-hover")).toBe("0")
 
-                expect(outlineClassType?.get("digit")?.has("-focus")).toBeTruthy()
+                expect(outlineClassType?.get("digitMap")?.has("-focus")).toBeTruthy()
 
-                expect(outlineClassType?.get("digit")?.get("-focus")).toBe("0")
+                expect(outlineClassType?.get("digitMap")?.get("-focus")).toBe("0")
 
             })
 
@@ -185,13 +185,13 @@ describe("Test if all class map changers work", () => {
 
                 const outlineClassType = bootstrapCSSUtility.get("bg")
 
-                expect(outlineClassType?.get("word")?.has("-hover")).toBeTruthy()
+                expect(outlineClassType?.get("wordMap")?.has("-hover")).toBeTruthy()
 
-                expect(outlineClassType?.get("word")?.get("-hover")).toBe("primary")
+                expect(outlineClassType?.get("wordMap")?.get("-hover")).toBe("primary")
 
-                expect(outlineClassType?.get("word")?.has("-focus")).toBeTruthy()
+                expect(outlineClassType?.get("wordMap")?.has("-focus")).toBeTruthy()
 
-                expect(outlineClassType?.get("word")?.get("-focus")).toBe("primary")
+                expect(outlineClassType?.get("wordMap")?.get("-focus")).toBe("primary")
 
             })
 
@@ -213,9 +213,9 @@ describe("Test if all class map changers work", () => {
 
                 const stateToValueMap = bootstrapCSSUtility.get(classType)
 
-                expect(stateToValueMap?.get("word")?.has("-focus")).toBeTruthy()
+                expect(stateToValueMap?.get("wordMap")?.has("-focus")).toBeTruthy()
 
-                expect(stateToValueMap?.get("word")?.get("-focus")).toBe("primary")
+                expect(stateToValueMap?.get("wordMap")?.get("-focus")).toBe("primary")
 
 
 
@@ -233,7 +233,7 @@ describe("Test if all class map changers work", () => {
                     (
                         input: string,
                         classType: string,
-                        valueType: "word" | "digit",
+                        valueType: "wordMap" | "digitMap",
                         key: string,
                         value: string
                     ) => {
@@ -252,13 +252,13 @@ describe("Test if all class map changers work", () => {
                     }
 
                 it.each([
-                    mapStructureExpectation("bg-red", "bg", "word", "base", "red"),
-                    mapStructureExpectation("bg-md-red", "bg-md", "word", "base", "red"),
-                    mapStructureExpectation("bg-lg-blue", "bg-lg", "word", "base", "blue"),
-                    mapStructureExpectation("g-col-1", "g-col", "digit", "base", "1"),
-                    mapStructureExpectation("g-col-md-3", "g-col-md", "digit", "base", "3"),
-                    mapStructureExpectation("bg-lg-black-hover", "bg-lg", "word", "-hover", "black"),
-                    mapStructureExpectation("bg-green-focus", "bg", "word", "-focus", "green"),
+                    mapStructureExpectation("bg-red", "bg", "wordMap", "base", "red"),
+                    mapStructureExpectation("bg-md-red", "bg-md", "wordMap", "base", "red"),
+                    mapStructureExpectation("bg-lg-blue", "bg-lg", "wordMap", "base", "blue"),
+                    mapStructureExpectation("g-col-1", "g-col", "digitMap", "base", "1"),
+                    mapStructureExpectation("g-col-md-3", "g-col-md", "digitMap", "base", "3"),
+                    mapStructureExpectation("bg-lg-black-hover", "bg-lg", "wordMap", "-hover", "black"),
+                    mapStructureExpectation("bg-green-focus", "bg", "wordMap", "-focus", "green"),
                 ])(
                     `For $input expect classType to be $expected.classType
                      key in the map to be $expected.key and value to be $expected.value
