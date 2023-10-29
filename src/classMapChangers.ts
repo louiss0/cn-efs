@@ -97,7 +97,12 @@ export class SortedClasses {
 
     public readonly tailwindCSSUtility = new Map<string, Map<ViableUtilityClassMapKeys, string | undefined> | undefined>();
 
-    public readonly bootstrapCSSUtility = new Map<string, Map<Extract<ViableUtilityClassMapKeys, "word" | "digit">, Map<string, string> | undefined> | undefined>();
+    public readonly bootstrapCSSUtility = new Map<
+        string,
+        Map<`${Extract<ViableUtilityClassMapKeys, "word" | "digit">}Map`,
+            Map<string, string> | undefined
+        > | undefined
+    >();
 
     public readonly customFiltered = new Map<string, Map<StringOrOmitFromString<"base">, string | undefined> | undefined>();
 
@@ -150,7 +155,7 @@ export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndVal
 
 
 
-            classMap.set(classTypeAndBreakpoint, new Map([[viableUtilityClassMapKeys[0], new Map().set(state, value)]]))
+            classMap.set(classTypeAndBreakpoint, new Map([["digitMap", new Map().set(state, value)]]))
 
 
             return true
@@ -165,7 +170,7 @@ export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndVal
             classMap.set(
                 classTypeAndBreakpoint,
                 new Map([[
-                    viableUtilityClassMapKeys[1],
+                    "wordMap",
                     new Map().set(state, value)
                 ]])
             )
@@ -185,7 +190,7 @@ export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndVal
 
         if (valueIsAViableDigit) {
 
-            result.get(viableUtilityClassMapKeys[0])?.set(state, value)
+            result.get("digitMap")?.set(state, value)
 
             return true
         }
@@ -193,7 +198,7 @@ export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndVal
 
         if (valueIsAViableWord) {
 
-            result.get(viableUtilityClassMapKeys[1])?.set(state, value)
+            result.get("wordMap")?.set(state, value)
 
 
 
