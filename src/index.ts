@@ -8,6 +8,7 @@ import {
     attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty,
     attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass,
     attemptToChangeClassMapBasedOnIfItIsAVariantGroup,
+    attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue,
 } from "./classMapChangers"
 
 
@@ -23,7 +24,7 @@ function getSortClassesBasedOnClassType(
 
 
 
-
+        // ! It's important for safe-listed classes and classes in the class type and object to be accounted for first. 
 
         if (safelist) {
 
@@ -67,6 +68,10 @@ function getSortClassesBasedOnClassType(
 
         }
 
+        // ! Class Map changers must be here
+
+        if (attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue(carry.bootstrapCSSUtility, value))
+            return carry
 
 
         if (attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(carry.tailwindCSSUtility, value))
@@ -151,6 +156,55 @@ const classNamesSorterAndFilter = (
 
     let sortString = ""
 
+
+
+    if (classNameMap.bootstrapCSSUtility.size !== 0) {
+
+
+        for (const [classType, classValueMap] of classNameMap.bootstrapCSSUtility) {
+
+
+            if (!classValueMap) continue;
+
+
+            const [digitMap, wordMap] = [
+                classValueMap.get("digitMap"),
+                classValueMap.get("wordMap")
+            ]
+
+            if (digitMap) {
+
+                for (const [key, value] of digitMap.entries()) {
+
+                    const returnEmptyStringIfKeyIsBaseElseKey =
+                        key === "base" ? "" : key
+
+                    sortString = sortString.concat(
+                        `${classType}-${value}${returnEmptyStringIfKeyIsBaseElseKey}`
+                    )
+
+                }
+
+            }
+
+            if (wordMap) {
+
+                for (const [key, value] of wordMap.entries()) {
+
+                    const returnEmptyStringIfKeyIsBaseElseKey =
+                        key === "base" ? "" : key
+
+                    sortString = sortString.concat(
+                        `${classType}-${value}${returnEmptyStringIfKeyIsBaseElseKey}`
+                    )
+
+                }
+            }
+
+
+        }
+
+    }
 
 
     if (classNameMap.bem.size !== 0) {
