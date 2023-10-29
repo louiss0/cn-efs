@@ -68,10 +68,15 @@ function getSortClassesBasedOnClassType(
 
         }
 
-        // ! Class Map changers must be here
 
-        if (attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue(carry.bootstrapCSSUtility, value))
-            return carry
+        /* 
+        
+        ! Class Map changers must be here.
+
+        ! Remember to never put new class at the bottom of the previous ones.
+        ! The order is important there will be conflict  
+
+        */
 
 
         if (attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(carry.tailwindCSSUtility, value))
@@ -101,6 +106,10 @@ function getSortClassesBasedOnClassType(
             value,
             classTypesAndClassNames
         )
+
+
+        if (attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue(carry.bootstrapCSSUtility, value))
+            return carry
 
 
         return carry
@@ -180,7 +189,7 @@ const classNamesFilterAndSorter = (
                         key === "base" ? "" : key
 
                     sortString = sortString.concat(
-                        `${classType}-${value}${returnEmptyStringIfKeyIsBaseElseKey}`
+                        `${classType}-${value}${returnEmptyStringIfKeyIsBaseElseKey} `
                     )
 
                 }
