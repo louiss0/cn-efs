@@ -52,8 +52,11 @@ bootstrap people or be a part of this [discussion](https://github.com/orgs/twbs/
 
 This library works by first checking if all the classes passed to it are truthy by using.
 `clsx` then it will filter all the classes based on their structure.
-It does this filtering checking the structure of the class and placing it in a map based on it's structure.
-It knows what to do based on what kind of class is written. Utility classes are usually written like these.
+It does this filtering checking the structure of the class.
+Breaks it then places the pieces in a Map based on it's structure.
+After that process it will re-assemble them back together into a string.
+It knows what to do based on what kind of class is written.
+Utility classes are usually written like these.
 
 ```txt
     <!-- Digit -->
@@ -125,18 +128,22 @@ It knows what to do based on what kind of class is written. Utility classes are 
 ```
 
 It two utility classes are in the same category then the last one
-always wins. **Prefixes don't matter.**. When it comes to variants
-if two classes have the same **variant type and category** the last one will win. When it comes to variables the normally if two utility classes
-have the same variant and type the variable will be replaced with a different one. If a variable is hinted then it will replace a class
-depending on the hint.
+always wins. **Prefixes don't matter.**.
+When it comes to variants.
+If two classes have the same **variant type and category** the last one will win.
+When it comes to variables the normally if two utility classes have the same variant and type.
+The variable will be replaced with a different one.
+If a variable is hinted then it will replace a class depending on the hint.
 
 - `string:` replaces a class in the word category.
 - `color:` replaces a class in the color category.
 - `length:` replaces a class in the digit category.
 
-When it comes to BEM classes it interacts tries to replace the class depending on if it's a block or modifier class.
+When it comes to BEM classes it tries to replace the class depending on.
+If it's a block or modifier class.
 
-- **modifier** it checks if the block is there if not when two classes conflict the last one wins else an error is thrown
+- **modifier** it checks if the block is there.
+  - If not when two classes conflict the last one wins else an error is thrown
 - **element** it will just remove duplicate elements based even ones with that are different.
 
 When it comes to variant groups they will be turned into their
@@ -158,13 +165,15 @@ For classes with only one word there is no way to tell what to
 do with them at all those classes have to be put in categories so
 that the class name filter and sorter can tell what class to replace
 with what. This is where the [Filter Object](#the-filter-object) comes in.
-It's an object that allows you to define class lists and associate that with a name. When filtering the name will be used to determine if one
+It's an object that allows you to define class lists and associate that with a name.
+When filtering the name will be used to determine if one
 of the classes listed will be removed for a different one when filtering.
 
 ### The Filter Object
 
-The filter object is a object literal that is used to tell the sorter that if a class name is the same kind as
-another class; then please replace that one with the one that comes later in the series of class names.
+The filter object is a object literal that is used to tell the sorter.
+That if a class name is the same kind as another class.
+Then please replace that one with the one that comes later in the series of class names.
 The way do do this is by creating an object with lowercase keys and Array's of class names.
 The key in is used to store one of the utilities that is found one as it's values in a map.
 
@@ -190,7 +199,8 @@ This is how you use the filter map.
 ### Safe Listing
 
 A safe list is a list of classes that must be ignored.
-The `classNamesSortersAndFilters` function will throw and error if duplicates are written in the class string.
+The `classNamesSortersAndFilters` function will throw and error.
+If duplicates are written in the class string.
 The class names that are written in the class string are always going to appear first when sorted.
 
 Passing in a safe list
