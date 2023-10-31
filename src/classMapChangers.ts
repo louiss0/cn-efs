@@ -158,8 +158,10 @@ type ClassMapChangerBasedOnClassName<T extends ClassNameMap,
 export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue: ClassMapChangerBasedOnClassName<AllSortedClasses["bootstrapCSSUtility"]> = (classMap, className) => {
 
 
-    const cssTypeValueUtilityClassMatchGroups = bootstrapCSSTypeBreakpointAndValueUtilityClassRE.exec(className)?.groups
-        || bootstrapCSSTypeBreakpointAndValueAsColorUtilityClassRE.exec(className)?.groups
+    const cssTypeValueUtilityClassMatchGroups =
+        bootstrapCSSTypeBreakpointAndValueAsColorUtilityClassRE.exec(className)?.groups
+        ||
+        bootstrapCSSTypeBreakpointAndValueUtilityClassRE.exec(className)?.groups
 
 
 
@@ -177,7 +179,7 @@ export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndVal
     const valueIsAViableDigit = checkIfStringIsAProperDigit(value)
 
 
-    const valueIsAViableWord = checkIfStringIsALowerCaseWord(value)
+    const valueIsAViableWord = /[a-z\-_]+/.test(value)
 
 
 
