@@ -86,42 +86,76 @@ type ViableBemClassMapKeys = typeof viableBEMClassMapKeys[number]
 type StringOrOmitFromString<T extends string> = T | Omit<string, T>
 
 
+type SortedClassObjectWithoutCustomFilteredOrSafeList<T extends string> =
+    T extends "customFiltered" | "safeListed" ? never :
+    Record<T, ClassNameMap>;
+
+export const createSortedClassObject = <T extends string, U extends SortedClassObjectWithoutCustomFilteredOrSafeList<T> | undefined = undefined>(
+    sortedClassObject?: U
+) => {
 
 
-export class SortedClasses {
 
-
-    public readonly bem = new Map<string, Map<ViableBemClassMapKeys, string | undefined> | undefined>();
-
-    public readonly arbitraryProperties = new Map<string, Map<StringOrOmitFromString<"base">, string | undefined> | undefined>();
-
-    public readonly tailwindCSSUtility = new Map<string, Map<ViableUtilityClassMapKeys, string | undefined> | undefined>();
-
-    public readonly bootstrapCSSUtility = new Map<
-        string,
-        Map<`${Extract<ViableUtilityClassMapKeys, "word" | "digit">}Map`,
-            Map<string, string> | undefined
-        > | undefined
-    >();
-
-    public readonly customFiltered = new Map<string, Map<StringOrOmitFromString<"base">, string | undefined> | undefined>();
-
-    public readonly safeListed: Array<string> = []
-
+    const initalObject = {
+        customFiltered: new Map<string, Map<StringOrOmitFromString<"base">, string | undefined> | undefined>(),
+        safeListed: [] as Array<string>,
+    };
+    return Object.freeze(
+        (sortedClassObject ? Object.assign(initalObject, sortedClassObject) : initalObject) as
+        typeof sortedClassObject extends undefined ? typeof initalObject : typeof initalObject & typeof sortedClassObject
+    )
 
 
 }
 
+export const sortedClasses = createSortedClassObject()
+
+export type SortedClasses = typeof sortedClasses
+
+export const sortedBEMClasses = createSortedClassObject({
+    bem: new Map<string, Map<ViableBemClassMapKeys, string | undefined> | undefined>()
+})
 
 
+export const sortedBootstrapClasses = createSortedClassObject({
+    bootstrapCSSUtility: new Map<
+        string,
+        Map<`${Extract<ViableUtilityClassMapKeys, "word" | "digit">}Map`,
+            Map<string, string> | undefined
+        > | undefined
+    >()
 
-type ClassMapChangerBasedOnClassName<T extends Map<string, Map<string | Omit<string, string>, string | Map<string, string> | undefined> | undefined>,
+});
+
+export const sortedTailwindClasses = createSortedClassObject({
+    arbitraryProperties: new Map<string, Map<StringOrOmitFromString<"base">, string | undefined> | undefined>(),
+    tailwindCSSUtility: new Map<string, Map<ViableUtilityClassMapKeys, string | undefined> | undefined>()
+
+})
+
+
+type AllSortedClasses = typeof sortedClasses
+    & typeof sortedBEMClasses
+    & typeof sortedBootstrapClasses
+    & typeof sortedTailwindClasses
+
+
+export type ClassNameMap = Map<
+    string,
+    Map<
+        string | Omit<string, string>,
+        string | Map<string, string> | undefined
+    >
+    | undefined
+>;
+
+type ClassMapChangerBasedOnClassName<T extends ClassNameMap,
     U = undefined>
     = U extends undefined ? (classMap: T, className: string,) => boolean : (classMap: T, className: string, data: U) => boolean
 
 
 
-export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue: ClassMapChangerBasedOnClassName<SortedClasses["bootstrapCSSUtility"]> = (classMap, className) => {
+export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue: ClassMapChangerBasedOnClassName<AllSortedClasses["bootstrapCSSUtility"]> = (classMap, className) => {
 
 
     const cssTypeValueUtilityClassMatchGroups = bootstrapCSSTypeBreakpointAndValueUtilityClassRE.exec(className)?.groups
@@ -215,7 +249,7 @@ export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndVal
 
 
 export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue:
-    ClassMapChangerBasedOnClassName<SortedClasses["tailwindCSSUtility"]> = (classMap, className) => {
+    ClassMapChangerBasedOnClassName<AllSortedClasses["tailwindCSSUtility"]> = (classMap, className) => {
 
 
 
@@ -490,7 +524,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
 
 
-type TypeAndListClassMapChanger = ClassMapChangerBasedOnClassName<SortedClasses["customFiltered"], Record<string, Array<string>>>
+type TypeAndListClassMapChanger = ClassMapChangerBasedOnClassName<AllSortedClasses["customFiltered"], Record<string, Array<string>>>
 
 export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject: TypeAndListClassMapChanger = (classMap, className, classTypeAndListObject) => {
 
@@ -565,7 +599,7 @@ const aBlockModifierClassName =
 
 
 export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapChangerBasedOnClassName<
-    SortedClasses["bem"],
+    AllSortedClasses["bem"],
     Array<string>
 > =
     (classMap, className, classNames) => {
@@ -657,7 +691,7 @@ const arbitraryPropertyRE =
     /(?<variant>(?:(?:(?:[\&:{1,2}[a-z0-9\-]+(?:\([a-z0-9\+\-\_]+\))?)\]|[a-z0-9\-]+(?:\([a-z0-9\+\-\_]+\))?):)*)?\[(?<property_key>[a-z]+(?:\-[a-z]+)*:)(?<property_value>[_\-),.\/(a-z0-9]+)\]/
 
 
-export const attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty: ClassMapChangerBasedOnClassName<SortedClasses["arbitraryProperties"]> =
+export const attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty: ClassMapChangerBasedOnClassName<AllSortedClasses["arbitraryProperties"]> =
     (classMap, className) => {
 
 
@@ -710,7 +744,7 @@ const relationClassUtilityRE = /^(?<relationship>@?[a-z-]+\/)(?<name>[a-z]+)$/
 
 
 
-export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassMapChangerBasedOnClassName<SortedClasses["tailwindCSSUtility"]> =
+export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassMapChangerBasedOnClassName<AllSortedClasses["tailwindCSSUtility"]> =
     (classMap, className) => {
 
 
@@ -751,9 +785,9 @@ const variantGroupRE =
     /(?<variant>[a-z0-9\]\[&\-\.#@+),\_\/(:]+:)\((?<class_names>(?:[\w\-\]\[$.#),(%:\/]+)(?:\s[\w\-\]\[$.#)\/,(%:]+)+)\)/
 
 type PropsNeededFromSortedClasses = {
-    tailwindCSSUtility: SortedClasses["tailwindCSSUtility"]
-    customFiltered: SortedClasses["customFiltered"]
-    arbitraryProperties: SortedClasses["arbitraryProperties"]
+    tailwindCSSUtility: AllSortedClasses["tailwindCSSUtility"]
+    customFiltered: AllSortedClasses["customFiltered"]
+    arbitraryProperties: AllSortedClasses["arbitraryProperties"]
 }
 
 export const attemptToChangeClassMapBasedOnIfItIsAVariantGroup =
