@@ -1,5 +1,5 @@
 
-type FilterObject = Record<Lowercase<string>, Array<Lowercase<string>>>;
+export type FilterObject = Record<Lowercase<string>, Array<Lowercase<string>>>;
 
 const cssVariableWithOptionalPrefixedHintRE =
     /^(?<variable_hint>[a-z]+:)?(?<variable_value>--_?[a-z0-9]+(?:(?:-|_)[a-z0-9]+)*)$/
