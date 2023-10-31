@@ -5,22 +5,93 @@ import {
     attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject,
     attemptToChangeClassNameMapAccordingToIfTheBEMConvention,
     attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty,
-    SortedClasses,
     attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass,
     attemptToChangeClassMapBasedOnIfItIsAVariantGroup,
     attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue,
+    createSortedBootstrapClasses,
+    createSortedTailwindClasses,
+    createSortedBEMClasses,
 } from './classMapChangers';
 
 
-type TestContext = SortedClasses
+const sortedBEMClasses = createSortedBEMClasses()
+const sortedBootstrapClasses = createSortedBootstrapClasses()
+const sortedTailwindClasses = createSortedTailwindClasses()
 
-beforeEach<TestContext>((context) => {
+const itUsingBootstrapSortedClasses = it.extend<typeof sortedBootstrapClasses>({
+    async safeListed({ }, use) {
 
 
-    Object.assign(context, new SortedClasses())
+        await use([...sortedBootstrapClasses.safeListed])
 
+
+    },
+    async customFiltered({ }, use) {
+
+        await use(new Map(sortedBootstrapClasses.customFiltered))
+
+    },
+    async bootstrapCSSUtility({ }, use) {
+
+        await use(new Map(sortedBootstrapClasses.bootstrapCSSUtility))
+
+    }
 })
 
+const itUsingTailwindSortedClasses = it.extend<typeof sortedTailwindClasses>({
+    async safeListed({ }, use) {
+
+
+
+        await use([...sortedTailwindClasses.safeListed])
+
+
+    },
+    async customFiltered({ }, use) {
+
+
+        await use(new Map(sortedTailwindClasses.customFiltered))
+
+
+    },
+    async arbitraryProperties({ }, use) {
+
+
+
+        await use(new Map(sortedTailwindClasses.arbitraryProperties))
+
+    },
+
+    async tailwindCSSUtility({ }, use) {
+
+
+        await use(new Map(sortedTailwindClasses.tailwindCSSUtility))
+
+    },
+})
+
+const itUsingBEMSortedClasses = it.extend<typeof sortedBEMClasses>({
+    async safeListed({ }, use) {
+
+        await use([...sortedTailwindClasses.safeListed])
+
+    },
+    async customFiltered({ }, use) {
+
+
+        await use(new Map(sortedTailwindClasses.customFiltered))
+
+
+    },
+    async bem({ }, use) {
+
+
+        await use(new Map(sortedBEMClasses.bem))
+
+
+
+    }
+})
 
 
 
@@ -39,7 +110,7 @@ describe("Test if all class map changers work", () => {
     describe("Testing attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue()", () => {
 
 
-        it<TestContext>("doesn't change the map if there is a single word class", ({ bootstrapCSSUtility: utility }) => {
+        itUsingBootstrapSortedClasses("doesn't change the map if there is a single word class", ({ bootstrapCSSUtility: utility }) => {
 
 
 
@@ -65,7 +136,7 @@ describe("Test if all class map changers work", () => {
             () => {
 
 
-                it<TestContext>("changes the map when a class with a digit is passed in", ({ bootstrapCSSUtility: utility }) => {
+                itUsingBootstrapSortedClasses("changes the map when a class with a digit is passed in", ({ bootstrapCSSUtility: utility }) => {
 
 
                     attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue(utility, "outline-0")
@@ -79,7 +150,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-                it<TestContext>(
+                itUsingBootstrapSortedClasses(
                     `${insertMessagePrefix} called digit a map with the key called of base where it is the value of that key.
                       When the value is a number.`,
                     ({ bootstrapCSSUtility: utility }) => {
@@ -114,7 +185,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-        it<TestContext>(
+        itUsingBootstrapSortedClasses(
             "Changes the class map when a utility class with a breakpoint is inserted",
             ({ bootstrapCSSUtility }) => {
 
@@ -128,7 +199,7 @@ describe("Test if all class map changers work", () => {
 
             })
 
-        it<TestContext>(
+        itUsingBootstrapSortedClasses(
             "Inserts a map into the value with a state is a key and a value at the end",
             ({ bootstrapCSSUtility }) => {
 
@@ -147,7 +218,7 @@ describe("Test if all class map changers work", () => {
 
             })
 
-        it<TestContext>(
+        itUsingBootstrapSortedClasses(
             "Stores multiple states each with a different value in the same map",
             ({ bootstrapCSSUtility }) => {
 
@@ -173,7 +244,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-        it<TestContext>(
+        itUsingBootstrapSortedClasses(
             "Stores multiple states each with a different value in the same map in the word property",
             ({ bootstrapCSSUtility }) => {
 
@@ -197,7 +268,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-        it<TestContext>(
+        itUsingBootstrapSortedClasses(
             "it places the breakpoint after the utility type and places the value in the map",
             ({ bootstrapCSSUtility }) => {
 
@@ -293,7 +364,7 @@ describe("Test if all class map changers work", () => {
     describe("Testing attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue()", () => {
 
 
-        it<TestContext>("doesn't change the map if there is a single word class", ({ tailwindCSSUtility: utility }) => {
+        itUsingTailwindSortedClasses("doesn't change the map if there is a single word class", ({ tailwindCSSUtility: utility }) => {
 
 
             attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "outline-")
@@ -316,7 +387,7 @@ describe("Test if all class map changers work", () => {
             () => {
 
 
-                it<TestContext>("changes the map when a class with a digit is passed in", ({ tailwindCSSUtility: utility }) => {
+                itUsingTailwindSortedClasses("changes the map when a class with a digit is passed in", ({ tailwindCSSUtility: utility }) => {
 
 
                     attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "outline-0")
@@ -330,7 +401,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-                it<TestContext>(
+                itUsingTailwindSortedClasses(
                     `${insertMessagePrefix} called digit with it as the value when the value is a number.`,
                     ({ tailwindCSSUtility: utility }) => {
 
@@ -433,7 +504,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-            it<TestContext>(
+            itUsingTailwindSortedClasses(
                 `${insertMessagePrefix} called word with it as the value when the value is a word.`,
                 ({ tailwindCSSUtility: utility }) => {
 
@@ -457,7 +528,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-            it<TestContext>(
+            itUsingTailwindSortedClasses(
                 `${insertMessagePrefix} called args with it as the value when multiple args are passed.`,
                 ({ tailwindCSSUtility: utility }) => {
 
@@ -555,7 +626,7 @@ describe("Test if all class map changers work", () => {
 
         describe("It works well with classes that are used for colors", () => {
 
-            it<TestContext>(
+            itUsingTailwindSortedClasses(
                 `${insertMessagePrefix} called color with it as the value when the value is a color-range.`,
                 ({ tailwindCSSUtility: utility }) => {
 
@@ -707,7 +778,7 @@ describe("Test if all class map changers work", () => {
         describe("It works well with variables", () => {
 
 
-            it<TestContext>("puts the value in map with a key called variable when key is not specified", ({ tailwindCSSUtility: utility }) => {
+            itUsingTailwindSortedClasses("puts the value in map with a key called variable when key is not specified", ({ tailwindCSSUtility: utility }) => {
 
                 const classNameAndExpectedKeyAndValue = {
                     className: "bg-[--primary-color]",
@@ -728,7 +799,7 @@ describe("Test if all class map changers work", () => {
             })
 
 
-            it<TestContext>("puts the value in a map with a key called color when a variable is hinted with color:", ({ tailwindCSSUtility: utility }) => {
+            itUsingTailwindSortedClasses("puts the value in a map with a key called color when a variable is hinted with color:", ({ tailwindCSSUtility: utility }) => {
 
                 const classNameAndExpectedKeyAndValue = {
                     className: "border-[color:--gray-9]",
@@ -746,7 +817,7 @@ describe("Test if all class map changers work", () => {
 
             })
 
-            it<TestContext>("puts the value in a map with a key called digit when a variable is hinted with length:", ({ tailwindCSSUtility: utility }) => {
+            itUsingTailwindSortedClasses("puts the value in a map with a key called digit when a variable is hinted with length:", ({ tailwindCSSUtility: utility }) => {
 
                 const classNameAndExpectedKeyAndValue = {
                     className: "font-size-[length:--step-2]",
@@ -765,7 +836,7 @@ describe("Test if all class map changers work", () => {
             })
 
 
-            it<TestContext>("puts the value in a map with a key called word when a variable is hinted with string:", ({ tailwindCSSUtility: utility }) => {
+            itUsingTailwindSortedClasses("puts the value in a map with a key called word when a variable is hinted with string:", ({ tailwindCSSUtility: utility }) => {
 
                 const classNameAndExpectedKeyAndValue = {
                     className: "outline-[string:--line-type]",
@@ -789,7 +860,7 @@ describe("Test if all class map changers work", () => {
 
         describe("It works with ! and - prefixes ", () => {
 
-            it<TestContext>(
+            itUsingTailwindSortedClasses(
                 "The - prefix is inserted as a prefix to the value when a - is put in a utility class",
                 ({ tailwindCSSUtility: utility }) => {
 
@@ -807,7 +878,7 @@ describe("Test if all class map changers work", () => {
 
         describe("It works with relational variants", () => {
 
-            it<TestContext>("Works with relational variants that use the / syntax", ({ tailwindCSSUtility: utility }) => {
+            itUsingTailwindSortedClasses("Works with relational variants that use the / syntax", ({ tailwindCSSUtility: utility }) => {
 
 
                 attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "peer-checked/draft:text-sky-500")
@@ -822,7 +893,7 @@ describe("Test if all class map changers work", () => {
             })
 
 
-            it<TestContext>("Works with arbitrary relational variants", ({ tailwindCSSUtility: utility, }) => {
+            itUsingTailwindSortedClasses("Works with arbitrary relational variants", ({ tailwindCSSUtility: utility, }) => {
 
 
                 attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "group-[.is-published]:opacity-50")
@@ -837,7 +908,7 @@ describe("Test if all class map changers work", () => {
             })
 
 
-            it<TestContext>("Works with arbitrary pseudo class variants", ({ tailwindCSSUtility: utility, }) => {
+            itUsingTailwindSortedClasses("Works with arbitrary pseudo class variants", ({ tailwindCSSUtility: utility, }) => {
 
 
                 attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "[&:nth-child(3)]:opacity-50")
@@ -852,7 +923,7 @@ describe("Test if all class map changers work", () => {
             })
 
 
-            it<TestContext>("Works with is or where selectors", ({ tailwindCSSUtility: utility, }) => {
+            itUsingTailwindSortedClasses("Works with is or where selectors", ({ tailwindCSSUtility: utility, }) => {
 
 
                 attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "[&:is(:hover,:focus)]:opacity-50")
@@ -882,7 +953,7 @@ describe("Test if all class map changers work", () => {
     describe("Testing attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject()", () => {
 
 
-        it<TestContext>("doesn't change the map if there is a single word class", ({ customFiltered }) => {
+        itUsingBEMSortedClasses("doesn't change the map if there is a single word class", ({ customFiltered }) => {
 
 
             attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(customFiltered, "nice", {})
@@ -897,7 +968,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-        it<TestContext>(
+        itUsingBEMSortedClasses(
             `Changes the class Map by putting a key that is in the filter Object with a value that is 
              one of the list of values in the Array that key accesses from the filter object.  
             `,
@@ -922,7 +993,7 @@ describe("Test if all class map changers work", () => {
             })
 
 
-        it<TestContext>(
+        itUsingBEMSortedClasses(
             `When iterating through a list of class names.
             If a utility class is found in the filter object's list of classes.
             The key associated with the list where it is found will be used as a key in the
@@ -961,7 +1032,7 @@ describe("Test if all class map changers work", () => {
             })
 
 
-        it<TestContext>(
+        itUsingBEMSortedClasses(
             `When sorting based on class names if no variant is provided
             the default variant will be base and it's value the class
             when a it is provided then the key will be the variant
@@ -1022,7 +1093,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-        it<TestContext>(
+        itUsingTailwindSortedClasses(
             `The arbitraryProperties map has a key inserted that is the arbitrary property key and a value.
             That value is a map with a key called base and a value that is the arbitrary property value.
             `,
@@ -1171,7 +1242,7 @@ describe("Test if all class map changers work", () => {
     describe("Testing attemptToChangeClassNameMapAccordingToIfTheBEMConventionAndReturnResultOfIfItHasChanged()", () => {
 
 
-        it<TestContext>("doesn't change the map if there is a single word class", ({ bem }) => {
+        itUsingBEMSortedClasses("doesn't change the map if there is a single word class", ({ bem }) => {
 
 
             attemptToChangeClassNameMapAccordingToIfTheBEMConvention(bem, "nice", [])
@@ -1185,7 +1256,7 @@ describe("Test if all class map changers work", () => {
         })
 
 
-        it<TestContext>("alters the BEM map when bem classes are encountered", ({ bem }) => {
+        itUsingBEMSortedClasses("alters the BEM map when bem classes are encountered", ({ bem }) => {
 
 
 
@@ -1213,7 +1284,7 @@ describe("Test if all class map changers work", () => {
         })
 
 
-        it<TestContext>("adds an  element to the map when a lower_case_word and two underscores are encountered", ({ bem }) => {
+        itUsingBEMSortedClasses("adds an  element to the map when a lower_case_word and two underscores are encountered", ({ bem }) => {
 
 
             // const bemClasses = ["card",  "card__title--lg", "card--lg"];
@@ -1234,7 +1305,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-        it<TestContext>(
+        itUsingBEMSortedClasses(
             `When a lower_case_word is encountered with two underscores.
              The map is changed to have a key with the word on the left of the two underscores as a key.
              The value is a Map called that has a key called element with value that is the two underscores plus the word.  
@@ -1258,7 +1329,7 @@ describe("Test if all class map changers work", () => {
 
             })
 
-        it<TestContext>(
+        itUsingBEMSortedClasses(
             `When a lower_case_word is encountered with two dashes.
              The map is changed to have a key with the word on the left of the two dashes as a key.
              The value is a Map called that has a key called element with value that is the two dashes plus the word.  
@@ -1294,7 +1365,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-        it<TestContext>("works with container queries", ({ tailwindCSSUtility: utility }) => {
+        itUsingTailwindSortedClasses("works with container queries", ({ tailwindCSSUtility: utility }) => {
 
 
             attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(utility, "@container/main")
@@ -1311,7 +1382,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-        it<TestContext>("works with named groups", ({ tailwindCSSUtility: utility }) => {
+        itUsingTailwindSortedClasses("works with named groups", ({ tailwindCSSUtility: utility }) => {
 
             attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(utility, "group/main")
 
@@ -1334,116 +1405,123 @@ describe("Test if all class map changers work", () => {
     describe("Testing attemptToChangeClassMapBasedOnIfItIsAVariantGroup", () => {
 
 
-        it<TestContext>(
+        itUsingTailwindSortedClasses(
             "works",
-            (context) => {
+            ({ tailwindCSSUtility, arbitraryProperties, customFiltered }) => {
 
                 attemptToChangeClassMapBasedOnIfItIsAVariantGroup(
-                    context,
+                    { tailwindCSSUtility, arbitraryProperties, customFiltered },
                     "hover:(bg-red-500 text-gray-500)"
                 )
 
-                expect(context.tailwindCSSUtility.has("hover:bg-")).toBeTruthy()
+                expect(tailwindCSSUtility.has("hover:bg-")).toBeTruthy()
 
-                expect(context.tailwindCSSUtility.has("hover:text-")).toBeTruthy()
+                expect(tailwindCSSUtility.has("hover:text-")).toBeTruthy()
 
             })
 
 
-        it<TestContext>(
+        itUsingTailwindSortedClasses(
             "Works with relational variants that use the / syntax",
-            (context) => {
+            ({ tailwindCSSUtility, arbitraryProperties, customFiltered }) => {
 
 
-                attemptToChangeClassMapBasedOnIfItIsAVariantGroup(context, "peer-checked/draft:(text-sky-500 bg-gray-500)")
+                attemptToChangeClassMapBasedOnIfItIsAVariantGroup({ tailwindCSSUtility, arbitraryProperties, customFiltered }, "peer-checked/draft:(text-sky-500 bg-gray-500)")
 
 
-                expect(context.tailwindCSSUtility.has("peer-checked/draft:text-")).toBeTruthy()
+                expect(tailwindCSSUtility.has("peer-checked/draft:text-")).toBeTruthy()
 
-                expect(context.tailwindCSSUtility.get("peer-checked/draft:text-")?.has("color")).toBeTruthy()
+                expect(tailwindCSSUtility.get("peer-checked/draft:text-")?.has("color")).toBeTruthy()
 
-                expect(context.tailwindCSSUtility.has("peer-checked/draft:bg-")).toBeTruthy()
+                expect(tailwindCSSUtility.has("peer-checked/draft:bg-")).toBeTruthy()
 
-                expect(context.tailwindCSSUtility.get("peer-checked/draft:bg-")?.has("color")).toBeTruthy()
+                expect(tailwindCSSUtility.get("peer-checked/draft:bg-")?.has("color")).toBeTruthy()
 
 
 
             })
 
 
-        it<TestContext>(
+        itUsingTailwindSortedClasses(
             "works with arbitrary relational variants",
-            (context) => {
+            ({ tailwindCSSUtility, arbitraryProperties, customFiltered }) => {
 
-
-                attemptToChangeClassMapBasedOnIfItIsAVariantGroup(context, "group-[.is-published]:(opacity-50 text-sky-900)")
-
-
-                expect(context.tailwindCSSUtility.has("group-[.is-published]:opacity-")).toBeTruthy()
-
-                expect(context.tailwindCSSUtility.get("group-[.is-published]:opacity-")?.has("digit")).toBeTruthy()
-
-                expect(context.tailwindCSSUtility.has("group-[.is-published]:text-")).toBeTruthy()
-
-                expect(context.tailwindCSSUtility.get("group-[.is-published]:text-")?.has("color")).toBeTruthy()
-
-
-
-            })
-
-
-        it<TestContext>(
-            "works with utilities that have variants as prefixes",
-            (context) => {
 
                 attemptToChangeClassMapBasedOnIfItIsAVariantGroup(
-                    context,
+                    { tailwindCSSUtility, arbitraryProperties, customFiltered },
+                    "group-[.is-published]:(opacity-50 text-sky-900)"
+                )
+
+
+                expect(tailwindCSSUtility.has("group-[.is-published]:opacity-")).toBeTruthy()
+
+                expect(tailwindCSSUtility.get("group-[.is-published]:opacity-")?.has("digit")).toBeTruthy()
+
+                expect(tailwindCSSUtility.has("group-[.is-published]:text-")).toBeTruthy()
+
+                expect(tailwindCSSUtility.get("group-[.is-published]:text-")?.has("color")).toBeTruthy()
+
+
+
+            })
+
+
+        itUsingTailwindSortedClasses(
+            "works with utilities that have variants as prefixes",
+            ({ tailwindCSSUtility, arbitraryProperties, customFiltered }) => {
+
+                attemptToChangeClassMapBasedOnIfItIsAVariantGroup(
+                    { tailwindCSSUtility, arbitraryProperties, customFiltered },
                     "hover:(focus:bg-500 peer-checked/main:text-gray-500)"
                 )
 
-                expect(context.tailwindCSSUtility.has("hover:focus:bg-")).toBeTruthy()
+                expect(tailwindCSSUtility.has("hover:focus:bg-")).toBeTruthy()
 
-                expect(context.tailwindCSSUtility.has("hover:peer-checked/main:text-")).toBeTruthy()
+                expect(tailwindCSSUtility.has("hover:peer-checked/main:text-")).toBeTruthy()
 
             })
 
 
-        it<TestContext>("Works with arbitrary pseudo class variants", (context) => {
+        itUsingTailwindSortedClasses(
+            "Works with arbitrary pseudo class variants",
+            ({ tailwindCSSUtility, arbitraryProperties, customFiltered }) => {
 
 
-            attemptToChangeClassMapBasedOnIfItIsAVariantGroup(context, "[&:nth-child(3)]:(opacity-50 border-gray-500)")
+                attemptToChangeClassMapBasedOnIfItIsAVariantGroup({ tailwindCSSUtility, arbitraryProperties, customFiltered }, "[&:nth-child(3)]:(opacity-50 border-gray-500)")
 
 
-            expect(context.tailwindCSSUtility.has("[&:nth-child(3)]:opacity-")).toBeTruthy()
+                expect(tailwindCSSUtility.has("[&:nth-child(3)]:opacity-")).toBeTruthy()
 
-            expect(context.tailwindCSSUtility.get("[&:nth-child(3)]:opacity-")?.has("digit")).toBeTruthy()
+                expect(tailwindCSSUtility.get("[&:nth-child(3)]:opacity-")?.has("digit")).toBeTruthy()
 
-            expect(context.tailwindCSSUtility.has("[&:nth-child(3)]:border-")).toBeTruthy()
+                expect(tailwindCSSUtility.has("[&:nth-child(3)]:border-")).toBeTruthy()
 
-            expect(context.tailwindCSSUtility.get("[&:nth-child(3)]:border-")?.has("color")).toBeTruthy()
-
-
-
-        })
-
-
-        it<TestContext>("Works with is or where selectors", (context) => {
-
-
-            attemptToChangeClassMapBasedOnIfItIsAVariantGroup(context, "[&:is(:hover,:focus)]:(opacity-50 bg-gray-900)")
-
-
-            expect(context.tailwindCSSUtility.has("[&:is(:hover,:focus)]:opacity-")).toBeTruthy()
-
-            expect(context.tailwindCSSUtility.get("[&:is(:hover,:focus)]:opacity-")?.has("digit")).toBeTruthy()
-
-            expect(context.tailwindCSSUtility.has("[&:is(:hover,:focus)]:bg-")).toBeTruthy()
-
-            expect(context.tailwindCSSUtility.get("[&:is(:hover,:focus)]:bg-")?.has("color")).toBeTruthy()
+                expect(tailwindCSSUtility.get("[&:nth-child(3)]:border-")?.has("color")).toBeTruthy()
 
 
 
-        })
+            })
+
+
+        itUsingTailwindSortedClasses(
+            "Works with is or where selectors",
+            ({ tailwindCSSUtility, arbitraryProperties, customFiltered }) => {
+
+
+                attemptToChangeClassMapBasedOnIfItIsAVariantGroup({ tailwindCSSUtility, arbitraryProperties, customFiltered }, "[&:is(:hover,:focus)]:(opacity-50 bg-gray-900)")
+
+
+                expect(tailwindCSSUtility.has("[&:is(:hover,:focus)]:opacity-")).toBeTruthy()
+
+                expect(tailwindCSSUtility.get("[&:is(:hover,:focus)]:opacity-")?.has("digit")).toBeTruthy()
+
+                expect(tailwindCSSUtility.has("[&:is(:hover,:focus)]:bg-")).toBeTruthy()
+
+                expect(tailwindCSSUtility.get("[&:is(:hover,:focus)]:bg-")?.has("color")).toBeTruthy()
+
+
+
+            })
 
 
 
