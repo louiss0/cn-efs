@@ -9,9 +9,10 @@ import {
     attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass,
     attemptToChangeClassMapBasedOnIfItIsAVariantGroup,
     attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue,
-    sortedBEMClasses,
-    sortedTailwindClasses,
-    sortedBootstrapClasses,
+    createSortedBEMClasses,
+    createSortedTailwindClasses,
+    createSortedBootstrapClasses,
+
 } from "./classMapChangers"
 
 
@@ -170,23 +171,6 @@ function isString(value: unknown): value is string {
     return typeof value === "string"
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function getCreateUtilityClassesBasedOnIfTheValueHasAPrefix(
     valueIsPrefixedWithAnExclamationMarkOrDashRE: RegExp,
     valueIsAUtilityClassVariantAndTypeRE: RegExp,
@@ -260,71 +244,79 @@ export const getClassNamesEvaluatorFilterAndSorter =
     <T extends SortedClasses>(options: GetClassNamesEvaluatorFilterAndSorterOptions<T>) =>
         (...args: Parameters<typeof clsx>) => {
 
+            const { classMap, classMapChanger, classMapToStringTransformer, filterObject } = options
+
             const classNameFilterSorter = classNameFilterSorterFactory(
-                options.classMap,
-                options.classMapChanger,
-                options.classMapToStringTransformer,
+                classMap,
+                classMapChanger,
+                classMapToStringTransformer,
             )
 
 
 
             return classNameFilterSorter(
                 clsx(...args),
-                options?.filterObject
+                filterObject
             )
 
         }
 
 
-export const cnEFS = getClassNamesEvaluatorFilterAndSorter(
-    {
-        classMap: sortedBEMClasses,
-        classMapChanger: (classMap, value) => {
+export const cnEFS = (...args: Parameters<typeof clsx>) => {
 
 
-            attemptToChangeClassNameMapAccordingToIfTheBEMConvention(classMap.bem, value, classMap.safeListed)
+    const classNamesEvaluatorFilterAndSorter = getClassNamesEvaluatorFilterAndSorter(
+        {
+            classMap: createSortedBEMClasses(),
+            classMapChanger(classMap, value) {
 
 
-            return classMap
-
-        },
-        classMapToStringTransformer(classNameMap, sortString) {
-
-            if (classNameMap.bem.size !== 0) {
+                attemptToChangeClassNameMapAccordingToIfTheBEMConvention(classMap.bem, value, classMap.safeListed)
 
 
+                return classMap
 
-                for (const [block, value] of classNameMap.bem) {
+            },
+            classMapToStringTransformer(classNameMap, sortString) {
+
+                if (classNameMap.bem.size !== 0) {
 
 
 
-                    const modifier = value?.get("modifier")
-                    const element = value?.get("element")
+                    for (const [block, value] of classNameMap.bem) {
 
 
-                    if (modifier) {
 
-                        sortString = sortString.concat(`${block} ${block}${modifier} `)
+                        const modifier = value?.get("modifier")
+                        const element = value?.get("element")
+
+
+                        if (modifier) {
+
+                            sortString = sortString.concat(`${block} ${block}${modifier} `)
+                        }
+
+                        if (element) {
+
+                            sortString = sortString.concat(`${block}${element} `)
+                        }
+
+
+
                     }
-
-                    if (element) {
-
-                        sortString = sortString.concat(`${block}${element} `)
-                    }
-
-
 
                 }
 
+
+                return sortString
+
             }
-
-
-            return sortString
-
         }
-    }
-)
+    )
 
+    return classNamesEvaluatorFilterAndSorter(...args)
+
+}
 
 type FilterObject = Record<Lowercase<string>, Array<Lowercase<string>>>;
 
@@ -389,9 +381,11 @@ const TailwindOrWindiFilterObject = {
     "font-smoothing": ["antialiased", "subpixels-antialiased"],
 } satisfies FilterObject
 
-export const tailwindOrWindi_CN_EFS = (...args: Parameters<typeof clsx>) =>
-    getClassNamesEvaluatorFilterAndSorter({
-        classMap: sortedTailwindClasses,
+export const tailwindOrWindi_CN_EFS = (...args: Parameters<typeof clsx>) => {
+
+
+    const classNamesEvaluatorFilterAndSorter = getClassNamesEvaluatorFilterAndSorter({
+        classMap: createSortedTailwindClasses(),
         classMapChanger(classNameMap, value, filterObject) {
 
 
@@ -501,7 +495,9 @@ export const tailwindOrWindi_CN_EFS = (...args: Parameters<typeof clsx>) =>
         },
         filterObject: TailwindOrWindiFilterObject,
 
-    })(...args)
+    })
+    return classNamesEvaluatorFilterAndSorter(...args)
+}
 
 const bootstrapFilterObject = {
     visibility: ["visible", "invisible", "collapse"],
@@ -512,10 +508,12 @@ const bootstrapFilterObject = {
 
 
 
-export const bootstrap_CN_EFS = (...args: Parameters<typeof clsx>) =>
-    getClassNamesEvaluatorFilterAndSorter({
+export const bootstrap_CN_EFS = (...args: Parameters<typeof clsx>) => {
+
+
+    const classNamesEvaluatorFilterAndSorter = getClassNamesEvaluatorFilterAndSorter({
         filterObject: bootstrapFilterObject,
-        classMap: sortedBootstrapClasses,
+        classMap: createSortedBootstrapClasses(),
         classMapChanger(classMap, value) {
 
             attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue(classMap.bootstrapCSSUtility, value)
@@ -577,7 +575,10 @@ export const bootstrap_CN_EFS = (...args: Parameters<typeof clsx>) =>
             return sortString
 
         }
-    })(...args)
+    })
+
+    return classNamesEvaluatorFilterAndSorter(...args)
 
 
+}
 
