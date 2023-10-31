@@ -359,68 +359,71 @@ export const cnEFS = (...args: Parameters<typeof clsx>) => {
 }
 
 
-const TailwindOrWindiFilterObject = {
-    appearance: ["appearance-none"],
-    grayscale: ["grayscale-0", "grayscale"],
-    invert: ["invert-0", "invert"],
-    display: [
-        "flex",
-        "inline-flex",
-        "grid",
-        "inline-grid",
-        "block",
-        "inline",
-        "inline-block",
-        "hidden",
-        "table",
-        "inline-table",
-        "table-caption",
-        "table-cell",
-        "table-column",
-        "table-column-group",
-        "table-footer-group",
-        "table-header-group",
-        "table-row-group",
-        "table-row",
-        "flow-root",
-        "contents",
-        "list-item",
-    ],
-    position: ["absolute", "fixed", "static", "relative", "sticky"],
-    sepia: ["sepia-0", "sepia"],
-    italic: ["italic", "not-italic"],
-    transition: [
-        "transition",
-        "transition-all",
-        "transition-colors",
-        "transition-opacity",
-        "transition-shadow",
-        "transition-transform",
-    ],
-    visibility: ["visible", "invisible", "collapse"],
-    "screen-reader": ["sr-only", "not-sr-only",],
-    "font-variant": [
-        "normal-nums",
-        "ordinal",
-        "slashed-zero",
-        "lining-nums",
-        "oldstyle-nums",
-        "proportional-nums",
-        "tabular-nums",
-        "diagonal-fractions",
-        "stacked-fractions",
-    ],
-
-    "border-collapse": ["border-collapse", "border-separate"],
-    "backdrop-grayscale": ["backdrop-grayscale", "backdrop-grayscale-0"],
-    "backdrop-invert": ["backdrop-invert", "backdrop-invert-0"],
-    "backdrop-sepia": ["backdrop-sepia", "backdrop-sepia-0"],
-    "text-overflow": ["truncate", "text-ellipsis", "text-clip"],
-    "text-transform": ["uppercase", "lowercase", "normal-case", "capitalize",],
-    "font-smoothing": ["antialiased", "subpixels-antialiased"],
-} satisfies FilterObject
 
 export const tailwindOrWindi_CN_EFS = (...args: Parameters<typeof clsx>) => {
+
+
+    const TailwindOrWindiFilterObject = {
+        appearance: ["appearance-none"],
+        grayscale: ["grayscale-0", "grayscale"],
+        invert: ["invert-0", "invert"],
+        display: [
+            "flex",
+            "inline-flex",
+            "grid",
+            "inline-grid",
+            "block",
+            "inline",
+            "inline-block",
+            "hidden",
+            "table",
+            "inline-table",
+            "table-caption",
+            "table-cell",
+            "table-column",
+            "table-column-group",
+            "table-footer-group",
+            "table-header-group",
+            "table-row-group",
+            "table-row",
+            "flow-root",
+            "contents",
+            "list-item",
+        ],
+        position: ["absolute", "fixed", "static", "relative", "sticky"],
+        sepia: ["sepia-0", "sepia"],
+        italic: ["italic", "not-italic"],
+        transition: [
+            "transition",
+            "transition-all",
+            "transition-colors",
+            "transition-opacity",
+            "transition-shadow",
+            "transition-transform",
+        ],
+        visibility: ["visible", "invisible", "collapse"],
+        "screen-reader": ["sr-only", "not-sr-only",],
+        "font-variant": [
+            "normal-nums",
+            "ordinal",
+            "slashed-zero",
+            "lining-nums",
+            "oldstyle-nums",
+            "proportional-nums",
+            "tabular-nums",
+            "diagonal-fractions",
+            "stacked-fractions",
+        ],
+
+        "border-collapse": ["border-collapse", "border-separate"],
+        "backdrop-grayscale": ["backdrop-grayscale", "backdrop-grayscale-0"],
+        "backdrop-invert": ["backdrop-invert", "backdrop-invert-0"],
+        "backdrop-sepia": ["backdrop-sepia", "backdrop-sepia-0"],
+        "text-overflow": ["truncate", "text-ellipsis", "text-clip"],
+        "text-transform": ["uppercase", "lowercase", "normal-case", "capitalize",],
+        "font-smoothing": ["antialiased", "subpixels-antialiased"],
+    } satisfies FilterObject
+
 
 
     const classNamesEvaluatorFilterAndSorter = getClassNamesEvaluatorFilterAndSorter({
@@ -533,16 +536,16 @@ export const tailwindOrWindi_CN_EFS = (...args: Parameters<typeof clsx>) => {
     return classNamesEvaluatorFilterAndSorter(...args)
 }
 
-const bootstrapFilterObject = {
-    visibility: ["visible", "invisible", "collapse"],
-    layout: ["d-flex", "grid"],
-    stack: ["vstack", "hstack"]
-} satisfies FilterObject
-
-
-
 
 export const bootstrap_CN_EFS = (...args: Parameters<typeof clsx>) => {
+
+
+    const bootstrapFilterObject = {
+        visibility: ["visible", "invisible", "collapse"],
+        layout: ["d-flex", "grid"],
+        stack: ["vstack", "hstack"]
+    } satisfies FilterObject
+
 
 
     const classNamesEvaluatorFilterAndSorter = getClassNamesEvaluatorFilterAndSorter({
