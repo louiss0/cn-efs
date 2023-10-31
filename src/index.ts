@@ -1,7 +1,7 @@
 
 import clsx from "clsx"
 import {
-    SortedClasses,
+    type SortedClasses,
     attemptToChangeClassNameMapAccordingToIfTheBEMConvention,
     attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue,
     attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject,
@@ -9,426 +9,327 @@ import {
     attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass,
     attemptToChangeClassMapBasedOnIfItIsAVariantGroup,
     attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue,
+    sortedBEMClasses,
+    sortedTailwindClasses,
+    sortedBootstrapClasses,
 } from "./classMapChangers"
 
 
-type ClassNamesSorterAndFilter = typeof classNamesFilterAndSorter
-
-
-function getSortClassesBasedOnClassType(
-    classTypesAndClassNames?: Record<Lowercase<string>, Array<Lowercase<string>>>,
-    safelist?: Array<string>
-) {
-
-    return (carry: SortedClasses, value: string, _: number, array: Array<string>) => {
 
 
 
-        // ! It's important for safe-listed classes and classes in the class type and object to be accounted for first. 
-
-        if (safelist) {
+const createStringFromCustomFilteredMapIfItIsNotEmptyAnEmptyStringIfItIs = (map: SortedClasses["customFiltered"]) => {
 
 
 
-            if (safelist.includes(value) && !carry.safeListed.includes(value)) {
+    let sortString = ""
+
+    if (map.size === 0) return sortString
 
 
-                carry.safeListed.push(value)
 
-                return carry
+    for (const filterClassVariantsAndValues of map.values()) {
+
+
+        if (!filterClassVariantsAndValues) continue
+
+        for (const [variant, className] of filterClassVariantsAndValues) {
+
+
+            sortString = sortString.concat(`${variant === "base" ? "" : variant}${className} `)
+
+        }
+
+
+    }
+
+    return sortString
+
+
+}
+
+const createStringFromSafeListedMapIfItIsNotEmptyAnEmptyStringIfItIs = (safeListed: SortedClasses["safeListed"]) => {
+
+
+    if (safeListed.length === 0) return ""
+
+
+    return `${safeListed.join(" ")} `
+
+
+}
+
+type ClassMapChanger<T extends SortedClasses> = (classMap: T, value: string, filterObject: FilterObject | undefined) => T
+
+type ClassMapTransformer<T extends SortedClasses> = (classMap: Omit<T, "customFiltered" | "safeListed">, value: string) => string
+
+const classNameFilterSorterFactory = <
+    T extends SortedClasses
+>(
+    classMap: T,
+    classMapChanger: ClassMapChanger<T>,
+    classMapToStringTransformer: ClassMapTransformer<T>
+) => {
+
+
+
+    return (
+        classNames: string,
+        filterObject?: FilterObject,
+    ) => {
+
+
+        const oneWordClass = /^[a-z]+$/
+
+        const splitClassNames = classNames.split(/\s+/)
+
+        if (splitClassNames.length < 2) {
+
+            throw new Error(
+                "This string has no sets of classes please add spaces between classes that need to be sorted"
+            )
+
+        }
+
+        const { customFiltered, safeListed, ...restOfTheMap } = splitClassNames.reduce((carry, value) => {
+
+
+            // ! It's important for safe-listed classes and classes in the class type and object to be accounted for first. 
+
+
+            if (filterObject) {
+
+                const result = attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(
+                    carry.customFiltered,
+                    value,
+                    filterObject
+                )
+
+                if (result) return carry
+
+
             }
 
-            if (safelist.includes(value) && carry.safeListed.includes(value)) {
+            if (oneWordClass.test(value)) {
 
 
-                throw new Error(
-                    `You have this class in the safelist and as a class name.
+
+                if (!carry.safeListed.includes(value)) {
+
+
+                    carry.safeListed.push(value)
+
+                    return carry
+                }
+
+                if (carry.safeListed.includes(value)) {
+
+
+                    throw new Error(
+                        `You have this class in the safelist and as a class name.
                      Classes that are safe listed are not filtered just prepended
                      to the start result of this function.
                      If you want them filtered then please use a filter map instead.
                     `
-                )
+                    )
+
+                }
+
 
             }
 
 
-        }
 
 
-        if (classTypesAndClassNames) {
-
-            const result = attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(
-                carry.customFiltered,
-                value,
-                classTypesAndClassNames
-            )
-
-            if (result) return carry
 
 
-        }
+            return classMapChanger(carry, value, filterObject)
+
+        }, classMap)
+
+        const resultOfCreateStringFromSafeListedMapIfItIsNotEmpty =
+            createStringFromSafeListedMapIfItIsNotEmptyAnEmptyStringIfItIs(safeListed)
+
+        const resultOfCreateStringFromCustomFilteredMapIfItIsNotEmpty =
+            createStringFromCustomFilteredMapIfItIsNotEmptyAnEmptyStringIfItIs(customFiltered)
 
 
-        /* 
-        
-        ! Class Map changers must be here.
-
-        ! Remember to never put new class at the bottom of the previous ones.
-        ! The order is important there will be conflict  
-
-        */
-
-
-        if (attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(carry.tailwindCSSUtility, value))
-            return carry
-
-
-        if (attemptToChangeClassNameMapAccordingToIfTheBEMConvention(carry.bem, value, array))
-            return carry
-
-
-        if (attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty(carry.arbitraryProperties, value))
-            return carry
-
-
-        if (attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(carry.tailwindCSSUtility, value))
-            return carry
-
-
-        const { customFiltered, tailwindCSSUtility, arbitraryProperties } = carry
-
-        attemptToChangeClassMapBasedOnIfItIsAVariantGroup(
-            {
-                tailwindCSSUtility,
-                arbitraryProperties,
-                customFiltered
-            },
-            value,
-            classTypesAndClassNames
-        )
-
-
-        if (attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue(carry.bootstrapCSSUtility, value))
-            return carry
-
-
-        return carry
+        return classMapToStringTransformer(
+            restOfTheMap,
+            resultOfCreateStringFromSafeListedMapIfItIsNotEmpty.concat(resultOfCreateStringFromCustomFilteredMapIfItIsNotEmpty)
+        ).trimEnd()
 
 
     }
+
+
 }
-
-
-
 
 
 function isString(value: unknown): value is string {
     return typeof value === "string"
 }
 
-const classNamesFilterAndSorter = (
-    classNames: string,
-    classTypesAndClassNames?: Record<Lowercase<string>, Array<Lowercase<string>>>,
-    safelist?: Array<string>
-) => {
-
-
-    const splitClassNames = classNames.split(/\s+/)
-
-    if (splitClassNames.length < 2) {
-
-        throw new Error(
-            "This string has no sets of classes please add spaces between classes that need to be sorted",
-        )
-
-    }
-
-
-    let classNameMap
-
-    try {
-
-        classNameMap =
-            splitClassNames.reduce(
-                getSortClassesBasedOnClassType(classTypesAndClassNames, safelist),
-                new SortedClasses()
-            )
-    } catch (error) {
-
-
-        throw error
-
-
-    }
 
 
 
-    let sortString = ""
 
 
 
-    if (classNameMap.bootstrapCSSUtility.size !== 0) {
 
 
-        for (const [classType, classValueMap] of classNameMap.bootstrapCSSUtility) {
 
 
-            if (!classValueMap) continue;
 
 
-            const [digitMap, wordMap] = [
-                classValueMap.get("digitMap"),
-                classValueMap.get("wordMap")
-            ]
 
-            if (digitMap) {
 
-                for (const [key, value] of digitMap.entries()) {
 
-                    const returnEmptyStringIfKeyIsBaseElseKey =
-                        key === "base" ? "" : key
 
-                    sortString = sortString.concat(
-                        `${classType}-${value}${returnEmptyStringIfKeyIsBaseElseKey} `
-                    )
 
-                }
+function getCreateUtilityClassesBasedOnIfTheValueHasAPrefix(
+    valueIsPrefixedWithAnExclamationMarkOrDashRE: RegExp,
+    valueIsAUtilityClassVariantAndTypeRE: RegExp,
+    utility: string) {
+    return (classValue: string) => {
 
-            }
 
-            if (wordMap) {
+        const prefixAndValueGroup = valueIsPrefixedWithAnExclamationMarkOrDashRE.exec(classValue)?.groups
 
-                for (const [key, value] of wordMap.entries()) {
+        const utilityAndClassValueWithASpace = `${utility}${classValue} `
 
-                    const returnEmptyStringIfKeyIsBaseElseKey =
-                        key === "base" ? "" : key
+        if (!prefixAndValueGroup) {
 
-                    sortString = sortString.concat(
-                        `${classType}-${value}${returnEmptyStringIfKeyIsBaseElseKey}`
-                    )
+            return utilityAndClassValueWithASpace
 
-                }
-            }
+        }
+
+
+        const { prefix, value } = prefixAndValueGroup
+
+
+
+        if (!prefix || !value) {
+
+
+
+            return utilityAndClassValueWithASpace
 
 
         }
 
-    }
+
+        const valueIsAUtilityClassVariantAndTypeGroup = valueIsAUtilityClassVariantAndTypeRE.exec(utility)?.groups
 
 
-    if (classNameMap.bem.size !== 0) {
+        if (!valueIsAUtilityClassVariantAndTypeGroup) {
 
-
-
-        for (const [block, value] of classNameMap.bem) {
-
-
-
-            const modifier = value?.get("modifier")
-            const element = value?.get("element")
-
-
-            if (modifier) {
-
-                sortString = sortString.concat(`${block} ${block}${modifier} `)
-            }
-
-            if (element) {
-
-                sortString = sortString.concat(`${block}${element} `)
-            }
-
-
+            return utilityAndClassValueWithASpace
 
         }
 
-    }
 
-
-
-    if (classNameMap.arbitraryProperties.size !== 0) {
-
-
-        for (const [property, variantAndValueMap] of classNameMap.arbitraryProperties) {
-
-
-
-            if (!variantAndValueMap) continue;
-
-
-            for (const [variant, value] of variantAndValueMap) {
-
-                sortString = sortString.concat(`${variant === "base" ? "" : variant}[${property}${value}] `)
-            }
-
-
-
+        const { variant, type } = valueIsAUtilityClassVariantAndTypeGroup as {
+            variant?: string
+            type: string
         }
 
-    }
 
-    if (classNameMap.tailwindCSSUtility.size !== 0) {
 
+        return variant
+            ? `${variant}${prefix}${type}${value} `
+            : `${prefix}${type}${value} `
 
-        const valueIsPrefixedWithAnExclamationMarkOrDashRE = /^(?<prefix>(-|!))(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d]+)$/
 
-        const valueIsAUtilityClassVariantAndTypeRE = /^(?<variant>[a-z0-9\][#\.&:\-\)"=(\/]+:)?(?<type>[a-z\-]+-)$/
 
 
-        for (const [utility, utilityValueMap] of classNameMap.tailwindCSSUtility) {
 
-
-            if (!utilityValueMap) continue;
-
-            const valuesFromUtilityValueMap = [
-                utilityValueMap.get("digit"),
-                utilityValueMap.get("word"),
-                utilityValueMap.get("color"),
-                utilityValueMap.get("function"),
-                utilityValueMap.get("variable"),
-                utilityValueMap.get("args"),
-            ]
-
-
-
-
-            const utilityClassesCreatedFromDefinedValuesFromTheUtilityValueMap =
-                valuesFromUtilityValueMap
-                    .filter(isString)
-                    .map(
-                        getCreateUtilityClassesBasedOnIfTheValueHasAPrefix(
-                            valueIsPrefixedWithAnExclamationMarkOrDashRE,
-                            valueIsAUtilityClassVariantAndTypeRE,
-                            utility
-                        )
-                    )
-
-            sortString = sortString.concat(
-                ...utilityClassesCreatedFromDefinedValuesFromTheUtilityValueMap
-
-            )
-
-
-
-
-        }
-
-    }
-
-    if (classNameMap.customFiltered.size !== 0) {
-
-        for (const filterClassVariantsAndValues of classNameMap.customFiltered.values()) {
-
-
-            if (!filterClassVariantsAndValues) continue
-
-            for (const [variant, className] of filterClassVariantsAndValues) {
-
-
-                sortString = sortString.concat(`${variant === "base" ? "" : variant}${className} `)
-
-            }
-
-
-        }
-
-    }
-
-
-    if (classNameMap.safeListed.length !== 0) {
-
-
-
-        sortString = `${classNameMap.safeListed.join(" ")}${sortString} `
-
-    }
-
-
-    return sortString.trimEnd()
-
-
-
-
-    function getCreateUtilityClassesBasedOnIfTheValueHasAPrefix(
-        valueIsPrefixedWithAnExclamationMarkOrDashRE: RegExp,
-        valueIsAUtilityClassVariantAndTypeRE: RegExp,
-        utility: string) {
-        return (classValue: string) => {
-
-
-            const prefixAndValueGroup = valueIsPrefixedWithAnExclamationMarkOrDashRE.exec(classValue)?.groups
-
-            const utilityAndClassValueWithASpace = `${utility}${classValue} `
-
-            if (!prefixAndValueGroup) {
-
-                return utilityAndClassValueWithASpace
-
-            }
-
-
-            const { prefix, value } = prefixAndValueGroup
-
-
-
-            if (!prefix || !value) {
-
-
-
-                return utilityAndClassValueWithASpace
-
-
-            }
-
-
-            const valueIsAUtilityClassVariantAndTypeGroup = valueIsAUtilityClassVariantAndTypeRE.exec(utility)?.groups
-
-
-            if (!valueIsAUtilityClassVariantAndTypeGroup) {
-
-                return utilityAndClassValueWithASpace
-
-            }
-
-
-            const { variant, type } = valueIsAUtilityClassVariantAndTypeGroup as {
-                variant?: string
-                type: string
-            }
-
-
-
-            return variant
-                ? `${variant}${prefix}${type}${value} `
-                : `${prefix}${type}${value} `
-
-
-
-
-
-        }
     }
 }
 
 
-type GetClassNamesEvaluatorFilterAndSorterOptions = {
-    filterObject?: Parameters<ClassNamesSorterAndFilter>[1]
-    safelist?: Parameters<ClassNamesSorterAndFilter>[2]
+
+type GetClassNamesEvaluatorFilterAndSorterOptions<T extends SortedClasses> = {
+    filterObject?: FilterObject
+    classMap: T,
+    classMapChanger: ClassMapChanger<T>,
+    classMapToStringTransformer: ClassMapTransformer<T>
 }
 
 export const getClassNamesEvaluatorFilterAndSorter =
-    (options?: GetClassNamesEvaluatorFilterAndSorterOptions) =>
-        (...args: Parameters<typeof clsx>) =>
-            classNamesFilterAndSorter(clsx(...args), options?.filterObject, options?.safelist)
+    <T extends SortedClasses>(options: GetClassNamesEvaluatorFilterAndSorterOptions<T>) =>
+        (...args: Parameters<typeof clsx>) => {
 
-export const classNamesEFS = getClassNamesEvaluatorFilterAndSorter();
+            const classNameFilterSorter = classNameFilterSorterFactory(
+                options.classMap,
+                options.classMapChanger,
+                options.classMapToStringTransformer,
+            )
 
 
-const tailwindOrWindiSafeList = ["group", "peer", "@container", "content", "appearance-none"]
+
+            return classNameFilterSorter(
+                clsx(...args),
+                options?.filterObject
+            )
+
+        }
+
+
+export const cnEFS = getClassNamesEvaluatorFilterAndSorter(
+    {
+        classMap: sortedBEMClasses,
+        classMapChanger: (classMap, value) => {
+
+
+            attemptToChangeClassNameMapAccordingToIfTheBEMConvention(classMap.bem, value, classMap.safeListed)
+
+
+            return classMap
+
+        },
+        classMapToStringTransformer(classNameMap, sortString) {
+
+            if (classNameMap.bem.size !== 0) {
+
+
+
+                for (const [block, value] of classNameMap.bem) {
+
+
+
+                    const modifier = value?.get("modifier")
+                    const element = value?.get("element")
+
+
+                    if (modifier) {
+
+                        sortString = sortString.concat(`${block} ${block}${modifier} `)
+                    }
+
+                    if (element) {
+
+                        sortString = sortString.concat(`${block}${element} `)
+                    }
+
+
+
+                }
+
+            }
+
+
+            return sortString
+
+        }
+    }
+)
+
 
 type FilterObject = Record<Lowercase<string>, Array<Lowercase<string>>>;
 
 const TailwindOrWindiFilterObject = {
+    appearance: ["appearance-none"],
     grayscale: ["grayscale-0", "grayscale"],
     invert: ["invert-0", "invert"],
     display: [
@@ -489,7 +390,118 @@ const TailwindOrWindiFilterObject = {
 } satisfies FilterObject
 
 export const tailwindOrWindi_CN_EFS = (...args: Parameters<typeof clsx>) =>
-    getClassNamesEvaluatorFilterAndSorter({ filterObject: TailwindOrWindiFilterObject, safelist: tailwindOrWindiSafeList })(...args)
+    getClassNamesEvaluatorFilterAndSorter({
+        classMap: sortedTailwindClasses,
+        classMapChanger(classNameMap, value, filterObject) {
+
+
+            if (attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(classNameMap.tailwindCSSUtility, value))
+                return classNameMap
+
+
+
+            if (attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty(classNameMap.arbitraryProperties, value))
+                return classNameMap
+
+
+            if (attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(classNameMap.tailwindCSSUtility, value))
+                return classNameMap
+
+
+            const { customFiltered, tailwindCSSUtility, arbitraryProperties } = classNameMap
+
+            attemptToChangeClassMapBasedOnIfItIsAVariantGroup(
+                {
+                    tailwindCSSUtility,
+                    arbitraryProperties,
+                    customFiltered
+                },
+                value,
+                filterObject
+            )
+
+            return classNameMap
+
+
+        },
+        classMapToStringTransformer(classNameMap, sortString) {
+
+
+            if (classNameMap.arbitraryProperties.size !== 0) {
+
+
+                for (const [property, variantAndValueMap] of classNameMap.arbitraryProperties) {
+
+
+
+                    if (!variantAndValueMap) continue;
+
+
+                    for (const [variant, value] of variantAndValueMap) {
+
+                        sortString = sortString.concat(`${variant === "base" ? "" : variant}[${property}${value}] `)
+                    }
+
+
+
+                }
+
+            }
+
+            if (classNameMap.tailwindCSSUtility.size !== 0) {
+
+
+                const valueIsPrefixedWithAnExclamationMarkOrDashRE = /^(?<prefix>(-|!))(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d]+)$/
+
+                const valueIsAUtilityClassVariantAndTypeRE = /^(?<variant>[a-z0-9\][#\.&:\-\)"=(\/]+:)?(?<type>[a-z\-]+-)$/
+
+
+                for (const [utility, utilityValueMap] of classNameMap.tailwindCSSUtility) {
+
+
+                    if (!utilityValueMap) continue;
+
+                    const valuesFromUtilityValueMap = [
+                        utilityValueMap.get("digit"),
+                        utilityValueMap.get("word"),
+                        utilityValueMap.get("color"),
+                        utilityValueMap.get("function"),
+                        utilityValueMap.get("variable"),
+                        utilityValueMap.get("args"),
+                    ]
+
+
+
+
+                    const utilityClassesCreatedFromDefinedValuesFromTheUtilityValueMap =
+                        valuesFromUtilityValueMap
+                            .filter(isString)
+                            .map(
+                                getCreateUtilityClassesBasedOnIfTheValueHasAPrefix(
+                                    valueIsPrefixedWithAnExclamationMarkOrDashRE,
+                                    valueIsAUtilityClassVariantAndTypeRE,
+                                    utility
+                                )
+                            )
+
+                    sortString = sortString.concat(
+                        ...utilityClassesCreatedFromDefinedValuesFromTheUtilityValueMap
+
+                    )
+
+
+
+
+                }
+
+            }
+
+            return sortString
+
+        },
+        filterObject: TailwindOrWindiFilterObject,
+
+    })(...args)
 
 const bootstrapFilterObject = {
     visibility: ["visible", "invisible", "collapse"],
@@ -498,41 +510,73 @@ const bootstrapFilterObject = {
 } satisfies FilterObject
 
 
-const bootstrapSafeList = [
-    "border",
-    "shadow",
-    "rounded",
-    "alert",
-    "container",
-    "row",
-    "col",
-    "table",
-    "figure",
-    "accordion",
-    "open",
-    "badge",
-    "breadcrumb",
-    "btn",
-    "card",
-    "carousel",
-    "slide",
-    "open",
-    "dropdown",
-    "list-group",
-    "modal",
-    "navbar",
-    "offcanvas",
-    "pagination",
-    "placeholder",
-    "toast",
-    "clearfix",
-    "nav",
-]
+
 
 export const bootstrap_CN_EFS = (...args: Parameters<typeof clsx>) =>
     getClassNamesEvaluatorFilterAndSorter({
         filterObject: bootstrapFilterObject,
-        safelist: bootstrapSafeList
+        classMap: sortedBootstrapClasses,
+        classMapChanger(classMap, value) {
+
+            attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue(classMap.bootstrapCSSUtility, value)
+
+            return classMap
+
+
+        },
+        classMapToStringTransformer(classMap, sortString) {
+
+            if (classMap.bootstrapCSSUtility.size !== 0) {
+
+
+                for (const [classType, classValueMap] of classMap.bootstrapCSSUtility) {
+
+
+                    if (!classValueMap) continue;
+
+
+                    const [digitMap, wordMap] = [
+                        classValueMap.get("digitMap"),
+                        classValueMap.get("wordMap")
+                    ]
+
+                    if (digitMap) {
+
+                        for (const [key, value] of digitMap.entries()) {
+
+                            const returnEmptyStringIfKeyIsBaseElseKey =
+                                key === "base" ? "" : key
+
+                            sortString = sortString.concat(
+                                `${classType}-${value}${returnEmptyStringIfKeyIsBaseElseKey} `
+                            )
+
+                        }
+
+                    }
+
+                    if (wordMap) {
+
+                        for (const [key, value] of wordMap.entries()) {
+
+                            const returnEmptyStringIfKeyIsBaseElseKey =
+                                key === "base" ? "" : key
+
+                            sortString = sortString.concat(
+                                `${classType}-${value}${returnEmptyStringIfKeyIsBaseElseKey}`
+                            )
+
+                        }
+                    }
+
+
+                }
+
+            }
+
+            return sortString
+
+        }
     })(...args)
 
 
