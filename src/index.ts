@@ -414,8 +414,6 @@ export const tailwindOrWindi_CN_EFS = (...args: Parameters<typeof clsx>) => {
             "diagonal-fractions",
             "stacked-fractions",
         ],
-
-        "border-collapse": ["border-collapse", "border-separate"],
         "backdrop-grayscale": ["backdrop-grayscale", "backdrop-grayscale-0"],
         "backdrop-invert": ["backdrop-invert", "backdrop-invert-0"],
         "backdrop-sepia": ["backdrop-sepia", "backdrop-sepia-0"],
