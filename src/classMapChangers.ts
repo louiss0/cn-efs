@@ -100,6 +100,7 @@ export const createSortedClassObject = <T extends string, U extends SortedClassO
         customFiltered: new Map<string, Map<StringOrOmitFromString<"base">, string | undefined> | undefined>(),
         safeListed: [] as Array<string>,
     };
+
     return Object.freeze(
         (sortedClassObject ? Object.assign(initalObject, sortedClassObject) : initalObject) as
         typeof sortedClassObject extends undefined ? typeof initalObject : typeof initalObject & typeof sortedClassObject
@@ -116,16 +117,33 @@ export const createSortedBEMClasses = () => createSortedClassObject({
     bem: new Map<string, Map<ViableBemClassMapKeys, string | undefined> | undefined>()
 })
 
-
-export const createSortedBootstrapClasses = () => createSortedClassObject({
-    bootstrapCSSUtility: new Map<
-        string,
-        Map<`${Extract<ViableUtilityClassMapKeys, "word" | "digit">}Map`,
-            Map<string, string> | undefined
-        > | undefined
+export const createSortedBaseCN_EFSClasses = () => Object.freeze({
+    ...createSortedBEMClasses(),
+    basicUtility: new Map<
+        string, Map<
+            Extract<
+                ViableUtilityClassMapKeys,
+                "word" | "digit" | "color"
+            >,
+            string | undefined
+        >
+        | undefined
     >()
 
-});
+})
+
+
+
+export const createSortedBootstrapClasses = () =>
+    createSortedClassObject({
+        bootstrapCSSUtility: new Map<
+            string,
+            Map<`${Extract<ViableUtilityClassMapKeys, "word" | "digit">}Map`,
+                Map<string, string> | undefined
+            > | undefined
+        >()
+
+    });
 
 export const createSortedTailwindClasses = () => createSortedClassObject({
     arbitraryProperties: new Map<string, Map<StringOrOmitFromString<"base">, string | undefined> | undefined>(),
@@ -137,6 +155,7 @@ export const createSortedTailwindClasses = () => createSortedClassObject({
 type AllSortedClasses = typeof sortedClasses
     & ReturnType<typeof createSortedBEMClasses>
     & ReturnType<typeof createSortedBootstrapClasses>
+    & ReturnType<typeof createSortedBaseCN_EFSClasses>
     & ReturnType<typeof createSortedTailwindClasses>
 
 
@@ -153,6 +172,184 @@ type ClassMapChangerBasedOnClassName<T extends ClassNameMap,
     U = undefined>
     = U extends undefined ? (classMap: T, className: string,) => boolean : (classMap: T, className: string, data: U) => boolean
 
+export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue: ClassMapChangerBasedOnClassName<AllSortedClasses["basicUtility"]> = (classMap, className) => {
+
+
+    const cssTypeValueUtilityClassMatchGroups = /(?<type>[a-z]+-)(?<subtype>(?:[a-z]+-)*)?(?<value>[a-z\d]+)/.exec(className)?.groups
+
+
+    if (!cssTypeValueUtilityClassMatchGroups) return false
+
+
+
+    const { type, value, subtype = "", } = cssTypeValueUtilityClassMatchGroups
+
+
+    if (!type || !value) return false
+
+
+    const typeAndSubtype = `${type}${subtype}`
+
+    const subTypeAndValue = `${subtype}${value}`
+
+
+
+
+    const valueIsAViableDigit = checkIfStringIsAProperDigit(value)
+
+
+    const valueIsAViableWord = checkIfStringIsALowerCaseWord(value)
+
+
+    const valueIsAViableColor = isAColorRange(`${subtype}${value}`)
+
+
+    const colorRangeGroups = colorRangeRE.exec(subTypeAndValue)?.groups
+
+
+    const dashedLowerCaseWordGroups = dashedLowerCaseWordRE.exec(subTypeAndValue)?.groups
+
+
+    if (!classMap.has(type)) {
+
+
+        if (valueIsAViableColor) {
+
+
+            if (colorRangeGroups) {
+
+
+                const { color, range } = colorRangeGroups
+
+                if (!color || !range) return false
+
+
+
+                classMap.set(type, new Map([[viableUtilityClassMapKeys[2], `${color}${range}`]]))
+
+                return true
+
+            }
+
+
+
+            classMap.set(type, new Map([[viableUtilityClassMapKeys[2], subTypeAndValue]]))
+
+            return true
+
+        }
+
+
+        if (valueIsAViableDigit) {
+
+
+
+            classMap.set(typeAndSubtype, new Map([[viableUtilityClassMapKeys[0], value]]))
+
+
+            return true
+
+        }
+
+
+        if (valueIsAViableWord) {
+
+
+            if (dashedLowerCaseWordGroups) {
+
+
+                const { first_word, middle_words = "", last_word } = dashedLowerCaseWordGroups
+
+
+                if (first_word && last_word) {
+
+                    classMap.set(
+                        type,
+                        new Map([[viableUtilityClassMapKeys[1], `${first_word}${middle_words}${last_word}`]])
+                    )
+
+                    return true
+                }
+
+                classMap.get(type)?.set(
+                    viableUtilityClassMapKeys[1],
+                    `${first_word}${middle_words}${last_word}`
+                )
+
+
+                return true
+            }
+
+            classMap.set(typeAndSubtype, new Map([[viableUtilityClassMapKeys[1], value]]))
+
+
+
+            return true
+        }
+
+
+
+
+
+
+    }
+
+
+
+
+
+    const result = classMap.get(type) || classMap.get(typeAndSubtype)
+
+
+    if (result) {
+
+        if (valueIsAViableColor) {
+
+            if (!colorRangeGroups) {
+
+                result.set(viableUtilityClassMapKeys[2], value)
+
+                return true
+
+            }
+
+
+            result.set(viableUtilityClassMapKeys[2], `${colorRangeGroups.color}${colorRangeGroups.range}`)
+
+
+            return true
+
+        }
+
+
+
+        if (valueIsAViableDigit) {
+
+            result.set(viableUtilityClassMapKeys[0], value)
+
+            return true
+        }
+
+
+        if (valueIsAViableWord) {
+
+            result.set(viableUtilityClassMapKeys[1], value)
+
+
+
+            return true
+
+        }
+
+
+
+    }
+
+
+    return false
+
+
+};
 
 
 export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue: ClassMapChangerBasedOnClassName<AllSortedClasses["bootstrapCSSUtility"]> = (classMap, className) => {
