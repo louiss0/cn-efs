@@ -1,4 +1,4 @@
-import { cnEFS, tailwindOrWindi_CN_EFS } from "."
+import { bootstrap_CN_EFS, cnEFS, tailwindOrWindi_CN_EFS } from "."
 
 
 
@@ -161,8 +161,73 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
     })
 
 
-    describe.todo("Testing bootstrap_CN_EFS", () => {
+    describe("Testing bootstrap_CN_EFS", () => {
 
+
+        it("works", () => {
+
+
+
+            const res = bootstrap_CN_EFS("bg-red bg-blue")
+
+
+            expect(res).toBe("bg-blue")
+
+
+
+        })
+
+        it("filters out based on breakpoints", () => {
+
+            const res = bootstrap_CN_EFS("bg-md-red bg-md-green")
+
+
+            expect(res).toBe("bg-md-green")
+
+
+        })
+
+
+        it("filters out based on states", () => {
+
+            const res = bootstrap_CN_EFS("bg-blue bg-red-hover bg-green-hover")
+
+
+            expect(res).toBe("bg-blue bg-green-hover")
+
+
+        })
+
+
+
+
+
+
+        it("filters out based on states and breakpoints", () => {
+
+            const res = bootstrap_CN_EFS(
+                "bg-blue bg-red-hover bg-green-hover bg-md-black-hover bg-md-blue-hover"
+            )
+
+
+            expect(res).toBe("bg-blue bg-green-hover bg-md-blue-hover")
+
+
+        })
+
+
+        it("filters based on conventional bootstrap colors", () => {
+
+            const res = bootstrap_CN_EFS(
+                "bg-primary bg-primary-emphasis"
+            )
+
+
+            expect(res).toBe("bg-primary-emphasis")
+
+
+
+        })
 
 
     })
