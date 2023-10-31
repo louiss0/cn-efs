@@ -112,12 +112,12 @@ export const sortedClasses = createSortedClassObject()
 
 export type SortedClasses = typeof sortedClasses
 
-export const sortedBEMClasses = createSortedClassObject({
+export const createSortedBEMClasses = () => createSortedClassObject({
     bem: new Map<string, Map<ViableBemClassMapKeys, string | undefined> | undefined>()
 })
 
 
-export const sortedBootstrapClasses = createSortedClassObject({
+export const createSortedBootstrapClasses = () => createSortedClassObject({
     bootstrapCSSUtility: new Map<
         string,
         Map<`${Extract<ViableUtilityClassMapKeys, "word" | "digit">}Map`,
@@ -127,7 +127,7 @@ export const sortedBootstrapClasses = createSortedClassObject({
 
 });
 
-export const sortedTailwindClasses = createSortedClassObject({
+export const createSortedTailwindClasses = () => createSortedClassObject({
     arbitraryProperties: new Map<string, Map<StringOrOmitFromString<"base">, string | undefined> | undefined>(),
     tailwindCSSUtility: new Map<string, Map<ViableUtilityClassMapKeys, string | undefined> | undefined>()
 
@@ -135,9 +135,9 @@ export const sortedTailwindClasses = createSortedClassObject({
 
 
 type AllSortedClasses = typeof sortedClasses
-    & typeof sortedBEMClasses
-    & typeof sortedBootstrapClasses
-    & typeof sortedTailwindClasses
+    & ReturnType<typeof createSortedBEMClasses>
+    & ReturnType<typeof createSortedBootstrapClasses>
+    & ReturnType<typeof createSortedTailwindClasses>
 
 
 export type ClassNameMap = Map<
