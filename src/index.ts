@@ -561,7 +561,7 @@ export const bootstrap_CN_EFS = (...args: Parameters<typeof clsx>) => {
                                 key === "base" ? "" : key
 
                             sortString = sortString.concat(
-                                `${classType}-${value}${returnEmptyStringIfKeyIsBaseElseKey}`
+                                `${classType}-${value}${returnEmptyStringIfKeyIsBaseElseKey} `
                             )
 
                         }
