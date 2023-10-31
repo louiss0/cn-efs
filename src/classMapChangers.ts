@@ -693,7 +693,7 @@ const arbitraryPropertyRE =
     /(?<variant>(?:(?:(?:[\&:{1,2}[a-z0-9\-]+(?:\([a-z0-9\+\-\_]+\))?)\]|[a-z0-9\-]+(?:\([a-z0-9\+\-\_]+\))?):)*)?\[(?<property_key>[a-z]+(?:\-[a-z]+)*:)(?<property_value>[_\-),.\/(a-z0-9]+)\]/
 
 
-export const attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty: ClassMapChangerBasedOnClassName<AllSortedClasses["arbitraryProperties"]> =
+export const attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty: ClassMapChangerBasedOnClassName<AllSortedClasses["arbitraryProperties"]> =
     (classMap, className) => {
 
 
@@ -746,7 +746,7 @@ const relationClassUtilityRE = /^(?<relationship>@?[a-z-]+\/)(?<name>[a-z]+)$/
 
 
 
-export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassMapChangerBasedOnClassName<AllSortedClasses["tailwindCSSUtility"]> =
+export const attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass: ClassMapChangerBasedOnClassName<AllSortedClasses["tailwindCSSUtility"]> =
     (classMap, className) => {
 
 
@@ -792,7 +792,7 @@ type PropsNeededFromSortedClasses = {
     arbitraryProperties: AllSortedClasses["arbitraryProperties"]
 }
 
-export const attemptToChangeClassMapBasedOnIfItIsAVariantGroup =
+export const attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup =
     ({ arbitraryProperties, customFiltered, tailwindCSSUtility, }: PropsNeededFromSortedClasses, className: string, filterObject?: FilterObject): boolean => {
 
 
@@ -827,7 +827,7 @@ export const attemptToChangeClassMapBasedOnIfItIsAVariantGroup =
                 }
 
                 const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClassResult =
-                    attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(tailwindCSSUtility, className)
+                    attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass(tailwindCSSUtility, className)
 
                 if (attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClassResult) {
 
@@ -835,7 +835,7 @@ export const attemptToChangeClassMapBasedOnIfItIsAVariantGroup =
                     return
                 }
 
-                const attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryPropertyResult = attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty(arbitraryProperties, className)
+                const attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryPropertyResult = attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty(arbitraryProperties, className)
 
                 if (attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryPropertyResult) {
 

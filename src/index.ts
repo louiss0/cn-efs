@@ -5,9 +5,9 @@ import {
     attemptToChangeClassNameMapAccordingToIfTheBEMConvention,
     attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue,
     attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject,
-    attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty,
-    attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass,
-    attemptToChangeClassMapBasedOnIfItIsAVariantGroup,
+    attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty,
+    attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass,
+    attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup,
     attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue,
     createSortedBEMClasses,
     createSortedTailwindClasses,
@@ -394,17 +394,17 @@ export const tailwindOrWindi_CN_EFS = (...args: Parameters<typeof clsx>) => {
 
 
 
-            if (attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty(classNameMap.arbitraryProperties, value))
+            if (attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty(classNameMap.arbitraryProperties, value))
                 return classNameMap
 
 
-            if (attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(classNameMap.tailwindCSSUtility, value))
+            if (attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass(classNameMap.tailwindCSSUtility, value))
                 return classNameMap
 
 
             const { customFiltered, tailwindCSSUtility, arbitraryProperties } = classNameMap
 
-            attemptToChangeClassMapBasedOnIfItIsAVariantGroup(
+            attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup(
                 {
                     tailwindCSSUtility,
                     arbitraryProperties,

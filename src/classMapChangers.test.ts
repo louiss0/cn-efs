@@ -4,9 +4,9 @@ import {
     attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue,
     attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject,
     attemptToChangeClassNameMapAccordingToIfTheBEMConvention,
-    attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty,
-    attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass,
-    attemptToChangeClassMapBasedOnIfItIsAVariantGroup,
+    attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty,
+    attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass,
+    attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup,
     attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue,
     createSortedBootstrapClasses,
     createSortedTailwindClasses,
@@ -1100,7 +1100,7 @@ describe("Test if all class map changers work", () => {
             ({ arbitraryProperties }) => {
 
 
-                attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty(arbitraryProperties, "[font-size:2rem]")
+                attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty(arbitraryProperties, "[font-size:2rem]")
 
 
 
@@ -1158,7 +1158,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-                    attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty(classMap, className)
+                    attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty(classMap, className)
 
 
                     expect(classMap.has(key)).toBeTruthy()
@@ -1211,7 +1211,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-                    attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty(classMap, className)
+                    attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty(classMap, className)
 
 
                     expect(classMap.has(key)).toBeTruthy()
@@ -1368,7 +1368,7 @@ describe("Test if all class map changers work", () => {
         itUsingTailwindSortedClasses("works with container queries", ({ tailwindCSSUtility: utility }) => {
 
 
-            attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(utility, "@container/main")
+            attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass(utility, "@container/main")
 
 
 
@@ -1384,7 +1384,7 @@ describe("Test if all class map changers work", () => {
 
         itUsingTailwindSortedClasses("works with named groups", ({ tailwindCSSUtility: utility }) => {
 
-            attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass(utility, "group/main")
+            attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass(utility, "group/main")
 
 
             expect(utility.has("group/")).toBeTruthy()
@@ -1409,7 +1409,7 @@ describe("Test if all class map changers work", () => {
             "works",
             ({ tailwindCSSUtility, arbitraryProperties, customFiltered }) => {
 
-                attemptToChangeClassMapBasedOnIfItIsAVariantGroup(
+                attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup(
                     { tailwindCSSUtility, arbitraryProperties, customFiltered },
                     "hover:(bg-red-500 text-gray-500)"
                 )
@@ -1426,7 +1426,7 @@ describe("Test if all class map changers work", () => {
             ({ tailwindCSSUtility, arbitraryProperties, customFiltered }) => {
 
 
-                attemptToChangeClassMapBasedOnIfItIsAVariantGroup({ tailwindCSSUtility, arbitraryProperties, customFiltered }, "peer-checked/draft:(text-sky-500 bg-gray-500)")
+                attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup({ tailwindCSSUtility, arbitraryProperties, customFiltered }, "peer-checked/draft:(text-sky-500 bg-gray-500)")
 
 
                 expect(tailwindCSSUtility.has("peer-checked/draft:text-")).toBeTruthy()
@@ -1447,7 +1447,7 @@ describe("Test if all class map changers work", () => {
             ({ tailwindCSSUtility, arbitraryProperties, customFiltered }) => {
 
 
-                attemptToChangeClassMapBasedOnIfItIsAVariantGroup(
+                attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup(
                     { tailwindCSSUtility, arbitraryProperties, customFiltered },
                     "group-[.is-published]:(opacity-50 text-sky-900)"
                 )
@@ -1470,7 +1470,7 @@ describe("Test if all class map changers work", () => {
             "works with utilities that have variants as prefixes",
             ({ tailwindCSSUtility, arbitraryProperties, customFiltered }) => {
 
-                attemptToChangeClassMapBasedOnIfItIsAVariantGroup(
+                attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup(
                     { tailwindCSSUtility, arbitraryProperties, customFiltered },
                     "hover:(focus:bg-500 peer-checked/main:text-gray-500)"
                 )
@@ -1487,7 +1487,7 @@ describe("Test if all class map changers work", () => {
             ({ tailwindCSSUtility, arbitraryProperties, customFiltered }) => {
 
 
-                attemptToChangeClassMapBasedOnIfItIsAVariantGroup({ tailwindCSSUtility, arbitraryProperties, customFiltered }, "[&:nth-child(3)]:(opacity-50 border-gray-500)")
+                attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup({ tailwindCSSUtility, arbitraryProperties, customFiltered }, "[&:nth-child(3)]:(opacity-50 border-gray-500)")
 
 
                 expect(tailwindCSSUtility.has("[&:nth-child(3)]:opacity-")).toBeTruthy()
@@ -1508,7 +1508,7 @@ describe("Test if all class map changers work", () => {
             ({ tailwindCSSUtility, arbitraryProperties, customFiltered }) => {
 
 
-                attemptToChangeClassMapBasedOnIfItIsAVariantGroup({ tailwindCSSUtility, arbitraryProperties, customFiltered }, "[&:is(:hover,:focus)]:(opacity-50 bg-gray-900)")
+                attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup({ tailwindCSSUtility, arbitraryProperties, customFiltered }, "[&:is(:hover,:focus)]:(opacity-50 bg-gray-900)")
 
 
                 expect(tailwindCSSUtility.has("[&:is(:hover,:focus)]:opacity-")).toBeTruthy()
