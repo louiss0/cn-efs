@@ -55,6 +55,26 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
         })
 
 
+        it("filters and sorts utility classes", () => {
+
+            const classes = "border-solid border-1 border-gray-600 border-[#FEFa1e]"
+
+            const sortedClasses = tailwindOrWindi_CN_EFS(classes)
+
+
+            expect(sortedClasses).not.toBe(classes)
+
+
+            expect(sortedClasses?.length).toBeLessThan(classes.length)
+
+
+
+            expect(sortedClasses).toMatchInlineSnapshot('"border-1 border-solid border-[#FEFa1e]"')
+
+
+
+        })
+
 
     })
 
