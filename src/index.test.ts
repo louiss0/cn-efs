@@ -9,6 +9,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
 
 
     describe("Testing cnEFS", () => {
+
         it("filters bem classes based on block and modifier", () => {
 
 
@@ -21,6 +22,15 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
             expect(sortedClasses).toMatchInlineSnapshot('"card card card--baz"')
 
 
+
+        })
+
+        it("throws error when string is not spaced", () => {
+
+
+
+            expect(() => cnEFS("foo"))
+                .toThrowErrorMatchingInlineSnapshot('"This string has no sets of classes please add spaces between classes that need to be sorted"')
 
         })
 
@@ -53,6 +63,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
 
 
         })
+
 
 
         it("filters and sorts utility classes", () => {
@@ -168,14 +179,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
             })
 
 
-        it("throws error when string is not spaced", () => {
 
-
-
-            expect(() => cnEFS("foo"))
-                .toThrowErrorMatchingInlineSnapshot('"This string has no sets of classes please add spaces between classes that need to be sorted"')
-
-        })
 
 
     })
