@@ -115,14 +115,6 @@ const classNameFilterSorterFactory = <
 
 
 
-                if (!carry.safeListed.includes(value)) {
-
-
-                    carry.safeListed.push(value)
-
-                    return carry
-                }
-
                 if (carry.safeListed.includes(value)) {
 
 
@@ -135,6 +127,15 @@ const classNameFilterSorterFactory = <
                     )
 
                 }
+
+
+
+
+                carry.safeListed.push(value)
+
+                return carry
+
+
 
 
             }
