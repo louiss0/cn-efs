@@ -32,7 +32,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
             const sortedClasses = cnEFS(bemClassesWithOnlyElementsAndElementModifiers)
 
 
-            expect(sortedClasses).toBe("card__title--lg")
+            expect(sortedClasses).toBe("card card__title--lg")
 
         })
 
@@ -142,7 +142,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
 
                 const sortedClasses = tailwindOrWindi_CN_EFS(classes)
 
-                expect(sortedClasses).toBe("absolute [font-size:2px] border-1 border-dashed border-gray-500 ")
+                expect(sortedClasses).toBe("absolute [font-size:2px] border-1 border-dashed border-gray-500")
 
 
             })
@@ -156,6 +156,13 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
                 .toThrowErrorMatchingInlineSnapshot('"This string has no sets of classes please add spaces between classes that need to be sorted"')
 
         })
+
+
+    })
+
+
+    describe.todo("Testing bootstrap_CN_EFS", () => {
+
 
 
     })
