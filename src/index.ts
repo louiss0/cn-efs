@@ -8,11 +8,11 @@ import {
     attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty,
     attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass,
     attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup,
-    attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue,
-    createSortedBEMClasses,
-    createSortedTailwindClasses,
+    attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue, createSortedTailwindClasses,
     createSortedBootstrapClasses,
-
+    createSortedBaseCN_EFSClasses,
+    type FilterObject,
+    attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue
 } from "./classMapChangers"
 
 
@@ -173,10 +173,16 @@ function isString(value: unknown): value is string {
 }
 
 function getCreateUtilityClassesBasedOnIfTheValueHasAPrefix(
-    valueIsPrefixedWithAnExclamationMarkOrDashRE: RegExp,
-    valueIsAUtilityClassVariantAndTypeRE: RegExp,
     utility: string) {
+
+
+    const valueIsPrefixedWithAnExclamationMarkOrDashRE = /^(?<prefix>(-|!))(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d]+)$/
+
+    const valueIsAUtilityClassVariantAndTypeRE = /^(?<variant>[a-z0-9\][#\.&:\-\)"=(\/]+:)?(?<type>[a-z\-]+-)$/
+
+
     return (classValue: string) => {
+
 
 
         const prefixAndValueGroup = valueIsPrefixedWithAnExclamationMarkOrDashRE.exec(classValue)?.groups
@@ -268,9 +274,12 @@ export const cnEFS = (...args: Parameters<typeof clsx>) => {
 
     const classNamesEvaluatorFilterAndSorter = getClassNamesEvaluatorFilterAndSorter(
         {
-            classMap: createSortedBEMClasses(),
+            classMap: createSortedBaseCN_EFSClasses(),
             classMapChanger(classMap, value) {
 
+
+                if (attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue(classMap.basicUtility, value))
+                    return classMap
 
                 attemptToChangeClassNameMapAccordingToIfTheBEMConvention(classMap.bem, value, classMap.safeListed)
 
@@ -308,6 +317,36 @@ export const cnEFS = (...args: Parameters<typeof clsx>) => {
 
                 }
 
+                if (classNameMap.basicUtility.size !== 0) {
+
+
+
+                    for (const [utility, utilityValueMap] of classNameMap.basicUtility) {
+
+
+                        if (!utilityValueMap) continue;
+
+                        const valuesFromUtilityValueMap = [
+                            utilityValueMap.get("digit"),
+                            utilityValueMap.get("word"),
+                            utilityValueMap.get("color"),
+                        ]
+
+
+                        const utilityClassesFromValuesFromUtilityValueMap = valuesFromUtilityValueMap
+                            .filter(isString)
+                            .map((value) => `${utility}${value} `)
+
+                        sortString = sortString.concat(
+                            ...utilityClassesFromValuesFromUtilityValueMap
+                        )
+
+                    }
+
+
+
+                }
+
 
                 return sortString
 
@@ -319,7 +358,6 @@ export const cnEFS = (...args: Parameters<typeof clsx>) => {
 
 }
 
-type FilterObject = Record<Lowercase<string>, Array<Lowercase<string>>>;
 
 const TailwindOrWindiFilterObject = {
     appearance: ["appearance-none"],
@@ -446,9 +484,6 @@ export const tailwindOrWindi_CN_EFS = (...args: Parameters<typeof clsx>) => {
             if (classNameMap.tailwindCSSUtility.size !== 0) {
 
 
-                const valueIsPrefixedWithAnExclamationMarkOrDashRE = /^(?<prefix>(-|!))(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d]+)$/
-
-                const valueIsAUtilityClassVariantAndTypeRE = /^(?<variant>[a-z0-9\][#\.&:\-\)"=(\/]+:)?(?<type>[a-z\-]+-)$/
 
 
                 for (const [utility, utilityValueMap] of classNameMap.tailwindCSSUtility) {
@@ -473,8 +508,6 @@ export const tailwindOrWindi_CN_EFS = (...args: Parameters<typeof clsx>) => {
                             .filter(isString)
                             .map(
                                 getCreateUtilityClassesBasedOnIfTheValueHasAPrefix(
-                                    valueIsPrefixedWithAnExclamationMarkOrDashRE,
-                                    valueIsAUtilityClassVariantAndTypeRE,
                                     utility
                                 )
                             )

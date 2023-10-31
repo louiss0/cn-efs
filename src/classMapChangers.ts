@@ -1059,15 +1059,3 @@ export const attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup =
     };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
