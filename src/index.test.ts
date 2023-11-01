@@ -1,4 +1,4 @@
-import { bootstrap_CN_EFS, cnEFS, tailwindOrWindi_CN_EFS } from "."
+import { bootstrapCN_EFS, cnEFS, tailwindOrWindiCN_EFS } from "."
 
 
 
@@ -90,7 +90,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
     })
 
 
-    describe("Testing tailwindOrWindi_CN_EFS", () => {
+    describe("Testing tailwindOrWindiCN_EFS", () => {
 
 
 
@@ -98,7 +98,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
 
             const classes = "outline-solid outline-1 outline-gray-600 outline-[#FFF333]"
 
-            const sortedClasses = tailwindOrWindi_CN_EFS(classes)
+            const sortedClasses = tailwindOrWindiCN_EFS(classes)
 
 
             expect(sortedClasses).not.toBe(classes)
@@ -123,7 +123,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
                 const classes = "random-solid random-[2_4_6] random-1 random-[#FFF333] random-[url(/foo)] random-[--foo]"
 
 
-                const sortedClasses = tailwindOrWindi_CN_EFS(classes)
+                const sortedClasses = tailwindOrWindiCN_EFS(classes)
 
                 expect(sortedClasses).toBe("random-1 random-solid random-[#FFF333] random-[url(/foo)] random-[--foo] random-[2_4_6]")
 
@@ -139,7 +139,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
             const classes = "[font-size:2px] [font-size:4px] [font-size:8px]"
 
 
-            const sortedClasses = tailwindOrWindi_CN_EFS(classes)
+            const sortedClasses = tailwindOrWindiCN_EFS(classes)
 
 
             expect(sortedClasses).toBe("[font-size:8px]")
@@ -152,7 +152,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
             const classes = "[font-size:2px] md:[font-size:4px] md:[font-size:8px] lg:[font-size:6px] lg:[font-size:7px]"
 
 
-            const sortedClasses = tailwindOrWindi_CN_EFS(classes)
+            const sortedClasses = tailwindOrWindiCN_EFS(classes)
 
 
             expect(sortedClasses).toBe("[font-size:2px] md:[font-size:8px] lg:[font-size:7px]")
@@ -171,7 +171,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
                 const classes = "absolute border-1 border-dashed border-gray-500 [font-size:2px]"
 
 
-                const sortedClasses = tailwindOrWindi_CN_EFS(classes)
+                const sortedClasses = tailwindOrWindiCN_EFS(classes)
 
                 expect(sortedClasses).toBe("absolute [font-size:2px] border-1 border-dashed border-gray-500")
 
@@ -185,14 +185,14 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
     })
 
 
-    describe("Testing bootstrap_CN_EFS", () => {
+    describe("Testing bootstrapCN_EFS", () => {
 
 
         it("works", () => {
 
 
 
-            const res = bootstrap_CN_EFS("bg-red bg-blue")
+            const res = bootstrapCN_EFS("bg-red bg-blue")
 
 
             expect(res).toBe("bg-blue")
@@ -203,7 +203,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
 
         it("filters out based on breakpoints", () => {
 
-            const res = bootstrap_CN_EFS("bg-md-red bg-md-green")
+            const res = bootstrapCN_EFS("bg-md-red bg-md-green")
 
 
             expect(res).toBe("bg-md-green")
@@ -214,7 +214,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
 
         it("filters out based on states", () => {
 
-            const res = bootstrap_CN_EFS("bg-blue bg-red-hover bg-green-hover")
+            const res = bootstrapCN_EFS("bg-blue bg-red-hover bg-green-hover")
 
 
             expect(res).toBe("bg-blue bg-green-hover")
@@ -229,7 +229,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
 
         it("filters out based on states and breakpoints", () => {
 
-            const res = bootstrap_CN_EFS(
+            const res = bootstrapCN_EFS(
                 "bg-blue bg-red-hover bg-green-hover bg-md-black-hover bg-md-blue-hover"
             )
 
@@ -242,7 +242,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
 
         it("filters based on conventional bootstrap colors", () => {
 
-            const res = bootstrap_CN_EFS(
+            const res = bootstrapCN_EFS(
                 "bg-primary bg-primary-emphasis"
             )
 
