@@ -47,7 +47,7 @@ const tailwindCSSUtilityClassVariantAndSelfRE = /(?<variant>[a-z0-9)\-(\]\[&,]+:
 
 const isAColorRange = (string: string) => colorRangeRE.test(string)
 
-const subtypeUsesAnAryAsAPostFixWithMaybeAValueRE = /(?<subtype>[a-z]+ary-)(?<value>[a-z\d]+)?/
+const subtypeUsesAnAryAsAPostFixWithMaybeAValueRE = /^(?<subtype>[a-z]+ary-)(?<value>[a-z\d]+)?$/
 
 const checkIfStringIsAProperColor = (string: string) =>
     hexColorRE.test(string)
@@ -471,6 +471,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
         if (!type || !value) return false
 
 
+        // consople.table(cssTypeValueUtilityClassMatchGroups);
 
         const classVariantAndType = `${variant}${type}`
 
