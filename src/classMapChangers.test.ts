@@ -298,7 +298,7 @@ describe("Test if all class map changers work", () => {
             "it constructs the map differently based on breakpoints for the same class",
             () => {
 
-                const classMap = new Map()
+                const sortedClasses = new Map()
 
                 const mapStructureExpectation =
                     (
@@ -336,11 +336,11 @@ describe("Test if all class map changers work", () => {
                     `,
                     ({ input, expected: { classType, valueType, key, value } }) => {
 
-                        attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue(classMap, input)
+                        attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue(sortedClasses, input)
 
-                        expect(classMap.has(classType))
+                        expect(sortedClasses.has(classType))
 
-                        const stateToValueMap = classMap.get(classType)
+                        const stateToValueMap = sortedClasses.get(classType)
 
                         expect(stateToValueMap?.get(valueType)?.has(key)).toBeTruthy()
 
@@ -434,7 +434,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-                        const classMap = new Map()
+                        const sortedClasses = new Map()
 
                         it.each([
                             {
@@ -459,13 +459,13 @@ describe("Test if all class map changers work", () => {
                             ({ className, expected: { key, value } }) => {
 
 
-                                attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(classMap, className)
+                                attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(sortedClasses, className)
 
 
-                                expect(classMap.has(key)).toBeTruthy()
+                                expect(sortedClasses.has(key)).toBeTruthy()
 
 
-                                const res = classMap.get(key)
+                                const res = sortedClasses.get(key)
 
 
                                 expect(res).toBeInstanceOf(Map)
@@ -553,7 +553,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-            const classMap = new Map()
+            const sortedClasses = new Map()
 
             it.each(
                 [
@@ -595,14 +595,14 @@ describe("Test if all class map changers work", () => {
                     ({ className, expected: { key, value } }) => {
 
 
-                        attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(classMap, className)
+                        attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(sortedClasses, className)
 
 
 
-                        expect(classMap.has(key)).toBeTruthy()
+                        expect(sortedClasses.has(key)).toBeTruthy()
 
 
-                        const res = classMap.get(key)
+                        const res = sortedClasses.get(key)
 
 
                         expect(res).toBeInstanceOf(Map)
@@ -651,7 +651,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-            const classMap = new Map()
+            const sortedClasses = new Map()
 
             it.each([
                 {
@@ -687,13 +687,13 @@ describe("Test if all class map changers work", () => {
                     createTestMessageForTestingIfAClassNameChangesTheMapWithAnExpectedKeyAndAValueTHatIsAMapWithAnExpectedKeyAndValue("color"),
                     ({ className, expected: { key, value } }) => {
 
-                        attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(classMap, className)
+                        attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(sortedClasses, className)
 
 
-                        expect(classMap.has(key)).toBeTruthy()
+                        expect(sortedClasses.has(key)).toBeTruthy()
 
 
-                        const result = classMap.get(key)
+                        const result = sortedClasses.get(key)
 
 
 
@@ -714,7 +714,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-            const classMap = new Map()
+            const sortedClasses = new Map()
 
             it.each([
                 {
@@ -751,13 +751,13 @@ describe("Test if all class map changers work", () => {
                 ({ className, expected: { key, value } }) => {
 
 
-                    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(classMap, className)
+                    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(sortedClasses, className)
 
 
-                    expect(classMap.has(key)).toBeTruthy()
+                    expect(sortedClasses.has(key)).toBeTruthy()
 
 
-                    const result = classMap.get(key)
+                    const result = sortedClasses.get(key)
 
 
 
@@ -1115,7 +1115,7 @@ describe("Test if all class map changers work", () => {
         describe("It works with lots of arbitrary properties", () => {
 
 
-            const classMap = new Map()
+            const sortedClasses = new Map()
 
             it.each([
                 {
@@ -1158,12 +1158,12 @@ describe("Test if all class map changers work", () => {
 
 
 
-                    attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty(classMap, className)
+                    attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty(sortedClasses, className)
 
 
-                    expect(classMap.has(key)).toBeTruthy()
+                    expect(sortedClasses.has(key)).toBeTruthy()
 
-                    expect(classMap.get(key).get("base")).toBe(value)
+                    expect(sortedClasses.get(key).get("base")).toBe(value)
 
 
 
@@ -1177,7 +1177,7 @@ describe("Test if all class map changers work", () => {
         describe("It works with lots of arbitrary properties that have modifiers", () => {
 
 
-            const classMap = new Map()
+            const sortedClasses = new Map()
 
             it.each([
                 {
@@ -1211,13 +1211,13 @@ describe("Test if all class map changers work", () => {
 
 
 
-                    attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty(classMap, className)
+                    attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty(sortedClasses, className)
 
 
-                    expect(classMap.has(key)).toBeTruthy()
+                    expect(sortedClasses.has(key)).toBeTruthy()
 
 
-                    const variantAndValueMap = classMap.get(key);
+                    const variantAndValueMap = sortedClasses.get(key);
 
                     expect(variantAndValueMap).toBeInstanceOf(Map)
 

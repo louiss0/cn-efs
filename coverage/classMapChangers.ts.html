@@ -1,68 +1,67 @@
-
 <!doctype html>
 <html lang="en">
 
-<head>
-    <title>Code coverage report for classMapChangers.ts</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="prettify.css" />
-    <link rel="stylesheet" href="base.css" />
-    <link rel="shortcut icon" type="image/x-icon" href="favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style type='text/css'>
-        .coverage-summary .sorter {
-            background-image: url(sort-arrow-sprite.png);
-        }
-    </style>
-</head>
-    
-<body>
-<div class='wrapper'>
-    <div class='pad1'>
-        <h1><a href="index.html">All files</a> classMapChangers.ts</h1>
-        <div class='clearfix'>
-            
-            <div class='fl pad1y space-right2'>
-                <span class="strong">79.54% </span>
-                <span class="quiet">Statements</span>
-                <span class='fraction'>564/709</span>
+    <head>
+        <title>Code coverage report for classMapChangers.ts</title>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="prettify.css" />
+        <link rel="stylesheet" href="base.css" />
+        <link rel="shortcut icon" type="image/x-icon" href="favicon.png" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <style type='text/css'>
+            .coverage-summary .sorter {
+                background-image: url(sort-arrow-sprite.png);
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class='wrapper'>
+            <div class='pad1'>
+                <h1><a href="index.html">All files</a> classMapChangers.ts</h1>
+                <div class='clearfix'>
+
+                    <div class='fl pad1y space-right2'>
+                        <span class="strong">79.54% </span>
+                        <span class="quiet">Statements</span>
+                        <span class='fraction'>564/709</span>
+                    </div>
+
+
+                    <div class='fl pad1y space-right2'>
+                        <span class="strong">81.44% </span>
+                        <span class="quiet">Branches</span>
+                        <span class='fraction'>79/97</span>
+                    </div>
+
+
+                    <div class='fl pad1y space-right2'>
+                        <span class="strong">100% </span>
+                        <span class="quiet">Functions</span>
+                        <span class='fraction'>17/17</span>
+                    </div>
+
+
+                    <div class='fl pad1y space-right2'>
+                        <span class="strong">79.54% </span>
+                        <span class="quiet">Lines</span>
+                        <span class='fraction'>564/709</span>
+                    </div>
+
+
+                </div>
+                <p class="quiet">
+                    Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+                </p>
+                <template id="filterTemplate">
+                    <div class="quiet">
+                        Filter:
+                        <input oninput="onInput()" type="search" id="fileSearch">
+                    </div>
+                </template>
             </div>
-        
-            
-            <div class='fl pad1y space-right2'>
-                <span class="strong">81.44% </span>
-                <span class="quiet">Branches</span>
-                <span class='fraction'>79/97</span>
-            </div>
-        
-            
-            <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
-                <span class="quiet">Functions</span>
-                <span class='fraction'>17/17</span>
-            </div>
-        
-            
-            <div class='fl pad1y space-right2'>
-                <span class="strong">79.54% </span>
-                <span class="quiet">Lines</span>
-                <span class='fraction'>564/709</span>
-            </div>
-        
-            
-        </div>
-        <p class="quiet">
-            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
-        </p>
-        <template id="filterTemplate">
-            <div class="quiet">
-                Filter:
-                <input oninput="onInput()" type="search" id="fileSearch">
-            </div>
-        </template>
-    </div>
-    <div class='status-line medium'></div>
-    <pre><table class="coverage">
+            <div class='status-line medium'></div>
+            <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
 <a name='L3'></a><a href='#L3'>3</a>
@@ -1605,11 +1604,11 @@ const variableHasAStringHint = (arbitraryValue: string) =&gt;
 &nbsp;
 &nbsp;
 type ClassMapChangerBasedOnClassName&lt;T extends Map&lt;string, Map&lt;string | Omit&lt;string, string&gt;, string | undefined&gt; | undefined&gt;, U = undefined&gt;
-    = U extends undefined ? (classMap: T, className: string,) =&gt; boolean : (classMap: T, className: string, data: U) =&gt; boolean
+    = U extends undefined ? (sortedClasses: T, className: string,) =&gt; boolean : (sortedClasses: T, className: string, data: U) =&gt; boolean
 &nbsp;
 &nbsp;
 export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
-    ClassMapChangerBasedOnClassName&lt;SortedClasses["utility"]&gt; = (classMap, className) =&gt; {
+    ClassMapChangerBasedOnClassName&lt;SortedClasses["utility"]&gt; = (sortedClasses, className) =&gt; {
 &nbsp;
 &nbsp;
 &nbsp;
@@ -1680,7 +1679,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
         const dashedLowerCaseWordGroups = dashedLowerCaseWordRE.exec(subTypeAndValue<span class="branch-0 cbranch-no" title="branch not covered" >)?.groups</span>
 &nbsp;
 &nbsp;
-        if (!classMap.has(classVariantAndType)) {
+        if (!sortedClasses.has(classVariantAndType)) {
 &nbsp;
 &nbsp;
             if (valueIsAViableColor) <span class="branch-0 cbranch-no" title="branch not covered" >{</span>
@@ -1695,7 +1694,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >                    classMap.set(classVariantAndType, new Map([[viableUtilityClassMapKeys[2], `${prefix}${color}${range}`]]))</span>
+<span class="cstat-no" title="statement not covered" >                    sortedClasses.set(classVariantAndType, new Map([[viableUtilityClassMapKeys[2], `${prefix}${color}${range}`]]))</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >                    return true</span>
 <span class="cstat-no" title="statement not covered" ></span>
@@ -1703,7 +1702,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >                classMap.set(classVariantAndType, new Map([[viableUtilityClassMapKeys[2], prefixAndClassValue]]))</span>
+<span class="cstat-no" title="statement not covered" >                sortedClasses.set(classVariantAndType, new Map([[viableUtilityClassMapKeys[2], prefixAndClassValue]]))</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >                return true</span>
 <span class="cstat-no" title="statement not covered" ></span>
@@ -1714,7 +1713,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 &nbsp;
 &nbsp;
 &nbsp;
-                classMap.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[0], prefixAndClassValue]]))
+                sortedClasses.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[0], prefixAndClassValue]]))
 &nbsp;
 &nbsp;
                 return true
@@ -1733,7 +1732,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >                    if (first_word &amp;&amp; last_word) {</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >                        classMap.set(</span>
+<span class="cstat-no" title="statement not covered" >                        sortedClasses.set(</span>
 <span class="cstat-no" title="statement not covered" >                            classVariantAndType,</span>
 <span class="cstat-no" title="statement not covered" >                            new Map([[viableUtilityClassMapKeys[1], `${prefix}${first_word}${middle_words}${last_word}`]])</span>
 <span class="cstat-no" title="statement not covered" >                        )</span>
@@ -1741,7 +1740,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 <span class="cstat-no" title="statement not covered" >                        return true</span>
 <span class="cstat-no" title="statement not covered" >                    }</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >                    classMap.get(classVariantAndType)?.set(</span>
+<span class="cstat-no" title="statement not covered" >                    sortedClasses.get(classVariantAndType)?.set(</span>
 <span class="cstat-no" title="statement not covered" >                        viableUtilityClassMapKeys[1],</span>
 <span class="cstat-no" title="statement not covered" >                        `${prefix}${first_word}${middle_words}${last_word}`</span>
 <span class="cstat-no" title="statement not covered" >                    )</span>
@@ -1750,7 +1749,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 <span class="cstat-no" title="statement not covered" >                    return true</span>
 <span class="cstat-no" title="statement not covered" >                }</span>
 &nbsp;
-                classMap.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[1], prefixAndClassValue]]))
+                sortedClasses.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[1], prefixAndClassValue]]))
 &nbsp;
 &nbsp;
 &nbsp;
@@ -1762,7 +1761,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 <span class="cstat-no" title="statement not covered" >            if (arbitraryValueIsAViableNonColorFunction) {</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >                classMap.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[4], prefixAndClassValue]]))</span>
+<span class="cstat-no" title="statement not covered" >                sortedClasses.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[4], prefixAndClassValue]]))</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >                return true</span>
@@ -1771,7 +1770,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >            if (arbitraryValueIsAViableCSSVariable) {</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >                classMap.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[3], prefixAndClassValue]]))</span>
+<span class="cstat-no" title="statement not covered" >                sortedClasses.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[3], prefixAndClassValue]]))</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" ></span>
@@ -1784,7 +1783,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 <span class="cstat-no" title="statement not covered" >            if (arbitraryValueIsASetOfArgs) {</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >                classMap.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[5], prefixAndClassValue]]))</span>
+<span class="cstat-no" title="statement not covered" >                sortedClasses.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[5], prefixAndClassValue]]))</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" ></span>
@@ -1800,7 +1799,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 &nbsp;
 &nbsp;
 &nbsp;
-        const result = classMap.get(classVariantAndType<span class="branch-0 cbranch-no" title="branch not covered" >) || classMap.get(classVariantTypeAndSubtype)</span>
+        const result = sortedClasses.get(classVariantAndType<span class="branch-0 cbranch-no" title="branch not covered" >) || sortedClasses.get(classVariantTypeAndSubtype)</span>
 &nbsp;
 &nbsp;
         if (result) {
@@ -1886,7 +1885,7 @@ export const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValue:
 &nbsp;
 type TypeAndListClassMapChanger = ClassMapChangerBasedOnClassName&lt;SortedClasses["customFiltered"], Record&lt;string, Array&lt;string&gt;&gt;&gt;
 &nbsp;
-export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject: TypeAndListClassMapChanger = (classMap, className, classTypeAndListObject) =&gt; {
+export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject: TypeAndListClassMapChanger = (sortedClasses, className, classTypeAndListObject) =&gt; {
 &nbsp;
 &nbsp;
 &nbsp;
@@ -1909,9 +1908,9 @@ export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject: TypeA
 &nbsp;
         if (!class_type_and_value) <span class="branch-0 cbranch-no" title="branch not covered" >return</span>
 &nbsp;
-        if (!classMap.has(classType) &amp;&amp; classList.includes(class_type_and_value)) {
+        if (!sortedClasses.has(classType) &amp;&amp; classList.includes(class_type_and_value)) {
 &nbsp;
-            classMap.set(
+            sortedClasses.set(
                 classType,
                 new Map([
                     [
@@ -1928,7 +1927,7 @@ export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject: TypeA
         if (classList.includes(class_type_and_value)) {
 &nbsp;
 &nbsp;
-            classMap.get(classType,)
+            sortedClasses.get(classType,)
                 ?.set(variant, class_type_and_value)
 &nbsp;
             classMapHasChanged = true
@@ -1962,7 +1961,7 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapC
     SortedClasses["bem"],
     Array&lt;string&gt;
 &gt; =
-    (classMap, className, classNames) =&gt; {
+    (sortedClasses, className, classNames) =&gt; {
 &nbsp;
 &nbsp;
         const blockAndElementClassNameGroups = aBlockElementClassName.exec(className)?.groups
@@ -1981,9 +1980,9 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapC
             if (!lower_case_word || !element) <span class="branch-0 cbranch-no" title="branch not covered" >return false</span>
 &nbsp;
 &nbsp;
-            if (!classMap.has(lower_case_word)) {
+            if (!sortedClasses.has(lower_case_word)) {
 &nbsp;
-                classMap.set(
+                sortedClasses.set(
                     lower_case_word,
                     new Map([
                         ["element", element],
@@ -1995,7 +1994,7 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapC
 &nbsp;
             }
 &nbsp;
-            classMap.get(lower_case_word)
+            sortedClasses.get(lower_case_word)
                 ?.set("element", element)
 &nbsp;
 &nbsp;
@@ -2023,16 +2022,16 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapC
             }
 &nbsp;
 &nbsp;
-            if (!classMap.has(lower_case_word)) {
+            if (!sortedClasses.has(lower_case_word)) {
 &nbsp;
-                classMap.set(lower_case_word, new Map([["modifier", modifier]]))
+                sortedClasses.set(lower_case_word, new Map([["modifier", modifier]]))
 &nbsp;
                 return true
 &nbsp;
             }
 &nbsp;
 &nbsp;
-            classMap.get(lower_case_word)?.set("modifier", modifier)
+            sortedClasses.get(lower_case_word)?.set("modifier", modifier)
 &nbsp;
 &nbsp;
 &nbsp;
@@ -2052,7 +2051,7 @@ const arbitraryPropertyRE =
 &nbsp;
 &nbsp;
 export const attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProperty: ClassMapChangerBasedOnClassName&lt;SortedClasses["arbitraryProperties"]&gt; =
-    (classMap, className) =&gt; {
+    (sortedClasses, className) =&gt; {
 &nbsp;
 &nbsp;
         const arbitraryPropertyKeyAndValueMatch = arbitraryPropertyRE.exec(className)
@@ -2071,10 +2070,10 @@ export const attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProper
         if (!propertyKey || !propertyValue) <span class="branch-0 cbranch-no" title="branch not covered" >return false</span>
 &nbsp;
 &nbsp;
-        if (!classMap.has(propertyKey)) {
+        if (!sortedClasses.has(propertyKey)) {
 &nbsp;
 &nbsp;
-            classMap.set(
+            sortedClasses.set(
                 propertyKey,
                 new Map([
                     [
@@ -2090,7 +2089,7 @@ export const attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryProper
         }
 &nbsp;
 &nbsp;
-        classMap.get(propertyKey)?.set(variant, propertyValue)
+        sortedClasses.get(propertyKey)?.set(variant, propertyValue)
 &nbsp;
 &nbsp;
         return true
@@ -2105,7 +2104,7 @@ const relationClassUtilityRE = /^(?&lt;relationship&gt;@?[a-z-]+\/)(?&lt;name&gt
 &nbsp;
 &nbsp;
 export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassMapChangerBasedOnClassName&lt;SortedClasses["utility"]&gt; =
-    (classMap, className) =&gt; {
+    (sortedClasses, className) =&gt; {
 &nbsp;
 &nbsp;
 &nbsp;
@@ -2125,14 +2124,14 @@ export const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClass: ClassM
 <span class="cstat-no" title="statement not covered" ></span>
         if (!relationship || !name) <span class="branch-0 cbranch-no" title="branch not covered" >return false</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        if (!classMap.has(relationship)) {</span>
+<span class="cstat-no" title="statement not covered" >        if (!sortedClasses.has(relationship)) {</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >            classMap.set(relationship, new Map([["word", name]]))</span>
+<span class="cstat-no" title="statement not covered" >            sortedClasses.set(relationship, new Map([["word", name]]))</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >            return true</span>
 <span class="cstat-no" title="statement not covered" >        }</span>
 <span class="cstat-no" title="statement not covered" ></span>
-        classMap.get(relationship)?.set("word", name)
+        sortedClasses.get(relationship)?.set("word", name)
 &nbsp;
         return true
 &nbsp;
@@ -2232,15 +2231,19 @@ export const attemptToChangeClassMapBasedOnIfItIsAVariantGroup =
 &nbsp;
 &nbsp;
 &nbsp;
-&nbsp;</pre></td></tr></table></pre>
+&nbsp;</pre>
+            </td>
+            </tr>
+            </table>
+            </pre>
 
-                <div class='push'></div><!-- for sticky footer -->
-            </div><!-- /wrapper -->
-            <div class='footer quiet pad2 space-top1 center small'>
-                Code coverage generated by
-                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-10-12T20:27:25.759Z
-            </div>
+            <div class='push'></div><!-- for sticky footer -->
+        </div><!-- /wrapper -->
+        <div class='footer quiet pad2 space-top1 center small'>
+            Code coverage generated by
+            <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+            at 2023-10-12T20:27:25.759Z
+        </div>
         <script src="prettify.js"></script>
         <script>
             window.onload = function () {
@@ -2250,5 +2253,5 @@ export const attemptToChangeClassMapBasedOnIfItIsAVariantGroup =
         <script src="sorter.js"></script>
         <script src="block-navigation.js"></script>
     </body>
+
 </html>
-    

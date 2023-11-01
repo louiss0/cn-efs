@@ -60,14 +60,14 @@ const createStringFromSafeListedMapIfItIsNotEmptyAnEmptyStringIfItIs = (safeList
 
 }
 
-type ClassMapChanger<T extends SortedClasses> = (classMap: T, value: string, filterObject: FilterObject | undefined) => T
+type ClassMapChanger<T extends SortedClasses> = (sortedClasses: T, value: string, filterObject: FilterObject | undefined) => T
 
-type ClassMapTransformer<T extends SortedClasses> = (classMap: Omit<T, "customFiltered" | "safeListed">, value: string) => string
+type ClassMapTransformer<T extends SortedClasses> = (sortedClasses: Omit<T, "customFiltered" | "safeListed">, value: string) => string
 
 const classNameFilterSorterFactory = <
     T extends SortedClasses
 >(
-    classMap: T,
+    sortedClasses: T,
     classMapChanger: ClassMapChanger<T>,
     classMapToStringTransformer: ClassMapTransformer<T>
 ) => {
@@ -147,7 +147,7 @@ const classNameFilterSorterFactory = <
 
             return classMapChanger(carry, value, filterObject)
 
-        }, classMap)
+        }, sortedClasses)
 
         const resultOfCreateStringFromSafeListedMapIfItIsNotEmpty =
             createStringFromSafeListedMapIfItIsNotEmptyAnEmptyStringIfItIs(safeListed)
@@ -242,7 +242,7 @@ function getCreateUtilityClassesBasedOnIfTheValueHasAPrefix(
 
 type GetClassNamesEvaluatorFilterAndSorterOptions<T extends SortedClasses> = {
     filterObject?: FilterObject
-    classMap: T,
+    sortedClasses: T,
     classMapChanger: ClassMapChanger<T>,
     classMapToStringTransformer: ClassMapTransformer<T>
 }
@@ -251,10 +251,10 @@ export const getClassNamesEvaluatorFilterAndSorter =
     <T extends SortedClasses>(options: GetClassNamesEvaluatorFilterAndSorterOptions<T>) =>
         (...args: Parameters<typeof clsx>) => {
 
-            const { classMap, classMapChanger, classMapToStringTransformer, filterObject } = options
+            const { sortedClasses, classMapChanger, classMapToStringTransformer, filterObject } = options
 
             const classNameFilterSorter = classNameFilterSorterFactory(
-                classMap,
+                sortedClasses,
                 classMapChanger,
                 classMapToStringTransformer,
             )
@@ -274,17 +274,17 @@ export const cnEFS = (...args: Parameters<typeof clsx>) => {
 
     const classNamesEvaluatorFilterAndSorter = getClassNamesEvaluatorFilterAndSorter(
         {
-            classMap: createSortedBaseCN_EFSClasses(),
-            classMapChanger(classMap, value) {
+            sortedClasses: createSortedBaseCN_EFSClasses(),
+            classMapChanger(sortedClasses, value) {
 
 
-                if (attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue(classMap.basicUtility, value))
-                    return classMap
+                if (attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue(sortedClasses.basicUtility, value))
+                    return sortedClasses
 
-                attemptToChangeClassNameMapAccordingToIfTheBEMConvention(classMap.bem, value, classMap.safeListed)
+                attemptToChangeClassNameMapAccordingToIfTheBEMConvention(sortedClasses.bem, value, sortedClasses.safeListed)
 
 
-                return classMap
+                return sortedClasses
 
             },
             classMapToStringTransformer(classNameMap, sortString) {
@@ -425,7 +425,7 @@ export const tailwindOrWindi_CN_EFS = (...args: Parameters<typeof clsx>) => {
 
 
     const classNamesEvaluatorFilterAndSorter = getClassNamesEvaluatorFilterAndSorter({
-        classMap: createSortedTailwindClasses(),
+        sortedClasses: createSortedTailwindClasses(),
         classMapChanger(classNameMap, value, filterObject) {
 
 
@@ -548,21 +548,21 @@ export const bootstrap_CN_EFS = (...args: Parameters<typeof clsx>) => {
 
     const classNamesEvaluatorFilterAndSorter = getClassNamesEvaluatorFilterAndSorter({
         filterObject: bootstrapFilterObject,
-        classMap: createSortedBootstrapClasses(),
-        classMapChanger(classMap, value) {
+        sortedClasses: createSortedBootstrapClasses(),
+        classMapChanger(sortedClasses, value) {
 
-            attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue(classMap.bootstrapCSSUtility, value)
+            attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue(sortedClasses.bootstrapCSSUtility, value)
 
-            return classMap
+            return sortedClasses
 
 
         },
-        classMapToStringTransformer(classMap, sortString) {
+        classMapToStringTransformer(sortedClasses, sortString) {
 
-            if (classMap.bootstrapCSSUtility.size !== 0) {
+            if (sortedClasses.bootstrapCSSUtility.size !== 0) {
 
 
-                for (const [classType, classValueMap] of classMap.bootstrapCSSUtility) {
+                for (const [classType, classValueMap] of sortedClasses.bootstrapCSSUtility) {
 
 
                     if (!classValueMap) continue;
