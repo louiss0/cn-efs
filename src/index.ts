@@ -247,7 +247,7 @@ type GetClassNamesEvaluatorFilterAndSorterOptions<T extends SortedClasses> = {
     classMapToStringTransformer: ClassMapTransformer<T>
 }
 
-export const getClassNamesEvaluatorFilterAndSorter =
+const getClassNamesEvaluatorFilterAndSorter =
     <T extends SortedClasses>(options: GetClassNamesEvaluatorFilterAndSorterOptions<T>) =>
         (...args: Parameters<typeof clsx>) => {
 
@@ -360,7 +360,7 @@ export const cnEFS = (...args: Parameters<typeof clsx>) => {
 
 
 
-export const tailwindOrWindi_CN_EFS = (...args: Parameters<typeof clsx>) => {
+export const tailwindOrWindiCN_EFS = (...args: Parameters<typeof clsx>) => {
 
 
     const TailwindOrWindiFilterObject = {
@@ -535,7 +535,7 @@ export const tailwindOrWindi_CN_EFS = (...args: Parameters<typeof clsx>) => {
 }
 
 
-export const bootstrap_CN_EFS = (...args: Parameters<typeof clsx>) => {
+export const bootstrapCN_EFS = (...args: Parameters<typeof clsx>) => {
 
 
     const bootstrapFilterObject = {
