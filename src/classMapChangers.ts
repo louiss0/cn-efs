@@ -47,9 +47,12 @@ const tailwindCSSUtilityClassVariantAndSelfRE = /(?<variant>[a-z0-9)\-(\]\[&,]+:
 
 const isAColorRange = (string: string) => colorRangeRE.test(string)
 
+const subtypeUsesAnAryAsAPostFixWithMaybeAValueRE = /(?<subtype>[a-z]+ary-)(?<value>[a-z\d]+)?/
+
 const checkIfStringIsAProperColor = (string: string) =>
     hexColorRE.test(string)
     || cssColorFunctionRE.test(string)
+    || subtypeUsesAnAryAsAPostFixWithMaybeAValueRE.test(string)
 
 
 const cssNormalFunctionRE = /^(?<css_function>[a-z_-]{3,15}\(([a-z0-9%!\(\).\/-]+(?:_|,)?)+\))$/
@@ -176,6 +179,7 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
 
 
     const cssTypeValueUtilityClassMatchGroups = /(?<type>[a-z]+-)(?<subtype>(?:[a-z]+-)*)?(?<value>[a-z\d]+)/.exec(className)?.groups
+        || /(?<type>[a-z]+)(?<value>\d+)/.exec(className)?.groups
 
 
     if (!cssTypeValueUtilityClassMatchGroups) return false
@@ -201,7 +205,8 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
     const valueIsAViableWord = checkIfStringIsALowerCaseWord(value)
 
 
-    const valueIsAViableColor = isAColorRange(`${subtype}${value}`)
+    const valueIsAViableColor = isAColorRange(subTypeAndValue)
+        || subtypeUsesAnAryAsAPostFixWithMaybeAValueRE.test(subTypeAndValue)
 
 
     const colorRangeGroups = colorRangeRE.exec(subTypeAndValue)?.groups
@@ -344,7 +349,6 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
 
 
     }
-
 
     return false
 
