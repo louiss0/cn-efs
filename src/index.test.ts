@@ -243,11 +243,11 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
         it("filters based on conventional bootstrap colors", () => {
 
             const res = bootstrapCN_EFS(
-                "bg-primary bg-primary-emphasis text-warning-subtle text-warning"
+                "bg-primary bg-primary-emphasis text-warning-subtle-hover text-warning-hover"
             )
 
 
-            expect(res).toBe("bg-primary-emphasis text-warning")
+            expect(res).toBe("bg-primary-emphasis text-warning-hover")
 
 
 
