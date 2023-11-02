@@ -20,7 +20,7 @@ const variableHasAStringHint = (arbitraryValue: string) =>
 
 
 const tailwindCSSTypeAndValueUtilityClassRE =
-    /^(?<variant>[a-z0-9\][#\.&:\-\)",_=(\/]+:)?(?<prefix>!|-)?(?<type>[a-z]+-)(?<subtype>(?:[a-z]+-)*)?(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d]+)$/
+    /^(?<variant>[a-z0-9\][#\.&:\-\)",_=(\/]+:)?(?<prefix>!|-)?(?<type>[a-z]+-)(?<subtype>[a-z]+-)?(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d]+)$/
 
 
 const bootstrapCSSTypeBreakpointAndValueUtilityClassRE =
@@ -173,9 +173,9 @@ export type ClassNameMap = Map<
 
 type ClassMapChangerBasedOnClassName<T extends ClassNameMap,
     U = undefined>
-    = U extends undefined ? (sortedClasses: T, className: string,) => boolean : (sortedClasses: T, className: string, data: U) => boolean
+    = U extends undefined ? (classMap: T, className: string,) => boolean : (classMap: T, className: string, data: U) => boolean
 
-export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue: ClassMapChangerBasedOnClassName<AllSortedClasses["basicUtility"]> = (sortedClasses, className) => {
+export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue: ClassMapChangerBasedOnClassName<AllSortedClasses["basicUtility"]> = (classMap, className) => {
 
 
     const cssTypeValueUtilityClassMatchGroups = /(?<type>[a-z]+-)(?<subtype>(?:[a-z]+-)*)?(?<value>[a-z\d]+)/.exec(className)?.groups
@@ -215,7 +215,7 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
     const dashedLowerCaseWordGroups = dashedLowerCaseWordRE.exec(subTypeAndValue)?.groups
 
 
-    if (!sortedClasses.has(type)) {
+    if (!classMap.has(type)) {
 
 
         if (valueIsAViableColor) {
@@ -230,7 +230,7 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
 
 
 
-                sortedClasses.set(type, new Map([[viableUtilityClassMapKeys[2], `${color}${range}`]]))
+                classMap.set(type, new Map([[viableUtilityClassMapKeys[2], `${color}${range}`]]))
 
                 return true
 
@@ -238,7 +238,7 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
 
 
 
-            sortedClasses.set(type, new Map([[viableUtilityClassMapKeys[2], subTypeAndValue]]))
+            classMap.set(type, new Map([[viableUtilityClassMapKeys[2], subTypeAndValue]]))
 
             return true
 
@@ -249,7 +249,7 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
 
 
 
-            sortedClasses.set(typeAndSubtype, new Map([[viableUtilityClassMapKeys[0], value]]))
+            classMap.set(typeAndSubtype, new Map([[viableUtilityClassMapKeys[0], value]]))
 
 
             return true
@@ -268,7 +268,7 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
 
                 if (first_word && last_word) {
 
-                    sortedClasses.set(
+                    classMap.set(
                         type,
                         new Map([[viableUtilityClassMapKeys[1], `${first_word}${middle_words}${last_word}`]])
                     )
@@ -276,7 +276,7 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
                     return true
                 }
 
-                sortedClasses.get(type)?.set(
+                classMap.get(type)?.set(
                     viableUtilityClassMapKeys[1],
                     `${first_word}${middle_words}${last_word}`
                 )
@@ -285,7 +285,7 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
                 return true
             }
 
-            sortedClasses.set(typeAndSubtype, new Map([[viableUtilityClassMapKeys[1], value]]))
+            classMap.set(typeAndSubtype, new Map([[viableUtilityClassMapKeys[1], value]]))
 
 
 
@@ -303,7 +303,7 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
 
 
 
-    const result = sortedClasses.get(type) || sortedClasses.get(typeAndSubtype)
+    const result = classMap.get(type) || classMap.get(typeAndSubtype)
 
 
     if (result) {
@@ -356,7 +356,7 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
 };
 
 
-export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue: ClassMapChangerBasedOnClassName<AllSortedClasses["bootstrapCSSUtility"]> = (sortedClasses, className) => {
+export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue: ClassMapChangerBasedOnClassName<AllSortedClasses["bootstrapCSSUtility"]> = (classMap, className) => {
 
 
     const cssTypeValueUtilityClassMatchGroups =
@@ -385,14 +385,14 @@ export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndVal
 
 
 
-    if (!sortedClasses.has(classTypeAndBreakpoint)) {
+    if (!classMap.has(classTypeAndBreakpoint)) {
 
 
         if (valueIsAViableDigit) {
 
 
 
-            sortedClasses.set(classTypeAndBreakpoint, new Map([["digitMap", new Map().set(state, value)]]))
+            classMap.set(classTypeAndBreakpoint, new Map([["digitMap", new Map().set(state, value)]]))
 
 
             return true
@@ -404,7 +404,7 @@ export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndVal
 
 
 
-            sortedClasses.set(
+            classMap.set(
                 classTypeAndBreakpoint,
                 new Map([[
                     "wordMap",
@@ -420,7 +420,7 @@ export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndVal
 
     }
 
-    const result = sortedClasses.get(classTypeAndBreakpoint)
+    const result = classMap.get(classTypeAndBreakpoint)
 
 
     if (result) {
@@ -450,9 +450,125 @@ export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndVal
 
 };
 
+// TODO: Find a way to do margin without having to use ma- class.
 
+const getDeleteKeyBasedOnDirectionBasedClasses = (
+    classTypesThatUseDirectionParts: Array<string>,
+    requiredClassParts: Record<"up" | "down", `${string}-`>
+        & Record<"left" | "right", { primary: `${string}-`, secondary?: `${string}-` }>
+        & Record<"horizontal" | "vertical" | "both", `${string}-`>
+
+) => (
+    classMap: Map<string, any>,
+    classType: string,
+    classSubtype: string
+) => {
+
+
+
+        const classTypeIsAPartOfOrIsAClassThatUsesDirectionParts = classTypesThatUseDirectionParts
+            .some(value => classType.startsWith(value) || classType === value)
+
+
+        if (!classTypeIsAPartOfOrIsAClassThatUsesDirectionParts) return false
+
+
+        const deleteKeyBasedOnOpposingDirections = (directionClassPart: string, opposingDirectionClassPart: string) => {
+
+
+
+            if (classType.endsWith(directionClassPart)) {
+
+
+                return classMap.delete(`${classType.replace(directionClassPart, "")}${opposingDirectionClassPart}`)
+
+            }
+
+            if (classSubtype === directionClassPart) {
+
+
+                return classMap.delete(`${classType}${opposingDirectionClassPart}`)
+
+
+            }
+
+            return false
+
+        }
+
+
+        const { up, down, left, right, horizontal, both, vertical } = requiredClassParts
+
+        const allDirectionalClassPartsExceptBoth = [up, down, left, right, vertical, horizontal];
+
+
+
+        if (classType.endsWith(both) || classSubtype === both) {
+
+
+            Array.from(classMap.keys())
+                .filter(
+                    (key) => allDirectionalClassPartsExceptBoth
+                        .some(value =>
+                            typeof value === "string"
+                                ? key.endsWith(value)
+                                : key.endsWith(value.primary)
+                                || value?.secondary && key.endsWith(value?.secondary)
+                        )
+                )
+                .forEach(
+                    (filteredKey) => classMap.delete(filteredKey)
+                )
+
+
+            return true
+        }
+
+
+        return [
+            deleteKeyBasedOnOpposingDirections(up, down),
+            deleteKeyBasedOnOpposingDirections(down, up),
+            deleteKeyBasedOnOpposingDirections(left.primary, right.primary),
+            deleteKeyBasedOnOpposingDirections(right.primary, left.primary),
+            left?.secondary && right?.secondary && deleteKeyBasedOnOpposingDirections(left.secondary, right.secondary),
+            left?.secondary && right?.secondary && deleteKeyBasedOnOpposingDirections(right.secondary, left.secondary),
+            deleteKeyBasedOnOpposingDirections(horizontal, vertical),
+            deleteKeyBasedOnOpposingDirections(vertical, horizontal),
+        ].some(value => value === true)
+
+
+
+
+    }
+
+
+const attemptToDeleteKeysWhenAClassThatCanHaveOrHasDirectionPartsIsFoundAndASimilarClassIsFound = getDeleteKeyBasedOnDirectionBasedClasses(
+    [
+        "m",
+        "z-index",
+        "border",
+        "p",
+        "start",
+        "end",
+        "overflow",
+        "gap",
+        "scale",
+        "translate",
+        "rotate",
+        "skew",
+        "scroll",
+        "scroll-m",
+        "touch-pan",
+    ],
+    {
+        up: "t-", down: "b-",
+        left: { primary: "l-", secondary: "s-" },
+        right: { primary: "r-", secondary: "e-" },
+        horizontal: "x-", both: "a-", vertical: "y-"
+    }
+);
 export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue:
-    ClassMapChangerBasedOnClassName<AllSortedClasses["tailwindCSSUtility"]> = (sortedClasses, className) => {
+    ClassMapChangerBasedOnClassName<AllSortedClasses["tailwindCSSUtility"]> = (classMap, className) => {
 
 
 
@@ -471,7 +587,6 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
         if (!type || !value) return false
 
 
-        // consople.table(cssTypeValueUtilityClassMatchGroups);
 
         const classVariantAndType = `${variant}${type}`
 
@@ -521,10 +636,9 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
         const colorRangeGroups = colorRangeRE.exec(subTypeAndValue)?.groups
 
 
-        const dashedLowerCaseWordGroups = dashedLowerCaseWordRE.exec(subTypeAndValue)?.groups
 
+        if (!classMap.has(classVariantAndType)) {
 
-        if (!sortedClasses.has(classVariantAndType)) {
 
 
             if (valueIsAViableColor) {
@@ -539,7 +653,9 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
 
 
-                    sortedClasses.set(classVariantAndType, new Map([[viableUtilityClassMapKeys[2], `${prefix}${color}${range}`]]))
+                    classMap.set(classVariantAndType, new Map([[viableUtilityClassMapKeys[2], `${prefix}${color}${range}`]]))
+
+                    deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
 
                     return true
 
@@ -547,7 +663,9 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
 
 
-                sortedClasses.set(classVariantAndType, new Map([[viableUtilityClassMapKeys[2], prefixAndClassValue]]))
+                classMap.set(classVariantAndType, new Map([[viableUtilityClassMapKeys[2], prefixAndClassValue]]))
+
+                deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
 
                 return true
 
@@ -558,8 +676,23 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
 
 
-                sortedClasses.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[0], prefixAndClassValue]]))
+                classMap.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[0], prefixAndClassValue]]))
 
+
+
+
+
+
+                const keyDeletionAttemptResult = !attemptToDeleteKeysWhenAClassThatCanHaveOrHasDirectionPartsIsFoundAndASimilarClassIsFound(
+                    classMap,
+                    classVariantAndType,
+                    subtype
+                );
+
+                if (keyDeletionAttemptResult) {
+
+                    deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
+                }
 
                 return true
 
@@ -569,36 +702,13 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
             if (valueIsAViableWord) {
 
 
-                if (dashedLowerCaseWordGroups) {
 
+                classMap.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[1], prefixAndClassValue]]))
 
-                    const { first_word, middle_words = "", last_word } = dashedLowerCaseWordGroups
-
-
-                    if (first_word && last_word) {
-
-                        sortedClasses.set(
-                            classVariantAndType,
-                            new Map([[viableUtilityClassMapKeys[1], `${prefix}${first_word}${middle_words}${last_word}`]])
-                        )
-
-                        return true
-                    }
-
-                    sortedClasses.get(classVariantAndType)?.set(
-                        viableUtilityClassMapKeys[1],
-                        `${prefix}${first_word}${middle_words}${last_word}`
-                    )
-
-
-                    return true
-                }
-
-                sortedClasses.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[1], prefixAndClassValue]]))
-
-
+                deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
 
                 return true
+
             }
 
 
@@ -606,20 +716,23 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
             if (arbitraryValueIsAViableNonColorFunction) {
 
 
-                sortedClasses.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[4], prefixAndClassValue]]))
+                classMap.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[4], prefixAndClassValue]]))
 
+                deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
 
                 return true
+
             }
 
 
             if (arbitraryValueIsAViableCSSVariable) {
 
-                sortedClasses.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[3], prefixAndClassValue]]))
+                classMap.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[3], prefixAndClassValue]]))
 
-
+                deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
 
                 return true
+
             }
 
 
@@ -628,11 +741,12 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
             if (arbitraryValueIsASetOfArgs) {
 
 
-                sortedClasses.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[5], prefixAndClassValue]]))
+                classMap.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[5], prefixAndClassValue]]))
 
-
+                deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
 
                 return true
+
             }
 
 
@@ -643,11 +757,11 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
 
 
-
-        const result = sortedClasses.get(classVariantAndType) || sortedClasses.get(classVariantTypeAndSubtype)
+        const result = classMap.get(classVariantAndType) || classMap.get(classVariantTypeAndSubtype)
 
 
         if (result) {
+
 
             if (valueIsAViableColor) {
 
@@ -662,7 +776,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
                 result.set(viableUtilityClassMapKeys[2], `${colorRangeGroups.color}${colorRangeGroups.range}`)
 
-
+                deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
                 return true
 
             }
@@ -673,7 +787,24 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
                 result.set(viableUtilityClassMapKeys[0], prefixAndClassValue)
 
+
+
+
+
+                const keyDeletionAttemptResult = attemptToDeleteKeysWhenAClassThatCanHaveOrHasDirectionPartsIsFoundAndASimilarClassIsFound(
+                    classMap,
+                    classVariantAndType,
+                    subtype
+                );
+
+                if (!keyDeletionAttemptResult) {
+
+                    deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
+                }
+
+
                 return true
+
             }
 
 
@@ -683,6 +814,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
 
 
+                deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
                 return true
 
             }
@@ -695,6 +827,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
 
 
+                deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
                 return true
             }
 
@@ -704,6 +837,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
 
 
+                deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
                 return true
             }
 
@@ -713,6 +847,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
 
 
+                deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
                 return true
             }
 
@@ -727,10 +862,35 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
     }
 
 
+function deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap: Map<string, any>, className: string) {
+
+    const tailwindClassVariantTypeAndSubtypeRE = /^(?<variant>[a-z0-9\][#\.&:\-\)",_=(\/]+:)?(?<type>[a-z]+-)(?<subtype>[a-z]+-)$/
+
+    const tailwindClassVariantTypeAndSubtypeGroups = tailwindClassVariantTypeAndSubtypeRE.exec(className)?.groups
+
+    if (!tailwindClassVariantTypeAndSubtypeGroups) return
+
+
+
+    const identicalKey = Array.from(classMap.keys()).find((key) => {
+
+        const keyIsAtTailwindClassVariantTypeAndSubtype = tailwindClassVariantTypeAndSubtypeRE.exec(key)
+
+        const keyStartsWithTheMatchedType = key.startsWith(tailwindClassVariantTypeAndSubtypeGroups.type as string);
+
+        return keyIsAtTailwindClassVariantTypeAndSubtype && keyStartsWithTheMatchedType && key !== className
+
+    })
+
+    if (!identicalKey) return
+
+    return classMap.delete(identicalKey)
+
+}
 
 type TypeAndListClassMapChanger = ClassMapChangerBasedOnClassName<AllSortedClasses["customFiltered"], Record<string, Array<string>>>
 
-export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject: TypeAndListClassMapChanger = (sortedClasses, className, classTypeAndListObject) => {
+export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject: TypeAndListClassMapChanger = (classMap, className, classTypeAndListObject) => {
 
 
 
@@ -753,9 +913,9 @@ export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject: TypeA
 
         if (!class_type_and_value) return
 
-        if (!sortedClasses.has(classType) && classList.includes(class_type_and_value)) {
+        if (!classMap.has(classType) && classList.includes(class_type_and_value)) {
 
-            sortedClasses.set(
+            classMap.set(
                 classType,
                 new Map([
                     [
@@ -772,7 +932,7 @@ export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject: TypeA
         if (classList.includes(class_type_and_value)) {
 
 
-            sortedClasses.get(classType,)
+            classMap.get(classType,)
                 ?.set(variant, class_type_and_value)
 
             classMapHasChanged = true
@@ -806,7 +966,7 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapC
     AllSortedClasses["bem"],
     Array<string>
 > =
-    (sortedClasses, className, classNames) => {
+    (classMap, className, classNames) => {
 
 
         const blockAndElementClassNameGroups = aBlockElementClassName.exec(className)?.groups
@@ -825,9 +985,9 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapC
             if (!lower_case_word || !element) return false
 
 
-            if (!sortedClasses.has(lower_case_word)) {
+            if (!classMap.has(lower_case_word)) {
 
-                sortedClasses.set(
+                classMap.set(
                     lower_case_word,
                     new Map([
                         ["element", element],
@@ -839,7 +999,7 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapC
 
             }
 
-            sortedClasses.get(lower_case_word)
+            classMap.get(lower_case_word)
                 ?.set("element", element)
 
 
@@ -867,16 +1027,16 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapC
             }
 
 
-            if (!sortedClasses.has(lower_case_word)) {
+            if (!classMap.has(lower_case_word)) {
 
-                sortedClasses.set(lower_case_word, new Map([["modifier", modifier]]))
+                classMap.set(lower_case_word, new Map([["modifier", modifier]]))
 
                 return true
 
             }
 
 
-            sortedClasses.get(lower_case_word)?.set("modifier", modifier)
+            classMap.get(lower_case_word)?.set("modifier", modifier)
 
 
 
@@ -896,7 +1056,7 @@ const arbitraryPropertyRE =
 
 
 export const attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty: ClassMapChangerBasedOnClassName<AllSortedClasses["arbitraryProperties"]> =
-    (sortedClasses, className) => {
+    (classMap, className) => {
 
 
         const arbitraryPropertyKeyAndValueMatch = arbitraryPropertyRE.exec(className)
@@ -915,10 +1075,10 @@ export const attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitrar
         if (!propertyKey || !propertyValue) return false
 
 
-        if (!sortedClasses.has(propertyKey)) {
+        if (!classMap.has(propertyKey)) {
 
 
-            sortedClasses.set(
+            classMap.set(
                 propertyKey,
                 new Map([
                     [
@@ -934,7 +1094,7 @@ export const attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitrar
         }
 
 
-        sortedClasses.get(propertyKey)?.set(variant, propertyValue)
+        classMap.get(propertyKey)?.set(variant, propertyValue)
 
 
         return true
@@ -949,7 +1109,7 @@ const relationClassUtilityRE = /^(?<relationship>@?[a-z-]+\/)(?<name>[a-z]+)$/
 
 
 export const attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass: ClassMapChangerBasedOnClassName<AllSortedClasses["tailwindCSSUtility"]> =
-    (sortedClasses, className) => {
+    (classMap, className) => {
 
 
 
@@ -969,14 +1129,14 @@ export const attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass
 
         if (!relationship || !name) return false
 
-        if (!sortedClasses.has(relationship)) {
+        if (!classMap.has(relationship)) {
 
-            sortedClasses.set(relationship, new Map([["word", name]]))
+            classMap.set(relationship, new Map([["word", name]]))
 
             return true
         }
 
-        sortedClasses.get(relationship)?.set("word", name)
+        classMap.get(relationship)?.set("word", name)
 
         return true
 
@@ -988,14 +1148,14 @@ export const attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass
 const variantGroupRE =
     /(?<variant>[a-z0-9\]\[&\-\.#@+),\_\/(:]+:)\((?<class_names>(?:[\w\-\]\[$.#),(%:\/]+)(?:\s[\w\-\]\[$.#)\/,(%:]+)+)\)/
 
-type PropsNeededFromSortedClasses = {
+type PropsNeededFromClassMap = {
     tailwindCSSUtility: AllSortedClasses["tailwindCSSUtility"]
     customFiltered: AllSortedClasses["customFiltered"]
     arbitraryProperties: AllSortedClasses["arbitraryProperties"]
 }
 
 export const attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup =
-    ({ arbitraryProperties, customFiltered, tailwindCSSUtility, }: PropsNeededFromSortedClasses, className: string, filterObject?: FilterObject): boolean => {
+    ({ arbitraryProperties, customFiltered, tailwindCSSUtility, }: PropsNeededFromClassMap, className: string, filterObject?: FilterObject): boolean => {
 
 
 
