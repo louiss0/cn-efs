@@ -2,15 +2,27 @@
 
 ## [Unreleased]
 
+## Added
+
+- Created the function `cnEFS()`
+- Created the function `bootstrapCN_EFS()`
+
+## Changed
+
+- `tailwindOrWindiCN_EFS()` now resolves conflicts between classes that use l|t|b|e|r|s.
+- `tailwindOrWindiCN_EFS()` now resolves conflicts between classes that have the same type
+but different subtype.
+- Hide the Api's for users to create their own CN_EFS implementations.
+
 ## [1.1.1] - 2023-10-20
 
 ### Fixed
 
-- classes with underscores and commas were filtered out. 
+- classes with underscores and commas were filtered out.
 
 ## [1.1.0] - 2023-10-12
 
-### Changedga
+### Changed
 
 - Made the names shorter for class name evaluators and sorters to align with library theme.
 
