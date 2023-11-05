@@ -168,74 +168,12 @@ const classNameFilterSorterFactory = <
 }
 
 
-function isString(value: unknown): value is string {
-    return typeof value === "string"
+function isMap(value: unknown): value is Map<string, any> {
+    return value instanceof Map
 }
 
-function getCreateUtilityClassesBasedOnIfTheValueHasAPrefix(
-    utility: string) {
-
-
-    const valueIsPrefixedWithAnExclamationMarkOrDashRE = /^(?<prefix>(-|!))(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d]+)$/
-
-    const valueIsAUtilityClassVariantAndTypeRE = /^(?<variant>[a-z0-9\][#\.&:\-\)"=(\/]+:)?(?<type>[a-z\-]+-)$/
-
-
-    return (classValue: string) => {
-
-
-
-        const prefixAndValueGroup = valueIsPrefixedWithAnExclamationMarkOrDashRE.exec(classValue)?.groups
-
-        const utilityAndClassValueWithASpace = `${utility}${classValue} `
-
-        if (!prefixAndValueGroup) {
-
-            return utilityAndClassValueWithASpace
-
-        }
-
-
-        const { prefix, value } = prefixAndValueGroup
-
-
-
-        if (!prefix || !value) {
-
-
-
-            return utilityAndClassValueWithASpace
-
-
-        }
-
-
-        const valueIsAUtilityClassVariantAndTypeGroup = valueIsAUtilityClassVariantAndTypeRE.exec(utility)?.groups
-
-
-        if (!valueIsAUtilityClassVariantAndTypeGroup) {
-
-            return utilityAndClassValueWithASpace
-
-        }
-
-
-        const { variant, type } = valueIsAUtilityClassVariantAndTypeGroup as {
-            variant?: string
-            type: string
-        }
-
-
-
-        return variant
-            ? `${variant}${prefix}${type}${value} `
-            : `${prefix}${type}${value} `
-
-
-
-
-
-    }
+function isString(value: unknown): value is string {
+    return typeof value === "string"
 }
 
 
@@ -487,6 +425,7 @@ export const tailwindOrWindiCN_EFS = (...args: Parameters<typeof clsx>) => {
 
 
 
+
                 for (const [utility, utilityValueMap] of classNameMap.tailwindCSSUtility) {
 
 
@@ -506,12 +445,15 @@ export const tailwindOrWindiCN_EFS = (...args: Parameters<typeof clsx>) => {
 
                     const utilityClassesCreatedFromDefinedValuesFromTheUtilityValueMap =
                         valuesFromUtilityValueMap
-                            .filter(isString)
-                            .map(
-                                getCreateUtilityClassesBasedOnIfTheValueHasAPrefix(
-                                    utility
-                                )
-                            )
+                            .filter(isMap)
+                            .map((prefixValueMap) => {
+                                const prefix = prefixValueMap?.get("prefix")!
+                                const value = prefixValueMap?.get("value")!
+
+                                return `${utility}${prefix}${value} `
+
+                            })
+
 
                     sortString = sortString.concat(
                         ...utilityClassesCreatedFromDefinedValuesFromTheUtilityValueMap
@@ -521,9 +463,11 @@ export const tailwindOrWindiCN_EFS = (...args: Parameters<typeof clsx>) => {
 
 
 
+
                 }
 
             }
+
 
             return sortString
 
