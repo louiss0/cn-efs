@@ -7,19 +7,32 @@ filter sorters or `cnEFS`'s.
 What each function does is.
 
 1. Evaluate each class name passed to it using `clsx`.
-2. Breaks apart and filter each class for duplicates based on convention.
+2. Breaks apart and filter each class for duplicates based on conventions.
 3. Reassemble each of the class that were kept in Step 2.
+4. Return string with only the classes that were identical but on the right.
 
 Each function only works on specific classes.
 **If you don't have the correct string then it will be filtered out.**
 
 **Only lowercased words are ignored.**
+
 **Unless** it's not supposed to exist along side of another one.
 This is decided by the kind of cnEFS you are using.
 
+## Sorting
+
+This library will sort your classes based on which type of class
+it is or how it was filtered. This is done as a way to support better
+debugging. Know that single word classes will always be put before utility ones.
+
 ## Usage
 
-- BEM, CUBE, Tachyons
+The following sections will show you how to use each of the functions.
+This is based on what conventions or framework you are using.
+When using this library remember to use it on components where you will deal
+with conflicting classes.
+
+### BEM, CUBE, Tachyons
 
 ```jsx
 import { cnEFS } from "@code-fixer-23/cn-efs"
@@ -83,7 +96,7 @@ const {class:$class} = Astro.props
 
 **All the symbols will be filtered out of the string.**
 
-- Bootstrap
+### Bootstrap
 
 ```ts
 import {bootstrapCN_EFS} from "@code-fixer-23/cn-efs"
@@ -123,7 +136,7 @@ regex but could not. I know that most people like to stick to the defaults.
 This should be a small problem **but if you want to help me please talk to the
 bootstrap people or be a part of this [discussion](https://github.com/orgs/twbs/discussions/39338)**.
 
-- Tailwind, Windi  
+### Tailwind, Windi  
 
 ```vue
 
@@ -152,23 +165,7 @@ classes that abide by the `Tailwind` and `Windi` CSS Framework.
 It filters out conflicts between variants, states and breakpoints for each utility class.
 It resolves conflicts between important and not important values.
 
-**Warning** This library solves conflicts between classes that have. l|r|t|b, x|y
-But it does not solve `m-` vs any of them to do that you need to remove it and replace it
-with `ma` and other classes that use directions as well.
-
-### Sorting
-
-This library will sort your classes based on which type of class
-it is or how it was filtered. This is done as a way to support better
-debugging. Classes are sorted in this order from left to right.
-
-1. Classes listed in the Filter Object
-2. Safe listed
-3. BEM
-4. Arbitrary Properties
-5. Utility Classes
-
-### Limitations
+## Limitations
 
 This library can only filter out classes that look identical to each other.
 It does not resolve conflicts based on symbols like.
@@ -179,3 +176,9 @@ It does not resolve conflicts based on symbols like.
 I have decided to do this because I don't think it's good practice to write utility classes inconsistently.
 
 We also don't have a cache. **When React rerenders all of the work will all be redone again**.
+
+## Recommendations
+
+I recommend that you also use this library with.
+
+- [Class Variance Authority](https://www.npmjs.com/package/class-variance-authority).
