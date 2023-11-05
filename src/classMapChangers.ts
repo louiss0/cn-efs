@@ -150,7 +150,10 @@ export const createSortedBootstrapClasses = () =>
 
 export const createSortedTailwindClasses = () => createSortedClassObject({
     arbitraryProperties: new Map<string, Map<StringOrOmitFromString<"base">, string | undefined> | undefined>(),
-    tailwindCSSUtility: new Map<string, Map<ViableUtilityClassMapKeys, Map<"prefix" | "value", string> | undefined> | undefined>()
+    tailwindCSSUtility: new Map<string,
+        Map<ViableUtilityClassMapKeys,
+            Map<"prefix" | "value", string> | undefined> | undefined
+    >()
 
 })
 
@@ -658,6 +661,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
                 if (!classMap.has(classVariantAndType)) {
 
+
                     classMap.set(classVariantAndType, new Map([
                         [viableUtilityClassMapKeys[2], new Map([
                             ["prefix", prefix],
@@ -667,11 +671,16 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                     ]
                     )
                     )
+
+                    return true
+
                 }
 
                 classMap.get(classVariantAndType)
-                    ?.get(viableUtilityClassMapKeys[2],)
-                    ?.set("prefix", prefix).set("value", value)
+                    ?.set(viableUtilityClassMapKeys[2], new Map([
+                        ["prefix", prefix],
+                        ["value", `${color}${range}`]
+                    ]))
 
 
                 deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
@@ -1010,10 +1019,13 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                 if (!colorRangeGroups) {
 
 
-                    result.set(viableUtilityClassMapKeys[2], new Map([
-                        ["prefix", prefix],
-                        ["value", value]
-                    ]))
+                    result.set(
+                        viableUtilityClassMapKeys[2],
+                        new Map([
+                            ["prefix", prefix],
+                            ["value", value]
+                        ])
+                    )
 
 
                     return true
@@ -1021,7 +1033,9 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                 }
 
 
-                result.get(viableUtilityClassMapKeys[2],)?.set("prefix", prefix).set("value", value)
+                result.get(viableUtilityClassMapKeys[2])
+                    ?.set("prefix", prefix)
+                    .set("value", `${colorRangeGroups?.color}${colorRangeGroups?.range}`)
 
                 return true
 
