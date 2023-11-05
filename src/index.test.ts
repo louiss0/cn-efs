@@ -68,15 +68,15 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
 
         it("filters and sorts utility classes", () => {
 
-            const classes = "border-solid border-1 border-gray-600 border-red-50"
+            const classes = ["border-solid", "border-1", "border-gray-600", "border-red-50"]
 
-            const sortedClasses = cnEFS(classes)
-
-
-            expect(sortedClasses).not.toBe(classes)
+            const sortedClasses = cnEFS(...classes)
 
 
-            expect(sortedClasses?.length).toBeLessThan(classes.length)
+            expect(sortedClasses).not.toBe(classes.join(" "))
+
+
+            expect(sortedClasses?.length).toBeLessThan(classes.join(" ").length)
 
 
 
@@ -129,7 +129,8 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
 
 
 
-            })
+            }
+        )
 
 
 
@@ -243,7 +244,10 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
         it("filters based on conventional bootstrap colors", () => {
 
             const res = bootstrapCN_EFS(
-                "bg-primary bg-primary-emphasis text-warning-subtle-hover text-warning-hover"
+                "bg-primary",
+                "bg-primary-emphasis",
+                "text-warning-subtle-hover",
+                "text-warning-hover"
             )
 
 
