@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.0.0] - 2023-11-05
+
 ## Added
 
 - Created the function `cnEFS()`
