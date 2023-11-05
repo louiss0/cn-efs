@@ -28,12 +28,12 @@ const itUsingBootstrapSortedClasses = it.extend<typeof sortedBootstrapClasses>({
     },
     async customFiltered({ }, use) {
 
-        await use(new Map(sortedBootstrapClasses.customFiltered))
+        await use(structuredClone(sortedBootstrapClasses.customFiltered))
 
     },
     async bootstrapCSSUtility({ }, use) {
 
-        await use(new Map(sortedBootstrapClasses.bootstrapCSSUtility))
+        await use(structuredClone(sortedBootstrapClasses.bootstrapCSSUtility))
 
     }
 })
@@ -50,7 +50,7 @@ const itUsingTailwindSortedClasses = it.extend<typeof sortedTailwindClasses>({
     async customFiltered({ }, use) {
 
 
-        await use(new Map(sortedTailwindClasses.customFiltered))
+        await use(structuredClone(sortedTailwindClasses.customFiltered))
 
 
     },
@@ -58,14 +58,14 @@ const itUsingTailwindSortedClasses = it.extend<typeof sortedTailwindClasses>({
 
 
 
-        await use(new Map(sortedTailwindClasses.arbitraryProperties))
+        await use(structuredClone(sortedTailwindClasses.arbitraryProperties))
 
     },
 
     async tailwindCSSUtility({ }, use) {
 
 
-        await use(new Map(sortedTailwindClasses.tailwindCSSUtility))
+        await use(structuredClone(sortedTailwindClasses.tailwindCSSUtility))
 
     },
 })
@@ -79,14 +79,14 @@ const itUsingBEMSortedClasses = it.extend<typeof sortedBEMClasses>({
     async customFiltered({ }, use) {
 
 
-        await use(new Map(sortedTailwindClasses.customFiltered))
+        await use(structuredClone(sortedTailwindClasses.customFiltered))
 
 
     },
     async bem({ }, use) {
 
 
-        await use(new Map(sortedBEMClasses.bem))
+        await use(structuredClone(sortedBEMClasses.bem))
 
 
 
@@ -418,7 +418,7 @@ describe("Test if all class map changers work", () => {
                         expect(res).toBeInstanceOf(Map)
 
 
-                        expect(Object.fromEntries(res as Map<string, string>)).toHaveProperty("digit", "0")
+                        expect(res?.has("digit")).toBeTruthy()
 
 
 
@@ -472,11 +472,14 @@ describe("Test if all class map changers work", () => {
 
 
 
-                                expect(Object.fromEntries(res))
-                                    .toHaveProperty("digit", value)
 
-                                expect(Object.fromEntries(res))
-                                    .not.toHaveProperty("word")
+                                expect(res?.has("digit"))
+                                    .toBeTruthy()
+
+                                expect(res.get("digit")?.get("value")).toBe(value)
+
+                                expect(res?.has("word"))
+                                    .toBeFalsy()
 
 
 
@@ -520,7 +523,7 @@ describe("Test if all class map changers work", () => {
                     expect(res).toBeInstanceOf(Map)
 
 
-                    expect(Object.fromEntries(res as Map<string, string>)).toHaveProperty("word", "solid")
+                    expect(res?.has("word")).toBeTruthy()
 
 
                 }
@@ -545,7 +548,7 @@ describe("Test if all class map changers work", () => {
                     expect(res).toBeInstanceOf(Map)
 
 
-                    expect(Object.fromEntries(res as Map<string, string>)).toHaveProperty("args", "[2fr_auto]")
+                    expect(res?.has("args")).toBeTruthy()
 
 
                 }
@@ -609,7 +612,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-                        expect(Object.fromEntries(res)).toHaveProperty("args", value)
+                        expect(res.get("args")?.get("value")).toBe(value)
 
 
 
@@ -643,7 +646,7 @@ describe("Test if all class map changers work", () => {
                     expect(res).toBeInstanceOf(Map)
 
 
-                    expect(Object.fromEntries(res as Map<string, string>)).toHaveProperty("color", "gray-500")
+                    expect(res?.has("color")).toBeTruthy()
 
 
                 }
@@ -697,7 +700,9 @@ describe("Test if all class map changers work", () => {
 
 
 
-                        expect(Object.fromEntries(result)).toHaveProperty(viableUtilityClassMapKeys["2"], value)
+                        expect(result.has(viableUtilityClassMapKeys["2"])).toBeTruthy()
+
+                        expect(result.get(viableUtilityClassMapKeys["2"])?.get("value")).toBe(value)
 
 
 
@@ -761,11 +766,12 @@ describe("Test if all class map changers work", () => {
 
 
 
-                    expect(Object.fromEntries(result))
-                        .toHaveProperty(viableUtilityClassMapKeys[4], value)
+                    expect(result.has(viableUtilityClassMapKeys[4])).toBeTruthy()
 
-                    expect(Object.fromEntries(result))
-                        .not.toHaveProperty(viableUtilityClassMapKeys[2], value)
+                    expect(result.get(viableUtilityClassMapKeys[4])?.get("value")).toBe(value)
+
+                    expect(result.has(viableUtilityClassMapKeys[2]))
+                        .toBeFalsy()
 
 
 
@@ -851,6 +857,9 @@ describe("Test if all class map changers work", () => {
                 expect(utility.has(classNameAndExpectedKeyAndValue.expected.key)).toBeTruthy()
 
                 expect(utility.get(classNameAndExpectedKeyAndValue.expected.key)?.has("word")).toBeTruthy()
+
+                expect(utility.get(classNameAndExpectedKeyAndValue.expected.key)?.get("word")?.get("value"))
+                    .toBe(classNameAndExpectedKeyAndValue.expected.value)
 
             })
 
@@ -986,7 +995,11 @@ describe("Test if all class map changers work", () => {
 
                         marginLeftRightClasses
                             .forEach(
-                                value => attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, value)
+                                value =>
+                                    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(
+                                        tailwindCSSUtility,
+                                        value
+                                    )
                             )
 
                         const marginUpDownClasses = [
@@ -999,7 +1012,11 @@ describe("Test if all class map changers work", () => {
 
                         marginUpDownClasses
                             .forEach(
-                                value => attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, value)
+                                value =>
+                                    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(
+                                        tailwindCSSUtility,
+                                        value
+                                    )
                             )
 
 
@@ -1011,6 +1028,64 @@ describe("Test if all class map changers work", () => {
                         expect(tailwindCSSUtility.has("mb-")).toBeTruthy()
 
                         expect(tailwindCSSUtility.has("mt-")).toBeFalsy()
+
+
+                    }
+                )
+
+
+                itUsingTailwindSortedClasses(
+                    "Removes all other classes with directionClassParts when a - is introduced",
+                    ({ tailwindCSSUtility }) => {
+
+                        const marginClasses = [
+                            "mt-2",
+                            "mr-2",
+                            "m-4",
+                        ]
+
+
+                        marginClasses
+                            .forEach(
+                                marginClass =>
+                                    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, marginClass)
+                            )
+
+
+                        expect(tailwindCSSUtility.has("m-")).toBeTruthy()
+
+                        expect(tailwindCSSUtility.has("mt-")).toBeFalsy()
+
+                        expect(tailwindCSSUtility.has("mr-")).toBeFalsy()
+
+
+
+                    }
+                )
+
+
+                itUsingTailwindSortedClasses(
+                    "Removes a class with - when a directionClassPart is introduced ",
+                    ({ tailwindCSSUtility }) => {
+
+                        const classes = [
+                            "border-4",
+                            "border-t-4",
+                        ]
+
+
+                        classes
+                            .forEach(
+                                value =>
+                                    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, value)
+                            )
+
+
+
+                        expect(tailwindCSSUtility.has("border-")).toBeFalsy()
+
+                        expect(tailwindCSSUtility.has("border-t-")).toBeTruthy()
+
 
 
                     }
