@@ -686,7 +686,11 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                     ]))
 
 
-                deleteIdenticalKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(classMap, classVariantTypeAndSubtype)
+                deleteIdenticalValueTypeUsingTheKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(
+                    classMap,
+                    classVariantTypeAndSubtype,
+                    "color"
+                )
 
                 return true
             }
@@ -718,9 +722,10 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
                     if (!keyDeletionAttemptResult) {
 
-                        deleteIdenticalKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(
+                        deleteIdenticalValueTypeUsingTheKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(
                             classMap,
-                            classVariantTypeAndSubtype
+                            classVariantTypeAndSubtype,
+                            "digit"
                         )
                     }
 
@@ -737,7 +742,11 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                         ["value", value]
                     ])]]))
 
-                    deleteIdenticalKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(classMap, classVariantTypeAndSubtype)
+                    deleteIdenticalValueTypeUsingTheKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(
+                        classMap,
+                        classVariantTypeAndSubtype,
+                        "word"
+                    )
 
                     return true
 
@@ -753,7 +762,11 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                         ["value", value]
                     ])]]))
 
-                    deleteIdenticalKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(classMap, classVariantTypeAndSubtype)
+                    deleteIdenticalValueTypeUsingTheKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(
+                        classMap,
+                        classVariantTypeAndSubtype,
+                        "function"
+                    )
 
                     return true
 
@@ -767,7 +780,11 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                         ["value", value]
                     ])]]))
 
-                    deleteIdenticalKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(classMap, classVariantTypeAndSubtype)
+                    deleteIdenticalValueTypeUsingTheKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(
+                        classMap,
+                        classVariantTypeAndSubtype,
+                        "variable"
+                    )
 
                     return true
 
@@ -784,7 +801,11 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                         ["value", value]
                     ])]]))
 
-                    deleteIdenticalKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(classMap, classVariantTypeAndSubtype)
+                    deleteIdenticalValueTypeUsingTheKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(
+                        classMap,
+                        classVariantTypeAndSubtype,
+                        "args"
+                    )
 
                     return true
 
@@ -816,7 +837,11 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
                     if (!keyDeletionAttemptResult) {
 
-                        deleteIdenticalKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(classMap, classVariantTypeAndSubtype)
+                        deleteIdenticalValueTypeUsingTheKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(
+                            classMap,
+                            classVariantTypeAndSubtype,
+                            "digit"
+                        )
                     }
 
 
@@ -832,9 +857,13 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                         ["value", value]
                     ]))
 
+                    deleteIdenticalValueTypeUsingTheKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(
+                        classMap,
+                        classVariantTypeAndSubtype,
+                        "word"
+                    )
 
 
-                    deleteIdenticalKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(classMap, classVariantTypeAndSubtype)
                     return true
 
                 }
@@ -849,8 +878,12 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                     ]))
 
 
+                    deleteIdenticalValueTypeUsingTheKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(
+                        classMap,
+                        classVariantTypeAndSubtype,
+                        "color"
+                    )
 
-                    deleteIdenticalKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(classMap, classVariantTypeAndSubtype)
                     return true
                 }
 
@@ -861,9 +894,13 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                         ["value", value]
                     ]))
 
+                    deleteIdenticalValueTypeUsingTheKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(
+                        classMap,
+                        classVariantTypeAndSubtype,
+                        "variable"
+                    )
 
 
-                    deleteIdenticalKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(classMap, classVariantTypeAndSubtype)
                     return true
                 }
 
@@ -874,9 +911,13 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                         ["value", value]
                     ]))
 
+                    deleteIdenticalValueTypeUsingTheKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(
+                        classMap,
+                        classVariantTypeAndSubtype,
+                        "args"
+                    )
 
 
-                    deleteIdenticalKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(classMap, classVariantTypeAndSubtype)
                     return true
                 }
 
@@ -900,7 +941,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                     ["value", value]
                 ])]]))
 
-                deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType)
+                deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType, "color")
 
                 return true
             }
@@ -928,7 +969,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
                 if (!keyDeletionAttemptResult) {
 
-                    deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType)
+                    deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType, "digit")
                 }
 
                 return true
@@ -945,7 +986,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                     ["value", value]
                 ])]]))
 
-                deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType)
+                deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType, "word")
 
                 return true
 
@@ -961,7 +1002,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                     ["value", value]
                 ])]]))
 
-                deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType)
+                deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType, "function")
 
                 return true
 
@@ -975,7 +1016,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                     ["value", value]
                 ])]]))
 
-                deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType)
+                deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType, "variable")
 
                 return true
 
@@ -992,7 +1033,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                     ["value", value]
                 ])]]))
 
-                deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType)
+                deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType, "args")
 
                 return true
 
@@ -1027,6 +1068,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                         ])
                     )
 
+                    deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType, "color")
 
                     return true
 
@@ -1036,6 +1078,8 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                 result.get(viableUtilityClassMapKeys[2])
                     ?.set("prefix", prefix)
                     .set("value", `${colorRangeGroups?.color}${colorRangeGroups?.range}`)
+
+                deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType, "color")
 
                 return true
 
@@ -1050,15 +1094,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                     ["value", value]
                 ]))
 
-
-                attemptToDeleteKeysWhenAClassThatCanHaveOrHasDirectionPartsIsFoundAndASimilarClassIsFound(
-                    classMap,
-                    classVariantAndType,
-                    subtype
-                );
-
-
-                deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType)
+                deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType, "digit")
 
                 return true
 
@@ -1073,6 +1109,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                 ]))
 
 
+                deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType, "word")
 
                 return true
 
@@ -1087,7 +1124,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                     ["value", value]
                 ]))
 
-
+                deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType, "function")
 
                 return true
             }
@@ -1100,6 +1137,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                 ]))
 
 
+                deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType, "variable")
 
                 return true
             }
@@ -1111,7 +1149,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                     ["value", value]
                 ]))
 
-
+                deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType, "args")
 
                 return true
             }
@@ -1127,9 +1165,10 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
     }
 
 
-function deleteIdenticalKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(
-    classMap: Map<string, any>,
-    classNameType: string
+function deleteIdenticalValueTypeUsingTheKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(
+    classMap: AllSortedClasses['tailwindCSSUtility'],
+    classNameType: string,
+    valueType: ViableUtilityClassMapKeys
 ) {
 
     const tailwindClassVariantTypeAndSubtypeRE = /^(?<variant>[a-z0-9\][#\.&:\-\)",_=(\/]+:)?(?<type>[a-z]+-)(?<subtype>[a-z]+-)$/
@@ -1159,12 +1198,12 @@ function deleteIdenticalKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOpti
 
     if (!identicalKey) return
 
-    return classMap.delete(identicalKey)
+    return classMap.get(identicalKey)?.delete(valueType)
 
 
 }
 
-function deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap: Map<string, any>, classNameType: string) {
+function deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap: AllSortedClasses["tailwindCSSUtility"], classNameType: string, valueType: ViableUtilityClassMapKeys) {
 
     const tailwindClassVariantAndTypeRE = /^(?<variant>[a-z0-9\][#\.&:\-\)",_=(\/]+:)(?<type>[a-z]+-)$/
 
@@ -1196,7 +1235,7 @@ function deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMa
 
     if (!identicalKey) return
 
-    return classMap.delete(identicalKey)
+    return classMap.get(identicalKey)?.delete(valueType)
 
 }
 
