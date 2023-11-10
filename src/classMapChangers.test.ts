@@ -1095,6 +1095,66 @@ describe("Test if all class map changers work", () => {
         )
 
 
+        describe("It gets rid of identical variants in classes", () => {
+
+            itUsingTailwindSortedClasses(
+                "Removes identical from type only classes with variants",
+                ({ tailwindCSSUtility }) => {
+
+                    const classes = [
+                        "border-4",
+                        "hover:focus:border-4",
+                        "focus:hover:border-4",
+                    ]
+
+
+                    classes
+                        .forEach(
+                            value =>
+                                attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, value)
+                        )
+
+                    expect(tailwindCSSUtility.has('hover:focus:border-')).toBeFalsy()
+
+                    expect(tailwindCSSUtility.has('focus:hover:border-')).toBeTruthy()
+
+                    expect(tailwindCSSUtility.has('border-')).toBeTruthy()
+
+
+                }
+            )
+
+            itUsingTailwindSortedClasses(
+                "Removes identical from type and subtype classes with variants",
+                ({ tailwindCSSUtility }) => {
+
+                    const classes = [
+                        "border-4",
+                        "hover:focus:border-x-4",
+                        "focus:hover:border-y-4",
+                    ]
+
+
+                    classes
+                        .forEach(
+                            value =>
+                                attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, value)
+                        )
+
+                    expect(tailwindCSSUtility.has('hover:focus:border-x-')).toBeFalsy()
+
+                    expect(tailwindCSSUtility.has('focus:hover:border-y-')).toBeTruthy()
+
+
+                    expect(tailwindCSSUtility.has('border-')).toBeTruthy()
+
+
+                }
+            )
+
+        })
+
+
 
     })
 
