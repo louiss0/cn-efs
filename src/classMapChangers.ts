@@ -20,7 +20,7 @@ const variableHasAStringHint = (arbitraryValue: string) =>
 
 
 const tailwindCSSTypeAndValueUtilityClassRE =
-    /^(?<variant>[a-z0-9\][#\.&:\-\)",_=(\/]+:)?(?<prefix>!|-)?(?<type>[a-z]+-)(?<subtype>[a-z]+-)?(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d]+)$/
+    /^(?<variant>[a-z0-9\][#\.&:\-\)",_=(\/]+:)?(?<prefix>!|-|!-)?(?<type>[a-z]+-)(?<subtype>[a-z]+-)?(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d]+)$/
 
 
 const bootstrapCSSTypeBreakpointAndValueUtilityClassRE =
@@ -150,9 +150,12 @@ export const createSortedBootstrapClasses = () =>
 
 export const createSortedTailwindClasses = () => createSortedClassObject({
     arbitraryProperties: new Map<string, Map<StringOrOmitFromString<"base">, string | undefined> | undefined>(),
-    tailwindCSSUtility: new Map<string,
-        Map<ViableUtilityClassMapKeys,
-            Map<"prefix" | "value", string> | undefined> | undefined
+    tailwindCSSUtility: new Map<
+        string,
+        Map<
+            ViableUtilityClassMapKeys,
+            Map<"prefix" | "value", string> | undefined
+        > | undefined
     >()
 
 })
@@ -181,7 +184,8 @@ type ClassMapChangerBasedOnClassName<T extends ClassNameMap,
 export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue: ClassMapChangerBasedOnClassName<AllSortedClasses["basicUtility"]> = (classMap, className) => {
 
 
-    const cssTypeValueUtilityClassMatchGroups = /(?<type>[a-z]+-)(?<subtype>(?:[a-z]+-)*)?(?<value>[a-z\d]+)/.exec(className)?.groups
+    const cssTypeValueUtilityClassMatchGroups =
+        /(?<type>[a-z]+-)(?<subtype>(?:[a-z]+-)*)?(?<value>[a-z\d]+)/.exec(className)?.groups
         || /(?<type>[a-z]+)(?<value>\d+)/.exec(className)?.groups
 
 
@@ -451,7 +455,6 @@ export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndVal
 
 };
 
-// TODO: Find a way to do margin without having to use ma- class.
 
 const getDeleteKeyBasedOnDirectionBasedClasses = (
     classTypesThatUseDirectionParts: Array<string>,
@@ -683,7 +686,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                     ]))
 
 
-                deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
+                deleteIdenticalKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(classMap, classVariantTypeAndSubtype)
 
                 return true
             }
@@ -715,7 +718,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
                     if (!keyDeletionAttemptResult) {
 
-                        deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(
+                        deleteIdenticalKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(
                             classMap,
                             classVariantTypeAndSubtype
                         )
@@ -734,7 +737,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                         ["value", value]
                     ])]]))
 
-                    deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
+                    deleteIdenticalKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(classMap, classVariantTypeAndSubtype)
 
                     return true
 
@@ -750,7 +753,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                         ["value", value]
                     ])]]))
 
-                    deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
+                    deleteIdenticalKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(classMap, classVariantTypeAndSubtype)
 
                     return true
 
@@ -764,7 +767,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                         ["value", value]
                     ])]]))
 
-                    deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
+                    deleteIdenticalKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(classMap, classVariantTypeAndSubtype)
 
                     return true
 
@@ -781,7 +784,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                         ["value", value]
                     ])]]))
 
-                    deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
+                    deleteIdenticalKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(classMap, classVariantTypeAndSubtype)
 
                     return true
 
@@ -813,7 +816,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
                     if (!keyDeletionAttemptResult) {
 
-                        deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
+                        deleteIdenticalKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(classMap, classVariantTypeAndSubtype)
                     }
 
 
@@ -831,7 +834,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
 
 
-                    deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
+                    deleteIdenticalKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(classMap, classVariantTypeAndSubtype)
                     return true
 
                 }
@@ -847,7 +850,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
 
 
-                    deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
+                    deleteIdenticalKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(classMap, classVariantTypeAndSubtype)
                     return true
                 }
 
@@ -860,7 +863,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
 
 
-                    deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
+                    deleteIdenticalKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(classMap, classVariantTypeAndSubtype)
                     return true
                 }
 
@@ -873,7 +876,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
 
 
-                    deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
+                    deleteIdenticalKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(classMap, classVariantTypeAndSubtype)
                     return true
                 }
 
@@ -897,7 +900,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                     ["value", value]
                 ])]]))
 
-                deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
+                deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType)
 
                 return true
             }
@@ -925,10 +928,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
                 if (!keyDeletionAttemptResult) {
 
-                    deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(
-                        classMap,
-                        classVariantTypeAndSubtype
-                    )
+                    deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType)
                 }
 
                 return true
@@ -945,7 +945,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                     ["value", value]
                 ])]]))
 
-                deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
+                deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType)
 
                 return true
 
@@ -961,7 +961,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                     ["value", value]
                 ])]]))
 
-                deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
+                deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType)
 
                 return true
 
@@ -975,7 +975,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                     ["value", value]
                 ])]]))
 
-                deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
+                deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType)
 
                 return true
 
@@ -992,7 +992,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                     ["value", value]
                 ])]]))
 
-                deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap, classVariantTypeAndSubtype)
+                deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType)
 
                 return true
 
@@ -1058,7 +1058,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                 );
 
 
-
+                deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType)
 
                 return true
 
@@ -1127,23 +1127,70 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
     }
 
 
-function deleteIdenticalKeyFromClassMapIfItsAClassVariantTypeAndSubtype(classMap: Map<string, any>, className: string) {
+function deleteIdenticalKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(
+    classMap: Map<string, any>,
+    classNameType: string
+) {
 
     const tailwindClassVariantTypeAndSubtypeRE = /^(?<variant>[a-z0-9\][#\.&:\-\)",_=(\/]+:)?(?<type>[a-z]+-)(?<subtype>[a-z]+-)$/
 
-    const tailwindClassVariantTypeAndSubtypeGroups = tailwindClassVariantTypeAndSubtypeRE.exec(className)?.groups
+    const tailwindClassVariantTypeAndSubtypeGroups = tailwindClassVariantTypeAndSubtypeRE.exec(classNameType)?.groups
 
     if (!tailwindClassVariantTypeAndSubtypeGroups) return
 
+    const { variant = '', type } = tailwindClassVariantTypeAndSubtypeGroups
+
+    if (!type) return
 
 
     const identicalKey = Array.from(classMap.keys()).find((key) => {
 
-        const keyIsAtTailwindClassVariantTypeAndSubtype = tailwindClassVariantTypeAndSubtypeRE.exec(key)
+        const keyIsAtTailwindClassVariantTypeAndSubtype = tailwindClassVariantTypeAndSubtypeRE.test(key)
 
-        const keyStartsWithTheMatchedType = key.startsWith(tailwindClassVariantTypeAndSubtypeGroups.type as string);
+        const keyIsIdenticalToVariantAndTypeCombined =
+            new Set(`${key}${variant}${type}`).size === new Set(key).size
 
-        return keyIsAtTailwindClassVariantTypeAndSubtype && keyStartsWithTheMatchedType && key !== className
+
+        return keyIsAtTailwindClassVariantTypeAndSubtype
+            && key !== classNameType
+            && keyIsIdenticalToVariantAndTypeCombined
+
+    })
+
+    if (!identicalKey) return
+
+    return classMap.delete(identicalKey)
+
+
+}
+
+function deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap: Map<string, any>, classNameType: string) {
+
+    const tailwindClassVariantAndTypeRE = /^(?<variant>[a-z0-9\][#\.&:\-\)",_=(\/]+:)(?<type>[a-z]+-)$/
+
+    const tailwindClassVariantAndTypeGroups = tailwindClassVariantAndTypeRE.exec(classNameType)?.groups
+
+    if (!tailwindClassVariantAndTypeGroups) return
+
+    const { variant, type } = tailwindClassVariantAndTypeGroups
+
+    if (!variant || !type) return
+
+    const identicalKey = Array.from(classMap.keys()).find((key) => {
+
+
+        const keyIsAtTailwindClassVariantTypeAndSubtype = tailwindClassVariantAndTypeRE.test(key)
+
+
+        const keyIsIdenticalToVariantAndTypeCombined =
+            new Set(`${key}${variant}${type}`).size === new Set(key).size
+
+
+
+
+        return keyIsAtTailwindClassVariantTypeAndSubtype
+            && key !== classNameType
+            && keyIsIdenticalToVariantAndTypeCombined
 
     })
 
