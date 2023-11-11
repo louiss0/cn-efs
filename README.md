@@ -171,7 +171,8 @@ This library can only filter out classes that look identical to each other.
 It does not resolve conflicts based on symbols like.
 
 - `[&:focus]:` vs `focus:` arbitrary variant vs regular variant
-- `text-gray-500` vs `[color:#6b7280]` utility vs arbitrary property
+- `text-gray-500` vs `[color:#6b7280]` utility vs arbitrary property.
+- '`text-sm leading-6` vs text-lg/7' two class types vs class value/sub-value.
 
 I have decided to do this because I don't think it's good practice to write utility classes inconsistently.
 
