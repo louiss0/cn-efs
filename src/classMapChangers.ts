@@ -472,7 +472,7 @@ const getDeleteKeyBasedOnDirectionBasedClasses = (
         >
 
 ) => (
-    classMap: Map<string, any>,
+    classMap: AllSortedClasses['tailwindCSSUtility'],
     classType: string,
     classSubtype: string
 ) => {
@@ -485,43 +485,48 @@ const getDeleteKeyBasedOnDirectionBasedClasses = (
         if (!classTypeIsAPartOfOrIsAClassThatUsesDirectionParts) return false
 
 
-        const deleteKeyBasedOnOpposingDirections = (directionClassPart: string, opposingDirectionClassPart: string) => {
+        const deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts =
+            (directionClassPart: string, opposingDirectionClassPart: string) => {
 
 
-            if (classType.endsWith(directionClassPart)) {
+                if (classType.endsWith(directionClassPart)) {
 
 
-                return classMap.delete(`${classType.replace(directionClassPart, "")}${opposingDirectionClassPart}`)
+                    return classMap
+                        .get(`${classType.replace(directionClassPart, "")}${opposingDirectionClassPart}`)
+                        ?.delete("digit")
+
+                }
+
+
+
+                if (classSubtype === directionClassPart) {
+
+
+                    return classMap
+                        .get(`${classType}${opposingDirectionClassPart === "-" ? "" : opposingDirectionClassPart}`)
+                        ?.delete("digit")
+
+
+                }
+
+                return false
 
             }
-
-
-
-            if (classSubtype === directionClassPart) {
-
-
-                return classMap.delete(`${classType}${opposingDirectionClassPart === "-" ? "" : opposingDirectionClassPart}`)
-
-
-            }
-
-            return false
-
-        }
 
 
         const { up, down, left, right, horizontal, both, vertical } = requiredClassParts
 
 
         const mapHasChanged = [
-            deleteKeyBasedOnOpposingDirections(up, down),
-            deleteKeyBasedOnOpposingDirections(down, up),
-            deleteKeyBasedOnOpposingDirections(left.primary, right.primary),
-            deleteKeyBasedOnOpposingDirections(right.primary, left.primary),
-            left?.secondary && right?.secondary && deleteKeyBasedOnOpposingDirections(left.secondary, right.secondary),
-            left?.secondary && right?.secondary && deleteKeyBasedOnOpposingDirections(right.secondary, left.secondary),
-            deleteKeyBasedOnOpposingDirections(horizontal, vertical),
-            deleteKeyBasedOnOpposingDirections(vertical, horizontal),
+            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(up, down),
+            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(down, up),
+            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(left.primary, right.primary),
+            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(right.primary, left.primary),
+            left?.secondary && right?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(left.secondary, right.secondary),
+            left?.secondary && right?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(right.secondary, left.secondary),
+            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(horizontal, vertical),
+            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(vertical, horizontal),
         ].some(value => value === true)
 
 
@@ -529,21 +534,21 @@ const getDeleteKeyBasedOnDirectionBasedClasses = (
 
 
             return [
-                deleteKeyBasedOnOpposingDirections(both, up),
-                deleteKeyBasedOnOpposingDirections(up, both),
-                deleteKeyBasedOnOpposingDirections(down, both),
-                deleteKeyBasedOnOpposingDirections(left.primary, both),
-                deleteKeyBasedOnOpposingDirections(both, left.primary),
-                deleteKeyBasedOnOpposingDirections(right.primary, both),
-                deleteKeyBasedOnOpposingDirections(both, right.primary),
-                left?.secondary && right?.secondary && deleteKeyBasedOnOpposingDirections(left.secondary, both),
-                left?.secondary && right?.secondary && deleteKeyBasedOnOpposingDirections(both, left.secondary),
-                left?.secondary && right?.secondary && deleteKeyBasedOnOpposingDirections(right.secondary, both),
-                left?.secondary && right?.secondary && deleteKeyBasedOnOpposingDirections(both, right.secondary),
-                deleteKeyBasedOnOpposingDirections(horizontal, both),
-                deleteKeyBasedOnOpposingDirections(both, horizontal),
-                deleteKeyBasedOnOpposingDirections(vertical, both),
-                deleteKeyBasedOnOpposingDirections(both, vertical),
+                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, up),
+                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(up, both),
+                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(down, both),
+                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(left.primary, both),
+                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, left.primary),
+                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(right.primary, both),
+                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, right.primary),
+                left?.secondary && right?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(left.secondary, both),
+                left?.secondary && right?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, left.secondary),
+                left?.secondary && right?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(right.secondary, both),
+                left?.secondary && right?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, right.secondary),
+                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(horizontal, both),
+                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, horizontal),
+                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(vertical, both),
+                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, vertical),
             ].reduce(value => value === true)
 
         }
@@ -1094,7 +1099,16 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
                     ["value", value]
                 ]))
 
-                deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType, "digit")
+                const keyDeletionAttemptResult = attemptToDeleteKeysWhenAClassThatCanHaveOrHasDirectionPartsIsFoundAndASimilarClassIsFound(
+                    classMap,
+                    classVariantAndType,
+                    subtype
+                );
+
+                if (!keyDeletionAttemptResult) {
+
+                    deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap, classVariantAndType, "digit")
+                }
 
                 return true
 
