@@ -950,209 +950,229 @@ describe("Test if all class map changers work", () => {
         })
 
 
-        itUsingTailwindSortedClasses("deletes a class with the same type but different subtype", ({ tailwindCSSUtility: utility, }) => {
-
-
-            const classes = [
-                "grid-cols-1",
-                "grid-rows-4",
-                "grid-cols-3",
-                "grid-rows-8",
-            ]
-
-            classes.forEach((className) => attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, className))
-
-
-            expect(utility.has("grid-rows-")).toBeTruthy()
-
-            expect(utility.get("grid-rows-")?.has("digit")).toBeTruthy()
-
-            expect(utility.has("grid-cols-")).toBeFalsy()
-
-            expect(utility.get("grid-cols-")?.has("digit")).toBeFalsy()
-
-
-
-        })
-
 
         describe(
-            "It filters classes based on whether they have conflicting directions t|r|b|l ",
+            `It removes classes values or types based on identical variants or subtype.
+            Or it takes into account classes related to directions.`,
             () => {
 
-                itUsingTailwindSortedClasses(
-                    `removes a mr class when a ml is introduced after it and vice versa
-                     Removes a mt class when a mb class is introduced after it and vice versa
-                    `,
-                    ({ tailwindCSSUtility }) => {
-
-                        const marginLeftRightClasses = [
-                            "mr-2",
-                            "ml-3",
-                            "mr-2",
-                            "ml-4",
-                        ]
-
-                        marginLeftRightClasses
-                            .forEach(
-                                value =>
-                                    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(
-                                        tailwindCSSUtility,
-                                        value
-                                    )
-                            )
-
-                        const marginUpDownClasses = [
-                            "mt-2",
-                            "mb-5",
-                            "mt-4",
-                            "mb-3",
-                        ]
-
-
-                        marginUpDownClasses
-                            .forEach(
-                                value =>
-                                    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(
-                                        tailwindCSSUtility,
-                                        value
-                                    )
-                            )
-
-
-
-                        expect(tailwindCSSUtility.has("ml-")).toBeTruthy()
-
-                        expect(tailwindCSSUtility.has("mr-")).toBeFalsy()
-
-                        expect(tailwindCSSUtility.has("mb-")).toBeTruthy()
-
-                        expect(tailwindCSSUtility.has("mt-")).toBeFalsy()
-
-
-                    }
-                )
-
 
                 itUsingTailwindSortedClasses(
-                    "Removes all other classes with directionClassParts when a - is introduced",
-                    ({ tailwindCSSUtility }) => {
+                    `When a class with a subtype is inserted. 
+            If a class has a similar subtype and the value is in the map.
+            The same value type is removed from the map.`,
+                    ({ tailwindCSSUtility: utility, }) => {
 
-                        const marginClasses = [
-                            "mt-2",
-                            "mr-2",
-                            "m-4",
-                        ]
-
-
-                        marginClasses
-                            .forEach(
-                                marginClass =>
-                                    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, marginClass)
-                            )
-
-
-                        expect(tailwindCSSUtility.has("m-")).toBeTruthy()
-
-                        expect(tailwindCSSUtility.has("mt-")).toBeFalsy()
-
-                        expect(tailwindCSSUtility.has("mr-")).toBeFalsy()
-
-
-
-                    }
-                )
-
-
-                itUsingTailwindSortedClasses(
-                    "Removes a class with - when a directionClassPart is introduced ",
-                    ({ tailwindCSSUtility }) => {
 
                         const classes = [
-                            "border-4",
-                            "border-t-4",
+                            "grid-cols-1",
+                            "grid-rows-4",
+                            "grid-cols-3",
+                            "grid-rows-8",
                         ]
 
-
-                        classes
-                            .forEach(
-                                value =>
-                                    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, value)
-                            )
+                        classes.forEach((className) =>
+                            attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, className)
+                        )
 
 
+                        expect(utility.has("grid-rows-")).toBeTruthy()
 
-                        expect(tailwindCSSUtility.has("border-")).toBeFalsy()
-
-                        expect(tailwindCSSUtility.has("border-t-")).toBeTruthy()
+                        expect(utility.get("grid-rows-")?.has("digit")).toBeTruthy()
 
 
+                        expect(utility.get("grid-cols-")?.has("digit")).toBeFalsy()
+
+
+
+                    })
+
+                describe(
+                    "It filters classes based on whether they have conflicting directions t|r|b|l ",
+                    () => {
+
+                        itUsingTailwindSortedClasses(
+                            `removes a mr class when a ml is introduced after it and vice versa
+                     Removes a mt class when a mb class is introduced after it and vice versa
+                    `,
+                            ({ tailwindCSSUtility }) => {
+
+                                const marginLeftRightClasses = [
+                                    "mr-2",
+                                    "ml-3",
+                                    "mr-2",
+                                    "ml-4",
+                                ]
+
+                                marginLeftRightClasses
+                                    .forEach(
+                                        value =>
+                                            attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(
+                                                tailwindCSSUtility,
+                                                value
+                                            )
+                                    )
+
+                                const marginUpDownClasses = [
+                                    "mt-2",
+                                    "mb-5",
+                                    "mb-3",
+                                    "mt-4",
+                                ]
+
+
+                                marginUpDownClasses
+                                    .forEach(
+                                        value =>
+                                            attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(
+                                                tailwindCSSUtility,
+                                                value
+                                            )
+                                    )
+
+
+
+                                expect(tailwindCSSUtility.get("mr-")?.has("digit")).toBeFalsy()
+
+                                expect(tailwindCSSUtility.get("ml-")?.has("digit")).toBeTruthy()
+
+                                expect(tailwindCSSUtility.get("mb-")?.has("digit")).toBeFalsy()
+
+                                expect(tailwindCSSUtility.get("mt-")?.has("digit")).toBeTruthy()
+
+
+                            }
+                        )
+
+
+                        itUsingTailwindSortedClasses(
+                            "Removes all values from classes with directionClassParts when a - is introduced",
+                            ({ tailwindCSSUtility }) => {
+
+                                const marginClasses = [
+                                    "mt-2",
+                                    "mr-2",
+                                    "m-4",
+                                ]
+
+
+                                marginClasses
+                                    .forEach(
+                                        marginClass =>
+                                            attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, marginClass)
+                                    )
+
+
+                                expect(tailwindCSSUtility.has("m-")).toBeTruthy()
+
+                                expect(tailwindCSSUtility.get("mt-")?.has("digit")).toBeFalsy()
+
+                                expect(tailwindCSSUtility.get("mr-")?.has("digit")).toBeFalsy()
+
+
+
+                            }
+                        )
+
+
+                        itUsingTailwindSortedClasses(
+                            "Removes a class with - when a directionClassPart is introduced ",
+                            ({ tailwindCSSUtility }) => {
+
+                                const classes = [
+                                    "border-4",
+                                    "border-t-4",
+                                ]
+
+
+                                classes
+                                    .forEach(
+                                        value =>
+                                            attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, value)
+                                    )
+
+
+
+                                expect(tailwindCSSUtility.get("border-")?.has("digit")).toBeFalsy()
+
+                                expect(tailwindCSSUtility.has("border-t-")).toBeTruthy()
+
+
+
+                            }
+                        )
 
                     }
                 )
 
-            }
-        )
+
+                describe(
+                    "It gets rid value types of identical variants and types in the class map",
+                    () => {
+
+                        itUsingTailwindSortedClasses(
+                            "Removes identical from type only classes with variants",
+                            ({ tailwindCSSUtility }) => {
+
+                                const classes = [
+                                    "border-4",
+                                    "border-dashed",
+                                    "border-gray-500",
+                                    "hover:focus:border-4",
+                                    "focus:hover:border-4",
+                                    "border-y-4"
+                                ]
 
 
-        describe("It gets rid of identical variants in classes", () => {
+                                classes
+                                    .forEach(
+                                        value =>
+                                            attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, value)
+                                    )
 
-            itUsingTailwindSortedClasses(
-                "Removes identical from type only classes with variants",
-                ({ tailwindCSSUtility }) => {
+                                expect(tailwindCSSUtility.get('hover:focus:border-')?.has("digit")).toBeFalsy()
 
-                    const classes = [
-                        "border-4",
-                        "hover:focus:border-4",
-                        "focus:hover:border-4",
-                    ]
+                                expect(tailwindCSSUtility.has('focus:hover:border-')).toBeTruthy()
+
+                                expect(tailwindCSSUtility.get('border-')?.has('digit')).toBeFalsy()
 
 
-                    classes
-                        .forEach(
-                            value =>
-                                attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, value)
+                            }
                         )
 
-                    expect(tailwindCSSUtility.has('hover:focus:border-')).toBeFalsy()
+                        itUsingTailwindSortedClasses(
+                            "Removes identical value types from type and subtype classes with variants",
+                            ({ tailwindCSSUtility }) => {
 
-                    expect(tailwindCSSUtility.has('focus:hover:border-')).toBeTruthy()
-
-                    expect(tailwindCSSUtility.has('border-')).toBeTruthy()
-
-
-                }
-            )
-
-            itUsingTailwindSortedClasses(
-                "Removes identical from type and subtype classes with variants",
-                ({ tailwindCSSUtility }) => {
-
-                    const classes = [
-                        "border-4",
-                        "hover:focus:border-x-4",
-                        "focus:hover:border-y-4",
-                    ]
+                                const classes = [
+                                    "border-4",
+                                    "hover:focus:border-x-4",
+                                    "focus:hover:border-y-4",
+                                ]
 
 
-                    classes
-                        .forEach(
-                            value =>
-                                attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, value)
+                                classes
+                                    .forEach(
+                                        value =>
+                                            attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, value)
+                                    )
+
+                                expect(tailwindCSSUtility.get('hover:focus:border-x-')?.has("digit")).toBeFalsy()
+
+                                expect(tailwindCSSUtility.has('focus:hover:border-y-')).toBeTruthy()
+
+                                expect(tailwindCSSUtility.has('border-')).toBeTruthy()
+
+
+                            }
                         )
 
-                    expect(tailwindCSSUtility.has('hover:focus:border-x-')).toBeFalsy()
-
-                    expect(tailwindCSSUtility.has('focus:hover:border-y-')).toBeTruthy()
+                    })
 
 
-                    expect(tailwindCSSUtility.has('border-')).toBeTruthy()
 
+            })
 
-                }
-            )
-
-        })
 
 
 
@@ -1250,7 +1270,7 @@ describe("Test if all class map changers work", () => {
             `When sorting based on class names if no variant is provided
             the default variant will be base and it's value the class
             when a it is provided then the key will be the variant
-            and the value the   
+            and the value the one provided.  
             `,
             ({ customFiltered }) => {
 
@@ -1498,24 +1518,25 @@ describe("Test if all class map changers work", () => {
         })
 
 
-        itUsingBEMSortedClasses("adds an  element to the map when a lower_case_word and two underscores are encountered", ({ bem }) => {
-
-
-            // const bemClasses = ["card",  "card__title--lg", "card--lg"];
-
-
-            attemptToChangeClassNameMapAccordingToIfTheBEMConvention(bem, "card__title", [])
-
-            const cardElementAndModifierMap = bem.get("card");
-
-            expect(cardElementAndModifierMap?.has("element")).toBeTruthy()
-
-            expect(cardElementAndModifierMap?.get("element")).toBe("__title")
+        itUsingBEMSortedClasses(
+            "adds an  element to the map when a lower_case_word and two underscores are encountered",
+            ({ bem }) => {
 
 
 
 
-        })
+                attemptToChangeClassNameMapAccordingToIfTheBEMConvention(bem, "card__title", [])
+
+                const cardElementAndModifierMap = bem.get("card");
+
+                expect(cardElementAndModifierMap?.has("element")).toBeTruthy()
+
+                expect(cardElementAndModifierMap?.get("element")).toBe("__title")
+
+
+
+
+            })
 
 
 
