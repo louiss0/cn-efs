@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- The `!-` prefix is now taken account as a prefix that is taken into account.
+- `tailwindCN_EFS()` no longer removes all classes with an identical type when
+a class with directional part that is similar to a specific class type.
+
+### Changed
+
+- `tailwindCN_EFS()` removes identical variants from classes.
+
 ## [2.0.0] - 2023-11-05
 
 ## Added
