@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.1.0] - 2023-11-10
+
 ### Fixed
 
 - The `!-` prefix is now taken account as a prefix that is taken into account.
