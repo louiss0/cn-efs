@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Make sure that empty maps in `tailwindCN_EFS()` don't have their keys used when transforming.
+
 ## [2.1.0] - 2023-11-10
 
 ### Fixed
