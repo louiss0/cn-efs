@@ -1527,17 +1527,17 @@ export const attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup =
 
         let classMapHasChanged = false
 
-        const variantGroupMatch = variantGroupRE.exec(className)
+        const variantGroupMatchGroups = variantGroupRE.exec(className)?.groups
 
 
-        if (!variantGroupMatch) return classMapHasChanged
+        if (!variantGroupMatchGroups) return classMapHasChanged
 
-        const [, variant, classNames] = variantGroupMatch
+        const { variant, class_names } = variantGroupMatchGroups
 
 
-        if (!variant || !classNames) return classMapHasChanged
+        if (!variant || !class_names) return classMapHasChanged
 
-        const splitClassNames = classNames?.split(/\s/)
+        const splitClassNames = class_names?.split(/\s/)
 
 
         splitClassNames
@@ -1569,6 +1569,7 @@ export const attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup =
                     classMapHasChanged = true
                     return
                 }
+
                 if (filterObject) {
 
                     const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectResult = attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(customFiltered, className, filterObject)
