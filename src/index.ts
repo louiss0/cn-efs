@@ -367,17 +367,20 @@ export const tailwindOrWindiCN_EFS = (...args: Parameters<typeof clsx>) => {
         classMapChanger(classNameMap, value, filterObject) {
 
 
-            if (attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(classNameMap.tailwindCSSUtility, value))
+
+            const classMapWasChangedByAClassMapChanger = [
+                attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(classNameMap.tailwindCSSUtility, value),
+                attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty(classNameMap.arbitraryProperties, value),
+                attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass(classNameMap.tailwindCSSUtility, value)
+            ].some(value => value === true)
+
+
+            if (classMapWasChangedByAClassMapChanger)
+
                 return classNameMap
 
 
 
-            if (attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty(classNameMap.arbitraryProperties, value))
-                return classNameMap
-
-
-            if (attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass(classNameMap.tailwindCSSUtility, value))
-                return classNameMap
 
 
             const { customFiltered, tailwindCSSUtility, arbitraryProperties } = classNameMap
@@ -408,6 +411,10 @@ export const tailwindOrWindiCN_EFS = (...args: Parameters<typeof clsx>) => {
 
                     if (!variantAndValueMap) continue;
 
+                    const variantAndValueMapIsEmpty = variantAndValueMap.size === 0
+
+                    if (variantAndValueMapIsEmpty) continue;
+
 
                     for (const [variant, value] of variantAndValueMap) {
 
@@ -430,6 +437,12 @@ export const tailwindOrWindiCN_EFS = (...args: Parameters<typeof clsx>) => {
 
 
                     if (!utilityValueMap) continue;
+
+                    const utilityValueMapIsEmpty = utilityValueMap.size === 0
+
+
+                    if (utilityValueMapIsEmpty) continue;
+
 
                     const valuesFromUtilityValueMap = [
                         utilityValueMap.get("digit"),
@@ -475,6 +488,7 @@ export const tailwindOrWindiCN_EFS = (...args: Parameters<typeof clsx>) => {
         filterObject: TailwindOrWindiFilterObject,
 
     })
+
     return classNamesEvaluatorFilterAndSorter(...args)
 }
 
