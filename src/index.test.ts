@@ -96,7 +96,12 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
 
         it("filters and sorts utility classes", () => {
 
-            const classes = "outline-solid outline-1 outline-gray-600 outline-[#FFF333]"
+            const classes = [
+                "outline-solid",
+                "outline-1",
+                "outline-gray-600",
+                "outline-[#FFF333]"
+            ]
 
             const sortedClasses = tailwindOrWindiCN_EFS(classes)
 
@@ -104,7 +109,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
             expect(sortedClasses).not.toBe(classes)
 
 
-            expect(sortedClasses?.length).toBeLessThan(classes.length)
+            expect(!sortedClasses.includes("outline-gray-600")).toBeTruthy()
 
 
 
