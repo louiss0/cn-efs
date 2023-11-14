@@ -561,31 +561,177 @@ const getDeleteKeyBasedOnDirectionBasedClasses = (
     }
 
 
-const attemptToDeleteKeysWhenAClassThatCanHaveOrHasDirectionPartsIsFoundAndASimilarClassIsFound = getDeleteKeyBasedOnDirectionBasedClasses(
-    [
-        "m",
-        "z-index",
-        "border",
-        "p",
-        "start",
-        "end",
-        "overflow",
-        "gap",
-        "scale",
-        "translate",
-        "rotate",
-        "skew",
-        "scroll",
-        "scroll-m",
-        "touch-pan",
-    ],
-    {
-        up: "t-", down: "b-",
-        left: { primary: "l-", secondary: "s-" },
-        right: { primary: "r-", secondary: "e-" },
-        horizontal: "x-", both: "-", vertical: "y-"
+const attemptToDeleteKeysInTheTailwindUtilityClassMapWhenAClassThatHasDirectionPartsIsFoundAndASimilarClassIsFound =
+    getDeleteKeyBasedOnDirectionBasedClasses(
+        [
+            "m",
+            "z-index",
+            "border",
+            "p",
+            "start",
+            "end",
+            "overflow",
+            "gap",
+            "scale",
+            "translate",
+            "rotate",
+            "skew",
+            "rounded",
+            "scroll",
+            "scroll-m",
+            "touch-pan",
+            "bg-repeat",
+            "divide",
+        ],
+        {
+            up: "t-",
+            down: "b-",
+            left: {
+                primary: "l-",
+                secondary: "s-"
+            },
+            topLeft: {
+                primary: "tl-",
+                secondary: "ss-"
+            },
+            bottomLeft: {
+                primary: "bl-",
+                secondary: "es-"
+            },
+            right: {
+                primary: "r-",
+                secondary: "e-"
+            },
+            topRight: {
+                primary: "tr-",
+                secondary: "se-"
+            },
+            bottomRight: {
+                primary: "br-",
+                secondary: "ee-"
+            },
+            horizontal: "x-",
+            both: "-",
+            vertical: "y-"
+        }
+    );
+
+
+
+
+const attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValue =
+    (
+        classMap: AllSortedClasses["tailwindCSSUtility"],
+        classGroups:
+            Record<"variant" | "value" | "prefix", string> &
+            Record<"type" | "subtype", `${string}-`>
+    ) => {
+
+
+        let classMapHasChanged = false
+
+        const crossValueUtilityClassRelationShipWithClassesObject:
+            Record<`${string}-`, Record<`${string}-`, ViableUtilityClassMapKeys>> = {
+            "text-": {
+                "leading-": "digit",
+                "text-": "word",
+            },
+            "shadow-": {
+                "shadow-": "color",
+                "opacity-": "digit"
+            },
+            "accent-": {
+                "accent-": "color",
+                "opacity-": "digit"
+            },
+            "bg-": {
+                "bg-": "color",
+                "opacity-": "digit"
+            },
+            "border-": {
+                "border-": "color",
+                "opacity-": "digit"
+            },
+            "divide-": {
+                "divide-": "color",
+                "opacity-": "digit"
+            },
+            "ring-": {
+                "ring-": "color",
+                "opacity-": "digit"
+            },
+        }
+
+
+        const { variant, prefix, type, subtype, value } = classGroups
+
+
+        const valueFromCrossValueUtilityClassRelationShipWithClassesMapUsingTypeWithNoDash =
+            crossValueUtilityClassRelationShipWithClassesObject[`${type}${subtype}`]
+
+        const classVariantAndSubTypeFromClassGroups = `${variant}${type}${subtype}`;
+
+        if (valueFromCrossValueUtilityClassRelationShipWithClassesMapUsingTypeWithNoDash) {
+
+
+
+
+            if (!classVariantAndSubTypeFromClassGroups) {
+
+                classMap.set(
+                    classVariantAndSubTypeFromClassGroups,
+                    new Map([
+                        [viableUtilityClassMapKeys["6"],
+                        new Map([['prefix', prefix], ['value', value]])]
+                    ]
+                    ))
+
+            }
+
+
+
+            if (classVariantAndSubTypeFromClassGroups) {
+
+                classMap.get(classVariantAndSubTypeFromClassGroups)
+                    ?.get(viableUtilityClassMapKeys[6])
+                    ?.set("prefix", prefix)
+                    ?.set("value", value)
+
+
+            }
+
+
+
+
+            const fullClassTypeAndValueTypeObjects =
+                Object
+                    .entries(
+                        valueFromCrossValueUtilityClassRelationShipWithClassesMapUsingTypeWithNoDash
+                    ).map(([classType, valueType]) => ({
+                        fullClassType: `${variant}${classType}`,
+                        valueType
+                    }))
+
+
+            fullClassTypeAndValueTypeObjects
+                .forEach
+                (({ fullClassType, valueType }) =>
+                    classMap.get(fullClassType)?.delete(valueType)
+                )
+
+
+            classMapHasChanged = true
+        }
+
+
+
+        return classMapHasChanged
+
+
+
+
     }
-);
+
 export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue:
     ClassMapChangerBasedOnClassName<AllSortedClasses["tailwindCSSUtility"]> = (classMap, className) => {
 
