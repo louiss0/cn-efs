@@ -1201,6 +1201,8 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
             }
 
 
+
+
             return false
 
         }
@@ -1440,7 +1442,30 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
 
 
+
+
+
         }
+
+
+        const attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValueResult =
+
+            attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValue(
+                classMap,
+                {
+                    type: type as `${string}-`,
+                    subtype: subtype as `${string}-`,
+                    value,
+                    variant,
+                    prefix,
+                }
+            )
+
+        if (attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValueResult) {
+
+            return true
+        }
+
 
 
         return false
