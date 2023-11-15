@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.2.0] - 2023-11-15
+
 ## Added
 
 - `tailwindCN_EFS` can now resolve classes like  `text-sm leading-6 text-lg/6`.
