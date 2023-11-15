@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.2.1] - 2023-11-15
+
 ### Fixed
 
 - I finally added the repo to the package.json file.
