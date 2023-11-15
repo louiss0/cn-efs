@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## Added
+
+- `tailwindCN_EFS` can now resolve classes like  `text-sm leading-6 text-lg/6`.
+
+## Fixed
+
+- All possible tailwind directional class parts are accounted for in the
+`attemptToDeleteKeysInTheTailwindUtilityClassMapWhenAClassThatHasDirectionPartsIsFoundAndASimilarClassIsFound()`
+
 ### Fixed
 
 - Make sure that empty maps in `tailwindCN_EFS()` don't have their keys used when transforming.
