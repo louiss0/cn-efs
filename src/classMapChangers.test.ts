@@ -60,11 +60,14 @@ const itUsingTailwindSortedClasses = it.extend<typeof sortedTailwindClasses>({
 
         await use(structuredClone(sortedTailwindClasses.arbitraryProperties))
 
+        sortedTailwindClasses.arbitraryProperties.clear()
+
     },
 
     async tailwindCSSUtility({ }, use) {
 
 
+        sortedTailwindClasses.tailwindCSSUtility.clear()
         await use(structuredClone(sortedTailwindClasses.tailwindCSSUtility))
 
     },
@@ -103,6 +106,7 @@ const insertMessagePrefix = "inserts the word before the dash as key and the wor
 
 
 describe("Test if all class map changers work", () => {
+
 
 
 
@@ -364,18 +368,24 @@ describe("Test if all class map changers work", () => {
     describe("Testing attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue()", () => {
 
 
-        itUsingTailwindSortedClasses("doesn't change the map if there is a single word class", ({ tailwindCSSUtility: utility }) => {
+
+        itUsingTailwindSortedClasses(
+            "doesn't change the map if there is a single word class",
+            ({ tailwindCSSUtility: utility }) => {
 
 
-            attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "outline-")
+                attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(
+                    utility,
+                    "outline"
+                )
 
 
 
-            expect(utility).toHaveLength(0)
+                expect(utility).toHaveLength(0)
 
 
 
-        })
+            })
 
 
 
@@ -387,16 +397,17 @@ describe("Test if all class map changers work", () => {
             () => {
 
 
-                itUsingTailwindSortedClasses("changes the map when a class with a digit is passed in", ({ tailwindCSSUtility: utility }) => {
+                itUsingTailwindSortedClasses(
+                    "changes the map when a class with a digit is passed in", ({ tailwindCSSUtility: utility }) => {
 
 
-                    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "outline-0")
+                        attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "outline-0")
 
 
-                    expect(utility).toHaveLength(1)
+                        expect(utility).toHaveLength(1)
 
 
-                })
+                    })
 
 
 
@@ -1172,6 +1183,70 @@ describe("Test if all class map changers work", () => {
 
 
             })
+
+
+
+
+
+        describe(
+            "Changes the class map based on the value of a slashValue utility class.",
+            () => {
+
+
+                itUsingTailwindSortedClasses(
+                    "Adds the slash value to the class map then removes it's related classes.",
+                    ({ tailwindCSSUtility }) => {
+
+                        const classes = ["leading-6", "text-sm", "text-lg/6"]
+
+                        classes.forEach(value =>
+                            attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(
+                                tailwindCSSUtility,
+                                value
+                            )
+                        )
+
+
+
+                        expect(tailwindCSSUtility.get("text-")?.has("slashValue")).toBeTruthy()
+
+                        expect(tailwindCSSUtility.get("leading-")?.has("color")).toBeFalsy()
+
+                        expect(tailwindCSSUtility.get("text-")?.has("word")).toBeFalsy()
+
+
+                    }
+                )
+
+
+                itUsingTailwindSortedClasses(
+                    "Adds the slash value to the class map then removes related directional classes.",
+                    ({ tailwindCSSUtility }) => {
+
+                        const classes = ["border-gray-500", "border-x-gray-500/50"]
+
+                        classes.forEach(value =>
+                            attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(
+                                tailwindCSSUtility,
+                                value
+                            )
+                        )
+
+
+
+                        expect(tailwindCSSUtility.get("border-x-")?.has("slashValue"))
+                            .toBeTruthy()
+
+
+                        expect(tailwindCSSUtility.get("border-")?.has("color")).toBeFalsy()
+
+
+                    }
+                )
+
+            }
+
+        )
 
 
 
