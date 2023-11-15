@@ -46,6 +46,10 @@
     "classList",
     "windicss"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/louiss0/cn-efs.git"
+  },
   "author": {
     "name": "Shelton Louis",
     "url": "https://github.com/louiss0"
