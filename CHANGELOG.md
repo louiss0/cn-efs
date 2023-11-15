@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- I finally added the repo to the package.json file.
+- Removed all wrong info from ReadME.
+
 ## [2.2.0] - 2023-11-15
 
 ### Added
