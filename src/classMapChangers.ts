@@ -20,7 +20,8 @@ const variableHasAStringHint = (arbitraryValue: string) =>
 
 
 const tailwindCSSTypeAndValueUtilityClassRE =
-    /^(?<variant>[a-z0-9\][#\.&:\-\)",_=(\/]+:)?(?<prefix>!|-|!-)?(?<type>[a-z]+-)(?<subtype>[a-z]+-)?(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d]+)$/
+    /^(?<variant>[a-z0-9\][#\.&:\-\)",_=(\/]+:)?(?<prefix>!|-|!-)?(?<type>[a-z]+-)(?<subtype>(?<first>[a-z]+-)?(?<second>[a-z]+-))?(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d\/\][]+)$/
+
 
 
 const bootstrapCSSTypeBreakpointAndValueUtilityClassRE =
@@ -476,13 +477,17 @@ const getDeleteKeyBasedOnDirectionBasedClasses = (
 
 ) => (
     classMap: AllSortedClasses['tailwindCSSUtility'],
-    classType: string,
-    classSubtype: string
+    valueKey: "color" | "digit",
+    classTypeAndSubtype: {
+        type: string,
+        subtype: string
+    }
 ) => {
 
+        const { type, subtype } = classTypeAndSubtype
 
         const classTypeIsAPartOfOrIsAClassThatUsesDirectionParts = classTypesThatUseDirectionParts
-            .some(value => classType.startsWith(value) || classType === value)
+            .some(value => type.startsWith(value) || type === value)
 
 
         if (!classTypeIsAPartOfOrIsAClassThatUsesDirectionParts) return false
@@ -492,23 +497,27 @@ const getDeleteKeyBasedOnDirectionBasedClasses = (
             (directionClassPart: string, opposingDirectionClassPart: string) => {
 
 
-                if (classType.endsWith(directionClassPart)) {
+                if (type.endsWith(directionClassPart)) {
+
+                    const valueMap = classMap.get(
+                        `${type.replace(directionClassPart, "")}${opposingDirectionClassPart}`
+                    )
 
 
-                    return classMap
-                        .get(`${classType.replace(directionClassPart, "")}${opposingDirectionClassPart}`)
-                        ?.delete("digit")
+                    return valueMap?.delete(valueKey)
+
 
                 }
 
 
 
-                if (classSubtype === directionClassPart) {
+                if (subtype === directionClassPart) {
+
+                    const valueMap = classMap
+                        .get(`${type}${opposingDirectionClassPart === "-" ? "" : opposingDirectionClassPart}`)
 
 
-                    return classMap
-                        .get(`${classType}${opposingDirectionClassPart === "-" ? "" : opposingDirectionClassPart}`)
-                        ?.delete("digit")
+                    return valueMap?.delete(valueKey)
 
 
                 }
@@ -685,28 +694,29 @@ const getDeleteKeyBasedOnDirectionBasedClasses = (
     }
 
 
+const classTypesWithDirectionalClassParts = [
+    "m",
+    "z-index",
+    "border",
+    "p",
+    "start",
+    "end",
+    "overflow",
+    "gap",
+    "scale",
+    "translate",
+    "rotate",
+    "skew",
+    "rounded",
+    "scroll",
+    "scroll-m",
+    "touch-pan",
+    "bg-repeat",
+    "divide",
+];
 const attemptToDeleteKeysInTheTailwindUtilityClassMapWhenAClassThatHasDirectionPartsIsFoundAndASimilarClassIsFound =
     getDeleteKeyBasedOnDirectionBasedClasses(
-        [
-            "m",
-            "z-index",
-            "border",
-            "p",
-            "start",
-            "end",
-            "overflow",
-            "gap",
-            "scale",
-            "translate",
-            "rotate",
-            "skew",
-            "rounded",
-            "scroll",
-            "scroll-m",
-            "touch-pan",
-            "bg-repeat",
-            "divide",
-        ],
+        classTypesWithDirectionalClassParts,
         {
             up: "t-",
             down: "b-",
@@ -740,108 +750,278 @@ const attemptToDeleteKeysInTheTailwindUtilityClassMapWhenAClassThatHasDirectionP
         }
     );
 
+type ClassTypesWithRelationShipsWithOtherClassTypes = Record<
+    string,
+    {
+        isDirectional?: true
+        classType: `${string}-`
+        valueType: ViableUtilityClassMapKeys
+        secondary: {
+            classType: `${string}-`
+            valueType: ViableUtilityClassMapKeys
 
+        }
+    }
+>
+
+const crossValueUtilityClassRelationShipWithClassesObject: ClassTypesWithRelationShipsWithOtherClassTypes = {
+    text: {
+        classType: "text-",
+        valueType: "word",
+        secondary: {
+            classType: "leading-",
+            valueType: "digit"
+        }
+    },
+    shadow: {
+        classType: "shadow-",
+        valueType: "color",
+        secondary: {
+            classType: "opacity-",
+            valueType: "digit",
+        },
+    },
+    accent: {
+
+        classType: "accent-",
+        valueType: "color",
+        secondary: {
+            classType: "opacity-",
+            valueType: "digit"
+        }
+    },
+    bg: {
+        classType: "bg-",
+        valueType: "color",
+        secondary: {
+            classType: "opacity-",
+            valueType: "digit"
+        }
+    },
+    border: {
+        isDirectional: true,
+        classType: "border-",
+        valueType: "color",
+        secondary: {
+            classType: "opacity-",
+            valueType: "digit"
+        }
+    },
+    divide: {
+        isDirectional: true,
+        classType: "divide-",
+        valueType: "color",
+        secondary: {
+            classType: "opacity-",
+            valueType: "digit"
+        }
+    },
+    ring: {
+        classType: "ring-",
+        valueType: "color",
+        secondary: {
+            classType: "opacity-",
+            valueType: "digit"
+        }
+    },
+}
 
 
 const attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValue =
     (
         classMap: AllSortedClasses["tailwindCSSUtility"],
         classGroups:
-            Record<"variant" | "value" | "prefix", string> &
-            Record<"type" | "subtype", `${string}-`>
+            Record<
+                "type" | "variant" | "value" | "prefix",
+                string
+            > & Record<
+                "firstSubtype" | "secondSubtype",
+                string | undefined
+            >
     ) => {
 
 
         let classMapHasChanged = false
 
-        const crossValueUtilityClassRelationShipWithClassesObject:
-            Record<`${string}-`, Record<`${string}-`, ViableUtilityClassMapKeys>> = {
-            "text-": {
-                "leading-": "digit",
-                "text-": "word",
-            },
-            "shadow-": {
-                "shadow-": "color",
-                "opacity-": "digit"
-            },
-            "accent-": {
-                "accent-": "color",
-                "opacity-": "digit"
-            },
-            "bg-": {
-                "bg-": "color",
-                "opacity-": "digit"
-            },
-            "border-": {
-                "border-": "color",
-                "opacity-": "digit"
-            },
-            "divide-": {
-                "divide-": "color",
-                "opacity-": "digit"
-            },
-            "ring-": {
-                "ring-": "color",
-                "opacity-": "digit"
-            },
-        }
 
 
-        const { variant, prefix, type, subtype, value } = classGroups
+
+        const { variant, prefix, type, firstSubtype, secondSubtype = "", value } = classGroups
+
+        console.log("attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValue");
+        console.table(classGroups)
+
+        const valueFromCrossValueUtilityClassRelationShipWithClassesMapUsingTypeWithNoDash = crossValueUtilityClassRelationShipWithClassesObject[type.replace("-", "")]
+
+        const classVariantAndSubTypeFromClassGroups =
+            firstSubtype
+                ? `${variant}${type}${firstSubtype}`
+                : `${variant}${type}${secondSubtype}`;
 
 
-        const valueFromCrossValueUtilityClassRelationShipWithClassesMapUsingTypeWithNoDash =
-            crossValueUtilityClassRelationShipWithClassesObject[`${type}${subtype}`]
 
-        const classVariantAndSubTypeFromClassGroups = `${variant}${type}${subtype}`;
-
-        if (valueFromCrossValueUtilityClassRelationShipWithClassesMapUsingTypeWithNoDash) {
+        const valueIsASlashValue = /^[a-z\d]+\/[a-z\d\][]+$/.test(value)
 
 
 
 
-            if (!classVariantAndSubTypeFromClassGroups) {
+        const valueIsASlashValueAndClassTypeIsAKeyInCrossValueUtilityClassRelationShipWithClassesObject =
+            valueFromCrossValueUtilityClassRelationShipWithClassesMapUsingTypeWithNoDash
+            && valueIsASlashValue;
+        if (
+            valueIsASlashValueAndClassTypeIsAKeyInCrossValueUtilityClassRelationShipWithClassesObject
+        ) {
 
-                classMap.set(
-                    classVariantAndSubTypeFromClassGroups,
-                    new Map([
-                        [viableUtilityClassMapKeys["6"],
-                        new Map([['prefix', prefix], ['value', value]])]
-                    ]
-                    ))
+            const secondSubtypeAndValue = `${secondSubtype}${value}`;
+
+            const subtypeAndValueIsAColorWordAndSlashValue =
+                /^[a-z]+-[a-z\d]+\/[a-z\d\][\.]+$/.test(secondSubtypeAndValue)
+
+            console.table({ classVariantAndSubTypeFromClassGroups });
+
+            if (firstSubtype && subtypeAndValueIsAColorWordAndSlashValue) {
+
+
+
+                if (!classMap.has(classVariantAndSubTypeFromClassGroups)) {
+
+                    classMap.set(
+                        classVariantAndSubTypeFromClassGroups,
+                        new Map([
+                            [
+                                viableUtilityClassMapKeys["6"],
+                                new Map([
+                                    ['prefix', prefix],
+                                    ['value', secondSubtypeAndValue]
+                                ])
+                            ]
+                        ]
+                        ))
+
+                }
+
+
+
+                if (classMap.has(classVariantAndSubTypeFromClassGroups)) {
+
+
+                    const classVariantAndSubTypeFromClassGroupsResult =
+                        classMap.get(classVariantAndSubTypeFromClassGroups)
+
+                    const classVariantAndSubTypeFromClassGroupsResultDoesNotHaveASlashValue = !classVariantAndSubTypeFromClassGroupsResult
+                        ?.has(viableUtilityClassMapKeys[6]);
+
+                    if (classVariantAndSubTypeFromClassGroupsResultDoesNotHaveASlashValue) {
+
+                        classVariantAndSubTypeFromClassGroupsResult
+                            ?.set(
+                                "slashValue",
+                                new Map([
+                                    ['prefix', prefix],
+                                    ['value', secondSubtypeAndValue]
+                                ])
+                            )
+
+                    }
+
+                    classVariantAndSubTypeFromClassGroupsResult
+                        ?.get(viableUtilityClassMapKeys[6])
+                        ?.set("prefix", prefix)
+                        ?.set("value", secondSubtypeAndValue)
+
+
+                }
+
+
+
+            }
+
+            if (!firstSubtype) {
+
+                if (!classMap.has(classVariantAndSubTypeFromClassGroups)) {
+
+                    classMap.set(
+                        classVariantAndSubTypeFromClassGroups,
+                        new Map([
+                            [
+                                viableUtilityClassMapKeys["6"],
+                                new Map([
+                                    ['prefix', prefix],
+                                    ['value', value]
+                                ])
+                            ]
+                        ]
+                        ))
+
+                }
+
+
+                if (classMap.has(classVariantAndSubTypeFromClassGroups)) {
+
+
+                    const classVariantAndSubTypeFromClassGroupsResult =
+                        classMap.get(classVariantAndSubTypeFromClassGroups)
+
+                    const classVariantAndSubTypeFromClassGroupsResultDoesNotHaveASlashValue = !classVariantAndSubTypeFromClassGroupsResult
+                        ?.has(viableUtilityClassMapKeys[6]);
+
+                    if (classVariantAndSubTypeFromClassGroupsResultDoesNotHaveASlashValue) {
+
+                        classVariantAndSubTypeFromClassGroupsResult
+                            ?.set(
+                                "slashValue",
+                                new Map([
+                                    ['prefix', prefix],
+                                    ['value', value]
+                                ])
+                            )
+
+                    }
+
+                    classVariantAndSubTypeFromClassGroupsResult
+                        ?.get(viableUtilityClassMapKeys[6])
+                        ?.set("prefix", prefix)
+                        ?.set("value", value)
+
+
+                }
 
             }
 
 
+            const {
+                isDirectional,
+                secondary,
+                classType,
+                valueType
+            } = valueFromCrossValueUtilityClassRelationShipWithClassesMapUsingTypeWithNoDash
 
-            if (classVariantAndSubTypeFromClassGroups) {
+            if (isDirectional) {
 
-                classMap.get(classVariantAndSubTypeFromClassGroups)
-                    ?.get(viableUtilityClassMapKeys[6])
-                    ?.set("prefix", prefix)
-                    ?.set("value", value)
-
-
-            }
-
-
-
-
-            const fullClassTypeAndValueTypeObjects =
-                Object
-                    .entries(
-                        valueFromCrossValueUtilityClassRelationShipWithClassesMapUsingTypeWithNoDash
-                    ).map(([classType, valueType]) => ({
-                        fullClassType: `${variant}${classType}`,
-                        valueType
-                    }))
-
-
-            fullClassTypeAndValueTypeObjects
-                .forEach
-                (({ fullClassType, valueType }) =>
-                    classMap.get(fullClassType)?.delete(valueType)
+                attemptToDeleteKeysInTheTailwindUtilityClassMapWhenAClassThatHasDirectionPartsIsFoundAndASimilarClassIsFound(
+                    classMap,
+                    "color",
+                    {
+                        type: `${variant}${classType}`,
+                        subtype: firstSubtype ?? secondSubtype
+                    }
                 )
+
+                classMap
+                    .get(`${variant}${secondary.classType}`)
+                    ?.delete(secondary.valueType)
+
+            }
+
+            if (!isDirectional) {
+
+                classMap.get(`${variant}${classType}`)
+                    ?.delete(valueType)
+
+                classMap.get(`${variant}${secondary.classType}`)
+                    ?.delete(secondary.valueType)
+            }
+
 
 
             classMapHasChanged = true
@@ -861,16 +1041,21 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
 
 
-        const cssTypeValueUtilityClassMatchGroups = tailwindCSSTypeAndValueUtilityClassRE.exec(className)?.groups
-
-
+        const cssTypeValueUtilityClassMatchGroups =
+            tailwindCSSTypeAndValueUtilityClassRE.exec(className)?.groups
 
 
         if (!cssTypeValueUtilityClassMatchGroups) return false
 
-
-
-        const { type, value, variant = "", subtype = "", prefix = "", } = cssTypeValueUtilityClassMatchGroups
+        const {
+            type,
+            value,
+            variant = "",
+            subtype = "",
+            prefix = "",
+            first: firstSubtype,
+            second: secondSubtype
+        } = cssTypeValueUtilityClassMatchGroups
 
 
         if (!type || !value) return false
@@ -991,8 +1176,11 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
                     const keyDeletionAttemptResult = attemptToDeleteKeysInTheTailwindUtilityClassMapWhenAClassThatHasDirectionPartsIsFoundAndASimilarClassIsFound(
                         classMap,
-                        classVariantAndType,
-                        subtype
+                        "digit",
+                        {
+                            type: classVariantAndType,
+                            subtype
+                        }
                     );
 
                     if (!keyDeletionAttemptResult) {
@@ -1106,8 +1294,11 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
                     const keyDeletionAttemptResult = attemptToDeleteKeysInTheTailwindUtilityClassMapWhenAClassThatHasDirectionPartsIsFoundAndASimilarClassIsFound(
                         classMap,
-                        classVariantAndType,
-                        subtype
+                        "digit",
+                        {
+                            type: classVariantAndType,
+                            subtype
+                        }
                     );
 
                     if (!keyDeletionAttemptResult) {
@@ -1201,6 +1392,24 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
             }
 
 
+            const attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValueResult =
+                attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValue(
+                    classMap,
+                    {
+                        type,
+                        firstSubtype,
+                        secondSubtype,
+                        value,
+                        variant,
+                        prefix,
+                    }
+                )
+
+            if (attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValueResult) {
+
+                return true
+            }
+
 
 
             return false
@@ -1240,8 +1449,11 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
                 const keyDeletionAttemptResult = attemptToDeleteKeysInTheTailwindUtilityClassMapWhenAClassThatHasDirectionPartsIsFoundAndASimilarClassIsFound(
                     classMap,
-                    classVariantAndType,
-                    subtype
+                    "digit",
+                    {
+                        type: classVariantAndType,
+                        subtype
+                    }
                 );
 
                 if (!keyDeletionAttemptResult) {
@@ -1373,8 +1585,11 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
                 const keyDeletionAttemptResult = attemptToDeleteKeysInTheTailwindUtilityClassMapWhenAClassThatHasDirectionPartsIsFoundAndASimilarClassIsFound(
                     classMap,
-                    classVariantAndType,
-                    subtype
+                    "digit",
+                    {
+                        type: classVariantAndType,
+                        subtype
+                    }
                 );
 
                 if (!keyDeletionAttemptResult) {
@@ -1449,12 +1664,12 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
 
         const attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValueResult =
-
             attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValue(
                 classMap,
                 {
-                    type: type as `${string}-`,
-                    subtype: subtype as `${string}-`,
+                    type,
+                    firstSubtype,
+                    secondSubtype,
                     value,
                     variant,
                     prefix,
