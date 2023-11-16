@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.2.2] - 2023-11-16
+
 ### Changed
 
 - `CN_EFS` functions no longer reinitialise getClassNamesEvaluatorFilterAndSorter.
