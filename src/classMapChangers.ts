@@ -117,9 +117,8 @@ export const createSortedClassObject = <T extends string, U extends SortedClassO
 
 }
 
-export const sortedClasses = createSortedClassObject()
 
-export type SortedClasses = typeof sortedClasses
+export type SortedClasses = ReturnType<typeof createSortedClassObject>
 
 export const createSortedBEMClasses = () => createSortedClassObject({
     bem: new Map<string, Map<ViableBemClassMapKeys, string | undefined> | undefined>()
@@ -166,7 +165,7 @@ export const createSortedTailwindClasses = () => createSortedClassObject({
 })
 
 
-type AllSortedClasses = typeof sortedClasses
+type AllSortedClasses = SortedClasses
     & ReturnType<typeof createSortedBEMClasses>
     & ReturnType<typeof createSortedBootstrapClasses>
     & ReturnType<typeof createSortedBaseCN_EFSClasses>
@@ -182,9 +181,12 @@ export type ClassNameMap = Map<
     | undefined
 >;
 
-type ClassMapChangerBasedOnClassName<T extends ClassNameMap,
-    U = undefined>
-    = U extends undefined ? (classMap: T, className: string,) => boolean : (classMap: T, className: string, data: U) => boolean
+type ClassMapChangerBasedOnClassName<
+    T extends ClassNameMap,
+    U = undefined> =
+    U extends undefined
+    ? (classMap: T, className: string,) => boolean
+    : (classMap: T, className: string, data: U) => boolean
 
 
 
