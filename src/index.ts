@@ -67,76 +67,21 @@ type ClassMapTransformer<T extends SortedClasses> = (sortedClasses: Omit<T, "cus
 const classNameFilterSorterFactory = <
     T extends SortedClasses
 >(
-    sortedClasses: T,
+    sortedClassesCreator: () => T,
     classMapChanger: ClassMapChanger<T>,
     classMapToStringTransformer: ClassMapTransformer<T>
 ) => {
 
-    return (
-        classNames: Array<string>,
-        filterObject?: FilterObject,
-    ) => {
+    return (classNames: Array<string>, filterObject?: FilterObject) => {
 
 
+        const sortedClassesObject = sortedClassesCreator()
 
-        const { customFiltered, safeListed, ...restOfTheMap } = classNames.reduce((carry, value) => {
-
-
-            // ! It's important for safe-listed classes and classes in the class type and object to be accounted for first. 
-
-
-            if (filterObject) {
-
-                const result = attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(
-                    carry.customFiltered,
-                    value,
-                    filterObject
-                )
-
-                if (result) return carry
-
-
-            }
-
-            const oneWordClass = /^[a-z]+$/
-
-            if (oneWordClass.test(value)) {
-
-
-
-                if (carry.safeListed.includes(value)) {
-
-
-                    throw new Error(
-                        `You have this class in the safelist and as a class name.
-                     Classes that are safe listed are not filtered just prepended
-                     to the start result of this function.
-                     If you want them filtered then please use a filter map instead.
-                    `
-                    )
-
-                }
-
-
-
-
-                carry.safeListed.push(value)
-
-                return carry
-
-
-
-
-            }
-
-
-
-
-
-
-            return classMapChanger(carry, value, filterObject)
-
-        }, sortedClasses)
+        const { customFiltered, safeListed, ...restOfTheMap } = classNames
+            .reduce(
+                getSortClassesBasedOnTheFilterObjectIfItsOneWordOrUseTheClassMapChanger<T>(filterObject, classMapChanger),
+                sortedClassesObject
+            )
 
         const resultOfCreateStringFromSafeListedMapIfItIsNotEmpty =
             createStringFromSafeListedMapIfItIsNotEmptyAnEmptyStringIfItIs(safeListed)
@@ -150,7 +95,8 @@ const classNameFilterSorterFactory = <
 
         return classMapToStringTransformer(
             restOfTheMap,
-            resultOfCreateStringFromSafeListedMapIfItIsNotEmpty.concat(resultOfCreateStringFromCustomFilteredMapIfItIsNotEmpty)
+            resultOfCreateStringFromSafeListedMapIfItIsNotEmpty
+                .concat(resultOfCreateStringFromCustomFilteredMapIfItIsNotEmpty)
         ).trimEnd()
 
 
@@ -159,6 +105,66 @@ const classNameFilterSorterFactory = <
 
 }
 
+
+function getSortClassesBasedOnTheFilterObjectIfItsOneWordOrUseTheClassMapChanger<T extends SortedClasses>(filterObject: FilterObject | undefined, classMapChanger: ClassMapChanger<T>): (previousValue: T, currentValue: string, currentIndex: number, array: string[]) => T {
+    return (carry, value) => {
+        // ! It's important for safe-listed classes and classes in the class type and object to be accounted for first. 
+
+
+        if (filterObject) {
+
+            const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectWasSuccessful = attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(
+                carry.customFiltered,
+                value,
+                filterObject
+            )
+
+            if (attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectWasSuccessful)
+                return carry
+
+
+        }
+
+        const oneWordClass = /^[a-z]+$/
+
+        if (oneWordClass.test(value)) {
+
+
+
+            if (carry.safeListed.includes(value)) {
+
+
+                throw new Error(
+                    `You have this class in the safelist and as a class name.
+                     Classes that are safe listed are not filtered just prepended
+                     to the start result of this function.
+                     If you want them filtered then please use a filter map instead.
+                    `
+                )
+
+            }
+
+
+
+
+            carry.safeListed.push(value)
+
+            return carry
+
+
+
+
+        }
+
+
+
+
+
+
+        return classMapChanger(carry, value, filterObject)
+
+    }
+}
 
 function isMap(value: unknown): value is Map<string, any> {
     return value instanceof Map
@@ -181,7 +187,12 @@ const getClassNamesEvaluatorFilterAndSorter =
     <T extends SortedClasses>(options: GetClassNamesEvaluatorFilterAndSorterOptions<T>) =>
         (...args: Parameters<typeof clsx>) => {
 
-            const { sortedClassesCreator: sortedClasses, classMapChanger, classMapToStringTransformer, filterObject } = options
+            const {
+                sortedClassesCreator,
+                classMapChanger,
+                classMapToStringTransformer,
+                filterObject
+            } = options
 
 
 
@@ -198,7 +209,7 @@ const getClassNamesEvaluatorFilterAndSorter =
             }
 
             const classNameFilterSorter = classNameFilterSorterFactory(
-                sortedClasses(),
+                sortedClassesCreator,
                 classMapChanger,
                 classMapToStringTransformer,
             )
@@ -218,10 +229,22 @@ export const cnEFS = getClassNamesEvaluatorFilterAndSorter(
         classMapChanger(sortedClasses, value) {
 
 
-            if (attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue(sortedClasses.basicUtility, value))
+
+            const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValueWasSuccessful = attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue(
+                sortedClasses.basicUtility,
+                value
+            )
+
+            if (
+                attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValueWasSuccessful
+            )
                 return sortedClasses
 
-            attemptToChangeClassNameMapAccordingToIfTheBEMConvention(sortedClasses.bem, value, sortedClasses.safeListed)
+            attemptToChangeClassNameMapAccordingToIfTheBEMConvention(
+                sortedClasses.bem,
+                value,
+                sortedClasses.safeListed
+            )
 
 
             return sortedClasses
@@ -306,10 +329,10 @@ export const tailwindOrWindiCN_EFS = getClassNamesEvaluatorFilterAndSorter({
 
 
         const classMapWasChangedByAClassMapChanger = [
-            attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(classNameMap.tailwindCSSUtility, value),
-            attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty(classNameMap.arbitraryProperties, value),
-            attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass(classNameMap.tailwindCSSUtility, value)
-        ].some(value => value === true)
+            () => attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(classNameMap.tailwindCSSUtility, value),
+            () => attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty(classNameMap.arbitraryProperties, value),
+            () => attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass(classNameMap.tailwindCSSUtility, value)
+        ].some(value => value() === true)
 
 
         if (classMapWasChangedByAClassMapChanger)
@@ -355,7 +378,8 @@ export const tailwindOrWindiCN_EFS = getClassNamesEvaluatorFilterAndSorter({
 
                 for (const [variant, value] of variantAndValueMap) {
 
-                    sortString = sortString.concat(`${variant === "base" ? "" : variant}[${property}${value}] `)
+                    sortString = sortString
+                        .concat(`${variant === "base" ? "" : variant}[${property}${value}] `)
                 }
 
 
@@ -437,7 +461,8 @@ export const bootstrapCN_EFS = getClassNamesEvaluatorFilterAndSorter({
     classMapChanger(sortedClasses, value) {
 
         attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue(
-            sortedClasses.bootstrapCSSUtility, value
+            sortedClasses.bootstrapCSSUtility,
+            value
         )
 
         return sortedClasses
