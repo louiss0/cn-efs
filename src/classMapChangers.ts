@@ -101,7 +101,11 @@ export const createSortedClassObject = <T extends string, U extends SortedClassO
 
 
     const initalObject = {
-        customFiltered: new Map<string, Map<StringOrOmitFromString<"base">, string | undefined> | undefined>(),
+        customFiltered: new Map<
+            string,
+            Map<StringOrOmitFromString<"base">,
+                string | undefined> | undefined
+        >(),
         safeListed: [] as Array<string>,
     };
 
