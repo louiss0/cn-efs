@@ -111,14 +111,16 @@ export const createSortedClassObject = <T extends string, U extends SortedClassO
 
     return Object.freeze(
         (sortedClassObject ? Object.assign(initalObject, sortedClassObject) : initalObject) as
-        typeof sortedClassObject extends undefined ? typeof initalObject : typeof initalObject & typeof sortedClassObject
+        U extends undefined
+        ? typeof initalObject
+        : typeof initalObject & U
     )
 
 
 }
 
 
-export type SortedClasses = ReturnType<typeof createSortedClassObject>
+export type SortedClasses = ReturnType<typeof createSortedClassObject<string, undefined>>
 
 export const createSortedBEMClasses = () => createSortedClassObject({
     bem: new Map<string, Map<ViableBemClassMapKeys, string | undefined> | undefined>()
