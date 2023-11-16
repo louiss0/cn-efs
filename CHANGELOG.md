@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### Changed
+
+- `CN_EFS` functions no longer reinitialise getClassNamesEvaluatorFilterAndSorter.
+instead they are created from it's resulting call.
+- The error for checking if a class is more then one string is moved to the
+returned function of getClassNamesEvaluatorFilterAndSorter
+
 ## [2.2.1] - 2023-11-15
 
 ### Fixed
