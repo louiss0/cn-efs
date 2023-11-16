@@ -72,27 +72,14 @@ const classNameFilterSorterFactory = <
     classMapToStringTransformer: ClassMapTransformer<T>
 ) => {
 
-
-
     return (
-        classNames: string,
+        classNames: Array<string>,
         filterObject?: FilterObject,
     ) => {
 
 
-        const oneWordClass = /^[a-z]+$/
 
-        const splitClassNames = classNames.split(/\s+/)
-
-        if (splitClassNames.length < 2) {
-
-            throw new Error(
-                "This string has no sets of classes please add spaces between classes that need to be sorted"
-            )
-
-        }
-
-        const { customFiltered, safeListed, ...restOfTheMap } = splitClassNames.reduce((carry, value) => {
+        const { customFiltered, safeListed, ...restOfTheMap } = classNames.reduce((carry, value) => {
 
 
             // ! It's important for safe-listed classes and classes in the class type and object to be accounted for first. 
@@ -110,6 +97,8 @@ const classNameFilterSorterFactory = <
 
 
             }
+
+            const oneWordClass = /^[a-z]+$/
 
             if (oneWordClass.test(value)) {
 
@@ -154,6 +143,9 @@ const classNameFilterSorterFactory = <
 
         const resultOfCreateStringFromCustomFilteredMapIfItIsNotEmpty =
             createStringFromCustomFilteredMapIfItIsNotEmptyAnEmptyStringIfItIs(customFiltered)
+
+
+
 
 
         return classMapToStringTransformer(
