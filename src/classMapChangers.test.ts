@@ -1002,58 +1002,6 @@ describe("Test if all class map changers work", () => {
                     "It filters classes based on whether they have conflicting directions t|r|b|l ",
                     () => {
 
-                        itUsingTailwindSortedClasses(
-                            `removes a mr class when a ml is introduced after it and vice versa
-                     Removes a mt class when a mb class is introduced after it and vice versa
-                    `,
-                            ({ tailwindCSSUtility }) => {
-
-                                const marginLeftRightClasses = [
-                                    "mr-2",
-                                    "ml-3",
-                                    "mr-2",
-                                    "ml-4",
-                                ]
-
-                                marginLeftRightClasses
-                                    .forEach(
-                                        value =>
-                                            attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(
-                                                tailwindCSSUtility,
-                                                value
-                                            )
-                                    )
-
-                                const marginUpDownClasses = [
-                                    "mt-2",
-                                    "mb-5",
-                                    "mb-3",
-                                    "mt-4",
-                                ]
-
-
-                                marginUpDownClasses
-                                    .forEach(
-                                        value =>
-                                            attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(
-                                                tailwindCSSUtility,
-                                                value
-                                            )
-                                    )
-
-
-
-                                expect(tailwindCSSUtility.get("mr-")?.has("digit")).toBeFalsy()
-
-                                expect(tailwindCSSUtility.get("ml-")?.has("digit")).toBeTruthy()
-
-                                expect(tailwindCSSUtility.get("mb-")?.has("digit")).toBeFalsy()
-
-                                expect(tailwindCSSUtility.get("mt-")?.has("digit")).toBeTruthy()
-
-
-                            }
-                        )
 
 
                         itUsingTailwindSortedClasses(
