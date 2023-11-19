@@ -550,152 +550,49 @@ const getDeleteKeyBasedOnDirectionBasedClasses = (
         } = requiredClassParts
 
 
-        const mapHasChanged = [
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(up, down),
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(down, up),
-
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(
-                left.primary,
-                right.primary
-            ),
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(
-                right.primary,
-                left.primary
-            ),
-
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(
-                topLeft.primary,
-                bottomRight.primary
-            ),
-
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(
-                bottomRight.primary,
-                topLeft.primary
-            ),
-
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(
-                topRight.primary,
-                bottomLeft.primary
-            ),
-
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(
-                bottomLeft.primary,
-                topRight.primary
-            ),
 
 
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(
-                bottomLeft.primary,
-                bottomRight.primary
-            ),
+        return [
+            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, up),
+            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(up, both),
+            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(down, both),
 
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(
-                bottomRight.primary,
-                bottomLeft.primary
-            ),
+            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(left.primary, both),
+            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, left.primary),
 
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(
-                topLeft.primary,
-                topRight.primary
-            ),
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(
-                topRight.primary,
-                topLeft.primary
-            ),
+            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(right.primary, both),
+            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, right.primary),
 
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(horizontal, vertical),
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(vertical, horizontal),
+            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(topLeft.primary, both),
+            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, topLeft.primary),
+
+            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(topRight.primary, both),
+            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, topRight.primary),
+
+            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(bottomLeft.primary, both),
+            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, bottomLeft.primary),
+
+            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(bottomRight.primary, both),
+            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, bottomRight.primary),
+
+            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(horizontal, both),
+            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, horizontal),
+            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(vertical, both),
+            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, vertical),
+
             // ! It's best to leave these conditions at the bottom since they will rarely be reached
-            left?.secondary && right?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(
-                left.secondary,
-                right.secondary
-            ),
+            left?.secondary && right?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(left.secondary, both),
+            left?.secondary && right?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, left.secondary),
+            topLeft?.secondary && topRight?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(topRight.secondary, both),
+            topLeft?.secondary && topRight?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, topRight.secondary),
 
-            left?.secondary && right?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(
-                right.secondary,
-                left.secondary
-            ),
+            bottomLeft?.secondary && bottomRight?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(bottomRight.secondary, both),
+            bottomLeft?.secondary && bottomRight?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, bottomRight.secondary),
 
-            topLeft?.secondary && bottomRight?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(
-                bottomRight.secondary,
-                topLeft.secondary
-            ),
-
-            bottomLeft?.secondary && topRight?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(
-                topRight.secondary,
-                bottomLeft.secondary
-            ),
+        ].reduce(value => value === true)
 
 
-            topLeft?.secondary && topRight?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(
-                topLeft.secondary,
-                topRight.secondary
-            ),
 
-            topLeft?.secondary && topRight?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(
-                topLeft.secondary,
-                topRight.secondary
-            ),
-
-            bottomLeft?.secondary && bottomRight?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(
-                bottomRight.secondary,
-                bottomLeft.secondary
-            ),
-
-            bottomLeft?.secondary && bottomRight?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(
-                bottomRight.secondary,
-                bottomLeft.secondary
-            ),
-
-        ].some(value => value === true)
-
-
-        if (!mapHasChanged) {
-
-
-            return [
-                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, up),
-                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(up, both),
-                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(down, both),
-
-                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(left.primary, both),
-                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, left.primary),
-
-                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(right.primary, both),
-                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, right.primary),
-
-                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(topLeft.primary, both),
-                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, topLeft.primary),
-
-                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(topRight.primary, both),
-                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, topRight.primary),
-
-                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(bottomLeft.primary, both),
-                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, bottomLeft.primary),
-
-                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(bottomRight.primary, both),
-                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, bottomRight.primary),
-
-                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(horizontal, both),
-                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, horizontal),
-                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(vertical, both),
-                deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, vertical),
-
-                // ! It's best to leave these conditions at the bottom since they will rarely be reached
-                left?.secondary && right?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(left.secondary, both),
-                left?.secondary && right?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, left.secondary),
-                topLeft?.secondary && topRight?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(topRight.secondary, both),
-                topLeft?.secondary && topRight?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, topRight.secondary),
-
-                bottomLeft?.secondary && bottomRight?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(bottomRight.secondary, both),
-                bottomLeft?.secondary && bottomRight?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, bottomRight.secondary),
-
-            ].reduce(value => value === true)
-
-        }
-
-
-        return mapHasChanged
 
 
 
