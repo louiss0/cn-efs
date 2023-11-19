@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Remove filtering of classes based on different directions.
+
 ## [2.2.2] - 2023-11-16
 
 ### Changed
