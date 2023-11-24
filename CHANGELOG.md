@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- All possible variants are now detected when using `tailwindOrWindiCN_EFS()`.
+
 ## [2.2.3] - 2023-11-19
 
 ### Fixed
