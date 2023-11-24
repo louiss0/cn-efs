@@ -20,7 +20,7 @@ const variableHasAStringHint = (arbitraryValue: string) =>
 
 
 const tailwindCSSTypeAndValueUtilityClassRE =
-    /^(?<variant>[a-z0-9\][#\.&:\-\)",_=(\/]+:)?(?<prefix>!|-|!-)?(?<type>[a-z]+-)(?<subtype>(?<first>[a-z]+-)?(?<second>[a-z]+-))?(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d\/\][]+)$/
+    /^(?<variant>\S+:)?(?<prefix>!|-|!-)?(?<type>[a-z]+-)(?<subtype>(?<first>[a-z]+-)?(?<second>[a-z]+-))?(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d\/\][]+)$/
 
 
 
@@ -43,7 +43,7 @@ const hexColorRE = /^(?<hex_color>#[A-Fa-f0-9]{3,6})$/
 
 const cssColorFunctionRE = /(?<css_color_function>[a-z]{3,9}\((?:\d{1,4}(?:%|[a-z]{3,4}|\.\d+)?(?:,|_)?){3,4}\))/
 
-const tailwindCSSUtilityClassVariantAndSelfRE = /(?<variant>[a-z0-9)\-(\]\[&,]+:)?(?<class_type_and_value>[a-z0-9\-_\]\[,)(%#!]+)/
+const tailwindCSSUtilityClassVariantAndSelfRE = /(?<variant>\S+:)?(?<class_type_and_value>[a-z0-9\-_\]\[,)(%#!]+)/
 
 
 const isAColorRange = (string: string) => colorRangeRE.test(string)
@@ -1594,7 +1594,7 @@ function deleteIdenticalValueTypeUsingTheKeyFromClassMapIfItsATailwindClassTypeA
     valueType: ViableUtilityClassMapKeys
 ) {
 
-    const tailwindClassVariantTypeAndSubtypeRE = /^(?<variant>[a-z0-9\][#\.&:\-\)",_=(\/]+:)?(?<type>[a-z]+-)(?<subtype>[a-z]+-)$/
+    const tailwindClassVariantTypeAndSubtypeRE = /^(?<variant>\S+:)?(?<type>[a-z]+-)(?<subtype>[a-z]+-)$/
 
     const tailwindClassVariantTypeAndSubtypeGroups = tailwindClassVariantTypeAndSubtypeRE.exec(classNameType)?.groups
 
@@ -1628,7 +1628,7 @@ function deleteIdenticalValueTypeUsingTheKeyFromClassMapIfItsATailwindClassTypeA
 
 function deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap: AllSortedClasses["tailwindCSSUtility"], classNameType: string, valueType: ViableUtilityClassMapKeys) {
 
-    const tailwindClassVariantAndTypeRE = /^(?<variant>[a-z0-9\][#\.&:\-\)",_=(\/]+:)(?<type>[a-z]+-)$/
+    const tailwindClassVariantAndTypeRE = /^(?<variant>\S+:)(?<type>[a-z]+-)$/
 
     const tailwindClassVariantAndTypeGroups = tailwindClassVariantAndTypeRE.exec(classNameType)?.groups
 
@@ -1826,7 +1826,7 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapC
     }
 
 const arbitraryPropertyRE =
-    /(?<variant>(?:(?:(?:[\&:{1,2}[a-z0-9\-]+(?:\([a-z0-9\+\-\_]+\))?)\]|[a-z0-9\-]+(?:\([a-z0-9\+\-\_]+\))?):)*)?\[(?<property_key>[a-z]+(?:\-[a-z]+)*:)(?<property_value>[_\-),.\/(a-z0-9]+)\]/
+    /(?<variant>\S+:)?\[(?<property_key>[a-z]+(?:\-[a-z]+)*:)(?<property_value>[_\-),.\/(a-z0-9]+)\]/
 
 
 export const attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty: ClassMapChangerBasedOnClassName<AllSortedClasses["arbitraryProperties"]> =
@@ -1920,7 +1920,7 @@ export const attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass
 
 
 const variantGroupRE =
-    /(?<variant>[a-z0-9\]\[&\-\.#@+),\_\/(:]+:)\((?<class_names>(?:[\w\-\]\[$.#),(%:\/]+)(?:\s[\w\-\]\[$.#)\/,(%:]+)+)\)/
+    /(?<variant>\S+:)\((?<class_names>(?:[\w\-\]\[$.#),(%:\/]+)(?:\s[\w\-\]\[$.#)\/,(%:]+)+)\)/
 
 type PropsNeededFromClassMap = {
     tailwindCSSUtility: AllSortedClasses["tailwindCSSUtility"]
