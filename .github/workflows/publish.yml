@@ -9,8 +9,9 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      pages: write
+      contents: write
+      pull-requests:  write
+      issues: write
       id-token: write # The OIDC ID token is used for authentication with JSR.    
     steps: 
       - name: Checkout
