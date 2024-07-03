@@ -1,0 +1,39 @@
+{
+  "name": "@code-fixer-23/cn-efs",
+  "description": "This is the repo for creating a Class Name Filter Sorter",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "vitest",
+    "coverage": "vitest run --coverage"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "@total-typescript/ts-reset": "^0.5.1",
+    "@vitest/coverage-v8": "^1.6.0",
+    "semantic-release": "^24.0.0",
+    "typescript": "^5.5.3",
+    "vite": "^5.3.2",
+    "vitest": "^1.6.0"
+  },
+  "keywords": [
+    "tailwindcss",
+    "unocss",
+    "css",
+    "className",
+    "classList",
+    "windicss"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/louiss0/cn-efs.git"
+  },
+  "author": {
+    "name": "Shelton Louis",
+    "url": "https://github.com/louiss0"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1"
+  }
+}
