@@ -19,6 +19,7 @@ const sortedBootstrapClasses = new SortedBootstrapClasses()
 const sortedTailwindClasses = new SortedTailwindClasses()
 
 const itUsingBootstrapSortedClasses = it.extend<typeof sortedBootstrapClasses>({
+    // biome-ignore lint/correctness/noEmptyPattern: Vitest will not run without object destructuring
     async safeListed({ }, use) {
 
 
@@ -26,11 +27,13 @@ const itUsingBootstrapSortedClasses = it.extend<typeof sortedBootstrapClasses>({
 
 
     },
+    // biome-ignore lint/correctness/noEmptyPattern: Vitest will not run without object destructuring
     async customFiltered({ }, use) {
 
         await use(structuredClone(sortedBootstrapClasses.customFiltered))
 
     },
+    // biome-ignore lint/correctness/noEmptyPattern: Vitest will not run without object destructuring
     async bootstrapCSSUtility({ }, use) {
 
         await use(structuredClone(sortedBootstrapClasses.bootstrapCSSUtility))
@@ -39,6 +42,7 @@ const itUsingBootstrapSortedClasses = it.extend<typeof sortedBootstrapClasses>({
 })
 
 const itUsingTailwindSortedClasses = it.extend<typeof sortedTailwindClasses>({
+    // biome-ignore lint/correctness/noEmptyPattern: Vitest will not run without object destructuring
     async safeListed({ }, use) {
 
 
@@ -47,6 +51,7 @@ const itUsingTailwindSortedClasses = it.extend<typeof sortedTailwindClasses>({
 
 
     },
+    // biome-ignore lint/correctness/noEmptyPattern: Vitest will not run without object destructuring
     async customFiltered({ }, use) {
 
 
@@ -54,6 +59,7 @@ const itUsingTailwindSortedClasses = it.extend<typeof sortedTailwindClasses>({
 
 
     },
+    // biome-ignore lint/correctness/noEmptyPattern: Vitest will not run without object destructuring
     async arbitraryProperties({ }, use) {
 
 
@@ -63,6 +69,7 @@ const itUsingTailwindSortedClasses = it.extend<typeof sortedTailwindClasses>({
 
     },
 
+    // biome-ignore lint/correctness/noEmptyPattern: Vitest will not run without object destructuring
     async tailwindCSSUtility({ }, use) {
 
 
@@ -72,11 +79,13 @@ const itUsingTailwindSortedClasses = it.extend<typeof sortedTailwindClasses>({
 })
 
 const itUsingBEMSortedClasses = it.extend<typeof sortedBEMClasses>({
+    // biome-ignore lint/correctness/noEmptyPattern: Vitest will not run without object destructuring
     async safeListed({ }, use) {
 
         await use([...sortedTailwindClasses.safeListed])
 
     },
+    // biome-ignore lint/correctness/noEmptyPattern: Vitest will not run without object destructuring
     async customFiltered({ }, use) {
 
 
@@ -84,6 +93,7 @@ const itUsingBEMSortedClasses = it.extend<typeof sortedBEMClasses>({
 
 
     },
+    // biome-ignore lint/correctness/noEmptyPattern: Vitest will not run without object destructuring
     async bem({ }, use) {
 
 
@@ -980,10 +990,11 @@ describe("Test if all class map changers work", () => {
                             "grid-rows-8",
                         ]
 
-                        classes.forEach((className) =>
-                            attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, className)
-                        )
 
+                        for (const className of classes) {
+                            attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, className)
+
+                        }
 
                         expect(utility.has("grid-rows-")).toBeTruthy()
 
@@ -1013,11 +1024,11 @@ describe("Test if all class map changers work", () => {
                                 ]
 
 
-                                marginClasses
-                                    .forEach(
-                                        marginClass =>
-                                            attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, marginClass)
-                                    )
+
+                                for (const marginClass of marginClasses) {
+                                    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, marginClass)
+
+                                }
 
 
                                 expect(tailwindCSSUtility.has("m-")).toBeTruthy()
@@ -1042,12 +1053,12 @@ describe("Test if all class map changers work", () => {
                                 ]
 
 
-                                classes
-                                    .forEach(
-                                        value =>
-                                            attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, value)
-                                    )
 
+
+                                for (const value of classes) {
+                                    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, value)
+
+                                }
 
 
                                 expect(tailwindCSSUtility.get("border-")?.has("digit")).toBeFalsy()
@@ -1081,11 +1092,11 @@ describe("Test if all class map changers work", () => {
                                 ]
 
 
-                                classes
-                                    .forEach(
-                                        value =>
-                                            attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, value)
-                                    )
+
+                                for (const value of classes) {
+                                    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, value)
+
+                                }
 
                                 expect(tailwindCSSUtility.get('hover:focus:border-')?.has("digit")).toBeFalsy()
 
@@ -1108,11 +1119,10 @@ describe("Test if all class map changers work", () => {
                                 ]
 
 
-                                classes
-                                    .forEach(
-                                        value =>
-                                            attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, value)
-                                    )
+                                for (const value of classes) {
+                                    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, value)
+
+                                }
 
                                 expect(tailwindCSSUtility.get('hover:focus:border-x-')?.has("digit")).toBeFalsy()
 
@@ -1145,12 +1155,12 @@ describe("Test if all class map changers work", () => {
 
                         const classes = ["leading-6", "text-sm", "text-lg/6"]
 
-                        classes.forEach(value =>
+                        for (const value of classes) {
                             attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(
                                 tailwindCSSUtility,
                                 value
                             )
-                        )
+                        }
 
 
 
@@ -1171,12 +1181,12 @@ describe("Test if all class map changers work", () => {
 
                         const classes = ["border-gray-500", "border-x-gray-500/50"]
 
-                        classes.forEach(value =>
+                        for (const value of classes) {
                             attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(
                                 tailwindCSSUtility,
                                 value
                             )
-                        )
+                        }
 
 
 
@@ -1264,15 +1274,15 @@ describe("Test if all class map changers work", () => {
                     position: ["fixed", "absolute", "static", "relative", "sticky"]
                 };
 
-                classNames.forEach((value) => {
 
+                for (const value of classNames) {
                     attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(
                         customFiltered,
                         value,
                         filterObject,
                     )
+                }
 
-                })
 
 
 
@@ -1309,15 +1319,15 @@ describe("Test if all class map changers work", () => {
                     ]
                 };
 
-                classNames.forEach((value) => {
 
+                for (const value of classNames) {
                     attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(
                         customFiltered,
                         value,
                         filterObject,
                     )
+                }
 
-                })
 
 
 
