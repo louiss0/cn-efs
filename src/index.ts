@@ -106,7 +106,10 @@ const classNameFilterSorterFactory = <
 }
 
 
-function getSortClassesBasedOnTheFilterObjectIfItsOneWordOrUseTheClassMapChanger<T extends SortedClasses>(filterObject: FilterObject | undefined, classMapChanger: ClassMapChanger<T>): (previousValue: T, currentValue: string, currentIndex: number, array: string[]) => T {
+function getSortClassesBasedOnTheFilterObjectIfItsOneWordOrUseTheClassMapChanger
+    <T extends SortedClasses>
+    (filterObject: FilterObject | undefined, classMapChanger: ClassMapChanger<T>):
+    (previousValue: T, currentValue: string, currentIndex: number, array: string[]) => T {
     return (carry, value) => {
         // ! It's important for safe-listed classes and classes in the class type and object to be accounted for first. 
 
@@ -219,238 +222,232 @@ const getClassNamesEvaluatorFilterAndSorter =
         }
 
 
-export const cnEFS: (...args: Parameters<typeof clsx>) => string = getClassNamesEvaluatorFilterAndSorter(
-    {
+/**
+
+ This function evaluates each argument passed to it using clsx
+ Then it filters out classes based on whether each class is 
+ based on the BEM Convention or is a basic utility class.
+ @param {...Parameters<typeof clsx>} args -  arguments that clsx accepts
+
+ */
+export const cnEFS: (...args: Parameters<typeof clsx>) => string =
+    getClassNamesEvaluatorFilterAndSorter({
         sortedClassesCreator: () => new SortedBaseCN_EFSClasses(),
         classMapChanger(sortedClasses, value) {
-
-
-
-            const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValueWasSuccessful = attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue(
-                sortedClasses.basicUtility,
-                value
-            )
+            const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValueWasSuccessful =
+                attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue(
+                    sortedClasses.basicUtility,
+                    value,
+                );
 
             if (
                 attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValueWasSuccessful
             )
-                return sortedClasses
+                return sortedClasses;
 
             attemptToChangeClassNameMapAccordingToIfTheBEMConvention(
                 sortedClasses.bem,
                 value,
-                sortedClasses.safeListed
-            )
+                sortedClasses.safeListed,
+            );
 
-
-            return sortedClasses
-
+            return sortedClasses;
         },
         classMapToStringTransformer(classNameMap, _sortString) {
-
-            let sortString = _sortString
+            let sortString = _sortString;
 
             if (classNameMap.bem.size !== 0) {
-
-
-
                 for (const [block, value] of classNameMap.bem) {
-
-
-
-                    const modifier = value?.get("modifier")
-                    const element = value?.get("element")
-
+                    const modifier = value?.get("modifier");
+                    const element = value?.get("element");
 
                     if (modifier) {
-
-                        sortString = sortString.concat(`${block} ${block}${modifier} `)
+                        sortString = sortString.concat(`${block} ${block}${modifier} `);
                     }
 
                     if (element) {
-
-                        sortString = sortString.concat(`${block}${element} `)
+                        sortString = sortString.concat(`${block}${element} `);
                     }
-
-
-
                 }
-
             }
 
             if (classNameMap.basicUtility.size !== 0) {
-
-
-
                 for (const [utility, utilityValueMap] of classNameMap.basicUtility) {
-
-
                     if (!utilityValueMap) continue;
 
                     const valuesFromUtilityValueMap = [
                         utilityValueMap.get("digit"),
                         utilityValueMap.get("word"),
                         utilityValueMap.get("color"),
-                    ]
+                    ];
 
-
-                    const utilityClassesFromValuesFromUtilityValueMap = valuesFromUtilityValueMap
-                        .filter((value) => typeof value === "string")
-                        .map((value) => `${utility}${value} `)
+                    const utilityClassesFromValuesFromUtilityValueMap =
+                        valuesFromUtilityValueMap
+                            .filter((value) => typeof value === "string")
+                            .map((value) => `${utility}${value} `);
 
                     sortString = sortString.concat(
-                        ...utilityClassesFromValuesFromUtilityValueMap
-                    )
+                        ...utilityClassesFromValuesFromUtilityValueMap,
+                    );
+                }
+            }
+
+            return sortString;
+        },
+    });
+
+
+
+
+/**
+
+ This function evaluates each argument passed to it using clsx
+ Then it filters out classes based on whether each class is 
+ based on Tailwind' or WindiCSS's naming conventions.
+ Finally a string is returned that is a sorted version of the  classes generated by clsx. 
+ For people that use WindiCSS this function will sort variant groups as well. 
+ @param {...Parameters<typeof clsx>} args -  arguments that clsx accepts
+
+ */
+export const tailwindOrWindiCN_EFS: (...args: Parameters<typeof clsx>) => string =
+    getClassNamesEvaluatorFilterAndSorter({
+
+        sortedClassesCreator: () => new SortedTailwindClasses(),
+        classMapChanger(classNameMap, value, filterObject) {
+
+
+
+            const classMapWasChangedByAClassMapChanger = [
+                () => attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(classNameMap.tailwindCSSUtility, value),
+                () => attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty(classNameMap.arbitraryProperties, value),
+                () => attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass(classNameMap.tailwindCSSUtility, value)
+            ].some(value => value() === true)
+
+
+            if (classMapWasChangedByAClassMapChanger)
+
+                return classNameMap
+
+            const { customFiltered, tailwindCSSUtility, arbitraryProperties } = classNameMap
+
+            attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup(
+                {
+                    tailwindCSSUtility,
+                    arbitraryProperties,
+                    customFiltered
+                },
+                value,
+                filterObject
+            )
+
+            return classNameMap
+
+
+        },
+        classMapToStringTransformer(classNameMap, _sortString) {
+
+            let sortString = _sortString
+
+            if (classNameMap.arbitraryProperties.size !== 0) {
+
+
+                for (const [property, variantAndValueMap] of classNameMap.arbitraryProperties) {
+
+
+
+                    if (!variantAndValueMap) continue;
+
+                    const variantAndValueMapIsEmpty = variantAndValueMap.size === 0
+
+                    if (variantAndValueMapIsEmpty) continue;
+
+
+                    for (const [variant, value] of variantAndValueMap) {
+
+                        sortString = sortString
+                            .concat(`${variant === "base" ? "" : variant}[${property}${value}] `)
+                    }
+
+
 
                 }
 
+            }
 
+            if (classNameMap.tailwindCSSUtility.size !== 0) {
+
+
+
+
+
+                for (const [utility, utilityValueMap] of classNameMap.tailwindCSSUtility) {
+
+
+                    if (!utilityValueMap) continue;
+
+                    const utilityValueMapIsEmpty = utilityValueMap.size === 0
+
+
+                    if (utilityValueMapIsEmpty) continue;
+
+
+                    const valuesFromUtilityValueMap = [
+                        utilityValueMap.get("digit"),
+                        utilityValueMap.get("word"),
+                        utilityValueMap.get("color"),
+                        utilityValueMap.get("function"),
+                        utilityValueMap.get("variable"),
+                        utilityValueMap.get("args"),
+                    ]
+
+
+
+
+                    const utilityClassesCreatedFromDefinedValuesFromTheUtilityValueMap =
+                        valuesFromUtilityValueMap
+                            .filter((value) => value instanceof Map)
+                            .map((prefixValueMap) => {
+                                const prefix = prefixValueMap?.get("prefix")
+                                const value = prefixValueMap?.get("value")
+
+
+                                return `${utility}${prefix}${value} `
+
+                            })
+
+
+                    sortString = sortString.concat(
+                        ...utilityClassesCreatedFromDefinedValuesFromTheUtilityValueMap
+
+                    )
+
+
+
+
+
+                }
 
             }
 
 
             return sortString
 
-        }
-    }
-)
+        },
 
+    })
 
 
 
+/**
 
-export const tailwindOrWindiCN_EFS: (...args: Parameters<typeof clsx>) => string = getClassNamesEvaluatorFilterAndSorter({
+ This function evaluates each argument passed to it using clsx
+ Then it filters out classes based on whether each class is 
+ based on BootstrapCSS's naming conventions.
+ Finally a string is returned that is a sorted version of the classes generated by clsx. 
+ 
+ @param {...Parameters<typeof clsx>} args -  arguments that clsx accepts
 
-    sortedClassesCreator: () => new SortedTailwindClasses(),
-    classMapChanger(classNameMap, value, filterObject) {
-
-
-
-        const classMapWasChangedByAClassMapChanger = [
-            () => attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(classNameMap.tailwindCSSUtility, value),
-            () => attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty(classNameMap.arbitraryProperties, value),
-            () => attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass(classNameMap.tailwindCSSUtility, value)
-        ].some(value => value() === true)
-
-
-        if (classMapWasChangedByAClassMapChanger)
-
-            return classNameMap
-
-
-
-
-
-        const { customFiltered, tailwindCSSUtility, arbitraryProperties } = classNameMap
-
-        attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup(
-            {
-                tailwindCSSUtility,
-                arbitraryProperties,
-                customFiltered
-            },
-            value,
-            filterObject
-        )
-
-        return classNameMap
-
-
-    },
-    classMapToStringTransformer(classNameMap, _sortString) {
-
-        let sortString = _sortString
-
-        if (classNameMap.arbitraryProperties.size !== 0) {
-
-
-            for (const [property, variantAndValueMap] of classNameMap.arbitraryProperties) {
-
-
-
-                if (!variantAndValueMap) continue;
-
-                const variantAndValueMapIsEmpty = variantAndValueMap.size === 0
-
-                if (variantAndValueMapIsEmpty) continue;
-
-
-                for (const [variant, value] of variantAndValueMap) {
-
-                    sortString = sortString
-                        .concat(`${variant === "base" ? "" : variant}[${property}${value}] `)
-                }
-
-
-
-            }
-
-        }
-
-        if (classNameMap.tailwindCSSUtility.size !== 0) {
-
-
-
-
-
-            for (const [utility, utilityValueMap] of classNameMap.tailwindCSSUtility) {
-
-
-                if (!utilityValueMap) continue;
-
-                const utilityValueMapIsEmpty = utilityValueMap.size === 0
-
-
-                if (utilityValueMapIsEmpty) continue;
-
-
-                const valuesFromUtilityValueMap = [
-                    utilityValueMap.get("digit"),
-                    utilityValueMap.get("word"),
-                    utilityValueMap.get("color"),
-                    utilityValueMap.get("function"),
-                    utilityValueMap.get("variable"),
-                    utilityValueMap.get("args"),
-                ]
-
-
-
-
-                const utilityClassesCreatedFromDefinedValuesFromTheUtilityValueMap =
-                    valuesFromUtilityValueMap
-                        .filter((value) => value instanceof Map)
-                        .map((prefixValueMap) => {
-                            const prefix = prefixValueMap?.get("prefix")
-                            const value = prefixValueMap?.get("value")
-
-
-                            return `${utility}${prefix}${value} `
-
-                        })
-
-
-                sortString = sortString.concat(
-                    ...utilityClassesCreatedFromDefinedValuesFromTheUtilityValueMap
-
-                )
-
-
-
-
-
-            }
-
-        }
-
-
-        return sortString
-
-    },
-
-})
-
-
-
+*/
 export const bootstrapCN_EFS: (...args: Parameters<typeof clsx>) => string = getClassNamesEvaluatorFilterAndSorter({
     filterObject: {
         visibility: ["visible", "invisible", "collapse"],
