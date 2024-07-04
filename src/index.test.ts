@@ -30,7 +30,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
 
 
             expect(() => cnEFS("foo"))
-                .toThrowErrorMatchingInlineSnapshot('"This string has no sets of classes please add spaces between classes that need to be sorted"')
+                .toThrowErrorMatchingInlineSnapshot("[Error: This string has no sets of classes please add spaces between classes that need to be sorted]")
 
         })
 
@@ -57,8 +57,8 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
 
             expect(() => cnEFS(bemClassesWithOnlyModifiers))
                 .toThrowErrorMatchingInlineSnapshot(`
-                  "To have a modifier you must have the block card in the list of classes already.
-                                      Please put the block as the class that requires the use of the modifier."
+                  [Error: To have a modifier you must have the block card in the list of classes already.
+                                      Please put the block as the class that requires the use of the modifier.]
                 `)
 
 
