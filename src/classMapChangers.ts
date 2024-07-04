@@ -1915,6 +1915,8 @@ export const attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup =
         const variantGroupMatchGroups = variantGroupRE.exec(className)?.groups
 
 
+
+
         if (!variantGroupMatchGroups) return false
 
         const { variant, class_names } = variantGroupMatchGroups
@@ -1923,6 +1925,8 @@ export const attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup =
         if (!variant || !class_names) return false
 
         const splitClassNames = class_names?.split(/\s/)
+
+        let classMapHasChanged = false
 
 
         const classNamesPrefixedWithVariant = splitClassNames
@@ -1935,7 +1939,7 @@ export const attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup =
 
             if (attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValueResult) {
 
-                return true
+                classMapHasChanged = true
             }
 
             const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClassResult =
@@ -1943,14 +1947,14 @@ export const attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup =
 
             if (attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClassResult) {
 
-                return true
+                classMapHasChanged = true
             }
 
             const attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryPropertyResult = attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty(arbitraryProperties, className)
 
             if (attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryPropertyResult) {
 
-                return true
+                classMapHasChanged = true
             }
 
             if (filterObject) {
@@ -1959,14 +1963,14 @@ export const attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup =
 
                 if (attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectResult) {
 
-                    return true
+                    classMapHasChanged = true
                 }
             }
 
         }
 
 
-        return false
+        return classMapHasChanged
 
 
     };

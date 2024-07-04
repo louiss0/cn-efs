@@ -60,14 +60,12 @@ const itUsingTailwindSortedClasses = it.extend<typeof sortedTailwindClasses>({
 
         await use(structuredClone(sortedTailwindClasses.arbitraryProperties))
 
-        sortedTailwindClasses.arbitraryProperties.clear()
 
     },
 
     async tailwindCSSUtility({ }, use) {
 
 
-        sortedTailwindClasses.tailwindCSSUtility.clear()
         await use(structuredClone(sortedTailwindClasses.tailwindCSSUtility))
 
     },
@@ -1660,130 +1658,132 @@ describe("Test if all class map changers work", () => {
 
 
 
-    describe("Testing attemptToChangeClassMapBasedOnIfItIsAVariantGroup", () => {
+    describe(
+        "Testing attemptToChangeClassMapBasedOnIfItIsAVariantGroup",
+        () => {
 
 
-        itUsingTailwindSortedClasses(
-            "works",
-            ({ tailwindCSSUtility, arbitraryProperties, customFiltered }) => {
+            itUsingTailwindSortedClasses(
+                "works",
+                ({ tailwindCSSUtility, arbitraryProperties, customFiltered }) => {
 
-                attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup(
-                    { tailwindCSSUtility, arbitraryProperties, customFiltered },
-                    "hover:(bg-red-500 text-gray-500)"
-                )
+                    attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup(
+                        { tailwindCSSUtility, arbitraryProperties, customFiltered },
+                        "hover:(bg-red-500 text-gray-500)"
+                    )
 
-                expect(tailwindCSSUtility.has("hover:bg-")).toBeTruthy()
+                    expect(tailwindCSSUtility.has("hover:bg-")).toBeTruthy()
 
-                expect(tailwindCSSUtility.has("hover:text-")).toBeTruthy()
+                    expect(tailwindCSSUtility.has("hover:text-")).toBeTruthy()
 
-            })
-
-
-        itUsingTailwindSortedClasses(
-            "Works with relational variants that use the / syntax",
-            ({ tailwindCSSUtility, arbitraryProperties, customFiltered }) => {
+                })
 
 
-                attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup({ tailwindCSSUtility, arbitraryProperties, customFiltered }, "peer-checked/draft:(text-sky-500 bg-gray-500)")
+            itUsingTailwindSortedClasses(
+                "Works with relational variants that use the / syntax",
+                ({ tailwindCSSUtility, arbitraryProperties, customFiltered }) => {
 
 
-                expect(tailwindCSSUtility.has("peer-checked/draft:text-")).toBeTruthy()
-
-                expect(tailwindCSSUtility.get("peer-checked/draft:text-")?.has("color")).toBeTruthy()
-
-                expect(tailwindCSSUtility.has("peer-checked/draft:bg-")).toBeTruthy()
-
-                expect(tailwindCSSUtility.get("peer-checked/draft:bg-")?.has("color")).toBeTruthy()
+                    attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup({ tailwindCSSUtility, arbitraryProperties, customFiltered }, "peer-checked/draft:(text-sky-500 bg-gray-500)")
 
 
+                    expect(tailwindCSSUtility.has("peer-checked/draft:text-")).toBeTruthy()
 
-            })
+                    expect(tailwindCSSUtility.get("peer-checked/draft:text-")?.has("color")).toBeTruthy()
 
+                    expect(tailwindCSSUtility.has("peer-checked/draft:bg-")).toBeTruthy()
 
-        itUsingTailwindSortedClasses(
-            "works with arbitrary relational variants",
-            ({ tailwindCSSUtility, arbitraryProperties, customFiltered }) => {
-
-
-                attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup(
-                    { tailwindCSSUtility, arbitraryProperties, customFiltered },
-                    "group-[.is-published]:(opacity-50 text-sky-900)"
-                )
-
-
-                expect(tailwindCSSUtility.has("group-[.is-published]:opacity-")).toBeTruthy()
-
-                expect(tailwindCSSUtility.get("group-[.is-published]:opacity-")?.has("digit")).toBeTruthy()
-
-                expect(tailwindCSSUtility.has("group-[.is-published]:text-")).toBeTruthy()
-
-                expect(tailwindCSSUtility.get("group-[.is-published]:text-")?.has("color")).toBeTruthy()
+                    expect(tailwindCSSUtility.get("peer-checked/draft:bg-")?.has("color")).toBeTruthy()
 
 
 
-            })
+                })
 
 
-        itUsingTailwindSortedClasses(
-            "works with utilities that have variants as prefixes",
-            ({ tailwindCSSUtility, arbitraryProperties, customFiltered }) => {
-
-                attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup(
-                    { tailwindCSSUtility, arbitraryProperties, customFiltered },
-                    "hover:(focus:bg-500 peer-checked/main:text-gray-500)"
-                )
-
-                expect(tailwindCSSUtility.has("hover:focus:bg-")).toBeTruthy()
-
-                expect(tailwindCSSUtility.has("hover:peer-checked/main:text-")).toBeTruthy()
-
-            })
+            itUsingTailwindSortedClasses(
+                "works with arbitrary relational variants",
+                ({ tailwindCSSUtility, arbitraryProperties, customFiltered }) => {
 
 
-        itUsingTailwindSortedClasses(
-            "Works with arbitrary pseudo class variants",
-            ({ tailwindCSSUtility, arbitraryProperties, customFiltered }) => {
+                    attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup(
+                        { tailwindCSSUtility, arbitraryProperties, customFiltered },
+                        "group-[.is-published]:(opacity-50 text-sky-900)"
+                    )
 
 
-                attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup({ tailwindCSSUtility, arbitraryProperties, customFiltered }, "[&:nth-child(3)]:(opacity-50 border-gray-500)")
+                    expect(tailwindCSSUtility.has("group-[.is-published]:opacity-")).toBeTruthy()
 
+                    expect(tailwindCSSUtility.get("group-[.is-published]:opacity-")?.has("digit")).toBeTruthy()
 
-                expect(tailwindCSSUtility.has("[&:nth-child(3)]:opacity-")).toBeTruthy()
+                    expect(tailwindCSSUtility.has("group-[.is-published]:text-")).toBeTruthy()
 
-                expect(tailwindCSSUtility.get("[&:nth-child(3)]:opacity-")?.has("digit")).toBeTruthy()
-
-                expect(tailwindCSSUtility.has("[&:nth-child(3)]:border-")).toBeTruthy()
-
-                expect(tailwindCSSUtility.get("[&:nth-child(3)]:border-")?.has("color")).toBeTruthy()
+                    expect(tailwindCSSUtility.get("group-[.is-published]:text-")?.has("color")).toBeTruthy()
 
 
 
-            })
+                })
 
 
-        itUsingTailwindSortedClasses(
-            "Works with is or where selectors",
-            ({ tailwindCSSUtility, arbitraryProperties, customFiltered }) => {
+            itUsingTailwindSortedClasses(
+                "works with utilities that have variants as prefixes",
+                ({ tailwindCSSUtility, arbitraryProperties, customFiltered }) => {
+
+                    attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup(
+                        { tailwindCSSUtility, arbitraryProperties, customFiltered },
+                        "hover:(focus:bg-500 peer-checked/main:text-gray-500)"
+                    )
+
+                    expect(tailwindCSSUtility.has("hover:focus:bg-")).toBeTruthy()
+
+                    expect(tailwindCSSUtility.has("hover:peer-checked/main:text-")).toBeTruthy()
+
+                })
 
 
-                attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup({ tailwindCSSUtility, arbitraryProperties, customFiltered }, "[&:is(:hover,:focus)]:(opacity-50 bg-gray-900)")
+            itUsingTailwindSortedClasses(
+                "Works with arbitrary pseudo class variants",
+                ({ tailwindCSSUtility, arbitraryProperties, customFiltered }) => {
 
 
-                expect(tailwindCSSUtility.has("[&:is(:hover,:focus)]:opacity-")).toBeTruthy()
-
-                expect(tailwindCSSUtility.get("[&:is(:hover,:focus)]:opacity-")?.has("digit")).toBeTruthy()
-
-                expect(tailwindCSSUtility.has("[&:is(:hover,:focus)]:bg-")).toBeTruthy()
-
-                expect(tailwindCSSUtility.get("[&:is(:hover,:focus)]:bg-")?.has("color")).toBeTruthy()
+                    attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup({ tailwindCSSUtility, arbitraryProperties, customFiltered }, "[&:nth-child(3)]:(opacity-50 border-gray-500)")
 
 
+                    expect(tailwindCSSUtility.has("[&:nth-child(3)]:opacity-")).toBeTruthy()
 
-            })
+                    expect(tailwindCSSUtility.get("[&:nth-child(3)]:opacity-")?.has("digit")).toBeTruthy()
+
+                    expect(tailwindCSSUtility.has("[&:nth-child(3)]:border-")).toBeTruthy()
+
+                    expect(tailwindCSSUtility.get("[&:nth-child(3)]:border-")?.has("color")).toBeTruthy()
 
 
 
-    })
+                })
+
+
+            itUsingTailwindSortedClasses(
+                "Works with is or where selectors",
+                ({ tailwindCSSUtility, arbitraryProperties, customFiltered }) => {
+
+
+                    attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup({ tailwindCSSUtility, arbitraryProperties, customFiltered }, "[&:is(:hover,:focus)]:(opacity-50 bg-gray-900)")
+
+
+                    expect(tailwindCSSUtility.has("[&:is(:hover,:focus)]:opacity-")).toBeTruthy()
+
+                    expect(tailwindCSSUtility.get("[&:is(:hover,:focus)]:opacity-")?.has("digit")).toBeTruthy()
+
+                    expect(tailwindCSSUtility.has("[&:is(:hover,:focus)]:bg-")).toBeTruthy()
+
+                    expect(tailwindCSSUtility.get("[&:is(:hover,:focus)]:bg-")?.has("color")).toBeTruthy()
+
+
+
+                })
+
+
+
+        })
 
 
 
