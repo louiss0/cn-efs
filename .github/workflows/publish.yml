@@ -25,4 +25,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
       - name: Publish
-        run:  npm ci && npx jsr publish
+        run:  npm install && npx jsr publish
