@@ -92,21 +92,21 @@ type StringOrOmitFromString<T extends string> = T | Omit<string, T>
 
 export class SortedClasses {
 
-    public readonly customFiltered = new Map<
+    public readonly customFiltered: Map<
         string,
         Map<StringOrOmitFromString<"base">,
             string | undefined> | undefined
-    >()
+    > = new Map()
     public readonly safeListed: Array<string> = []
 }
 
 
 export class SortedBEMClasses extends SortedClasses {
-    public readonly bem = new Map<string, Map<ViableBemClassMapKeys, string | undefined> | undefined>()
+    public readonly bem: Map<string, Map<ViableBemClassMapKeys, string | undefined> | undefined> = new Map()
 }
 
 export class SortedBaseCN_EFSClasses extends SortedBEMClasses {
-    public readonly basicUtility = new Map<
+    public readonly basicUtility: Map<
         string, Map<
             Extract<
                 ViableUtilityClassMapKeys,
@@ -115,31 +115,31 @@ export class SortedBaseCN_EFSClasses extends SortedBEMClasses {
             string | undefined
         >
         | undefined
-    >()
+    > = new Map()
 
 }
 
 
 
 export class SortedBootstrapClasses extends SortedClasses {
-    public readonly bootstrapCSSUtility = new Map<
+    public readonly bootstrapCSSUtility: Map<
         string,
         Map<`${Extract<ViableUtilityClassMapKeys, "word" | "digit">}Map`,
             Map<string, string> | undefined
         > | undefined
-    >()
+    > = new Map()
 
 };
 
 export class SortedTailwindClasses extends SortedClasses {
-    public readonly arbitraryProperties = new Map<string, Map<StringOrOmitFromString<"base">, string | undefined> | undefined>()
-    public readonly tailwindCSSUtility = new Map<
+    public readonly arbitraryProperties: Map<string, Map<StringOrOmitFromString<"base">, string | undefined> | undefined> = new Map()
+    public readonly tailwindCSSUtility: Map<
         string,
         Map<
             ViableUtilityClassMapKeys,
             Map<"prefix" | "value", string> | undefined
         > | undefined
-    >()
+    > = new Map()
 
 }
 

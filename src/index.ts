@@ -181,7 +181,7 @@ type GetClassNamesEvaluatorFilterAndSorterOptions<T extends SortedClasses> = {
 
 const getClassNamesEvaluatorFilterAndSorter =
     <T extends SortedClasses>(options: GetClassNamesEvaluatorFilterAndSorterOptions<T>) =>
-        (...args: Parameters<typeof clsx>) => {
+        (...args: Parameters<typeof clsx>): string => {
 
             const {
                 sortedClassesCreator,
@@ -219,7 +219,7 @@ const getClassNamesEvaluatorFilterAndSorter =
         }
 
 
-export const cnEFS = getClassNamesEvaluatorFilterAndSorter(
+export const cnEFS: (...args: Parameters<typeof clsx>) => string = getClassNamesEvaluatorFilterAndSorter(
     {
         sortedClassesCreator: () => new SortedBaseCN_EFSClasses(),
         classMapChanger(sortedClasses, value) {
@@ -319,7 +319,7 @@ export const cnEFS = getClassNamesEvaluatorFilterAndSorter(
 
 
 
-export const tailwindOrWindiCN_EFS = getClassNamesEvaluatorFilterAndSorter({
+export const tailwindOrWindiCN_EFS: (...args: Parameters<typeof clsx>) => string = getClassNamesEvaluatorFilterAndSorter({
 
     sortedClassesCreator: () => new SortedTailwindClasses(),
     classMapChanger(classNameMap, value, filterObject) {
@@ -451,7 +451,7 @@ export const tailwindOrWindiCN_EFS = getClassNamesEvaluatorFilterAndSorter({
 
 
 
-export const bootstrapCN_EFS = getClassNamesEvaluatorFilterAndSorter({
+export const bootstrapCN_EFS: (...args: Parameters<typeof clsx>) => string = getClassNamesEvaluatorFilterAndSorter({
     filterObject: {
         visibility: ["visible", "invisible", "collapse"],
         layout: ["d-flex", "grid"],
