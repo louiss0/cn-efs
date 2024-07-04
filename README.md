@@ -4,6 +4,25 @@ This library is a library has a set of functions that are created to **Evaluate*
 **Filter** and **Sort** **Class Names**. They are called **class name** evaluate,
 filter sorters or `cnEFS`'s.
 
+```js
+  const classes = tailwindOrWindiCN_EFS('border-2 border-6')
+  console.log(classes)// output: border-6
+  
+```
+
+```js
+const status = 'warning'
+
+ const classes = cnEFS(
+      {
+            "bg-red-500": status === "error",
+            "bg-green-500": status === "success",
+            "bg-yellow-500": status === "warning",
+      }
+   )
+  console.log(classes)// output: "bg-green-500"  
+```
+
 What each function does is.
 
 1. Evaluate each class name passed to it using `clsx`.
@@ -43,7 +62,7 @@ export function ErrorComponent({status}) {
          "card",
           "card--md",
          "card--lg",
-         "bg-primary"
+         "bg-primary",
           {
             "bg-red-500": status === "error",
             "bg-blue-500": status === "success",
@@ -176,6 +195,19 @@ It does not resolve conflicts based on symbols like.
 I have decided to do this because I don't think it's good practice to write utility classes inconsistently.
 
 We also don't have a cache. **When React rerenders all of the work will all be redone again**.
+
+## Comparison
+
+This library is a set of functions that understands different CSS frameworks.
+No function in this library is coupled to a specific framework by way of config.
+Since this library only sorts and breaks apart strings it should be faster
+than it's competitors. **It's an extension of `clsx`**.
+
+**When compared to `tailwind-merge` you don't have to configure it to use objects.
+**
+
+It uses the JS `Map` to do filtering and breaks apart strings.
+This makes it optimal for most projects.
 
 ## Recommendations
 
