@@ -8,15 +8,15 @@ import {
     attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass,
     attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup,
     attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue,
-    createSortedBootstrapClasses,
-    createSortedTailwindClasses,
-    createSortedBEMClasses,
+    SortedBootstrapClasses,
+    SortedTailwindClasses,
+    SortedBEMClasses,
 } from './classMapChangers';
 
 
-const sortedBEMClasses = createSortedBEMClasses()
-const sortedBootstrapClasses = createSortedBootstrapClasses()
-const sortedTailwindClasses = createSortedTailwindClasses()
+const sortedBEMClasses = new SortedBEMClasses()
+const sortedBootstrapClasses = new SortedBootstrapClasses()
+const sortedTailwindClasses = new SortedTailwindClasses()
 
 const itUsingBootstrapSortedClasses = it.extend<typeof sortedBootstrapClasses>({
     async safeListed({ }, use) {

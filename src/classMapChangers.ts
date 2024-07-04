@@ -8,13 +8,13 @@ const checkIfStringIsACssVariableWithAnOptionalHint = (string: string) => cssVar
 
 
 const variableHasAColorHint = (arbitraryValue: string) =>
-    cssVariableWithOptionalPrefixedHintRE.exec(arbitraryValue)?.groups?.["variable_hint"] === "color:"
+    cssVariableWithOptionalPrefixedHintRE.exec(arbitraryValue)?.groups?.variable_hint === "color:"
 
 const variableHasALengthHint = (arbitraryValue: string) =>
-    cssVariableWithOptionalPrefixedHintRE.exec(arbitraryValue)?.groups?.["variable_hint"] === "length:"
+    cssVariableWithOptionalPrefixedHintRE.exec(arbitraryValue)?.groups?.variable_hint === "length:"
 
 const variableHasAStringHint = (arbitraryValue: string) =>
-    cssVariableWithOptionalPrefixedHintRE.exec(arbitraryValue)?.groups?.["variable_hint"] === "string:"
+    cssVariableWithOptionalPrefixedHintRE.exec(arbitraryValue)?.groups?.variable_hint === "string:"
 
 
 
@@ -90,45 +90,23 @@ type ViableBemClassMapKeys = typeof viableBEMClassMapKeys[number]
 type StringOrOmitFromString<T extends string> = T | Omit<string, T>
 
 
-type SortedClassObjectWithoutCustomFilteredOrSafeList<T extends string> =
-    T extends "customFiltered" | "safeListed" ? never :
-    Record<T, ClassNameMap>;
+export class SortedClasses {
 
-export const createSortedClassObject = <T extends string, U extends SortedClassObjectWithoutCustomFilteredOrSafeList<T> | undefined = undefined>(
-    sortedClassObject?: U
-) => {
-
-
-
-    const initalObject = {
-        customFiltered: new Map<
-            string,
-            Map<StringOrOmitFromString<"base">,
-                string | undefined> | undefined
-        >(),
-        safeListed: [] as Array<string>,
-    };
-
-    return Object.freeze(
-        (sortedClassObject ? Object.assign(initalObject, sortedClassObject) : initalObject) as
-        U extends undefined
-        ? typeof initalObject
-        : typeof initalObject & U
-    )
-
-
+    public readonly customFiltered = new Map<
+        string,
+        Map<StringOrOmitFromString<"base">,
+            string | undefined> | undefined
+    >()
+    public readonly safeListed: Array<string> = []
 }
 
 
-export type SortedClasses = ReturnType<typeof createSortedClassObject<string, undefined>>
+export class SortedBEMClasses extends SortedClasses {
+    public readonly bem = new Map<string, Map<ViableBemClassMapKeys, string | undefined> | undefined>()
+}
 
-export const createSortedBEMClasses = () => createSortedClassObject({
-    bem: new Map<string, Map<ViableBemClassMapKeys, string | undefined> | undefined>()
-})
-
-export const createSortedBaseCN_EFSClasses = () => Object.freeze({
-    ...createSortedBEMClasses(),
-    basicUtility: new Map<
+export class SortedBaseCN_EFSClasses extends SortedBEMClasses {
+    public readonly basicUtility = new Map<
         string, Map<
             Extract<
                 ViableUtilityClassMapKeys,
@@ -139,24 +117,23 @@ export const createSortedBaseCN_EFSClasses = () => Object.freeze({
         | undefined
     >()
 
-})
+}
 
 
 
-export const createSortedBootstrapClasses = () =>
-    createSortedClassObject({
-        bootstrapCSSUtility: new Map<
-            string,
-            Map<`${Extract<ViableUtilityClassMapKeys, "word" | "digit">}Map`,
-                Map<string, string> | undefined
-            > | undefined
-        >()
+export class SortedBootstrapClasses extends SortedClasses {
+    public readonly bootstrapCSSUtility = new Map<
+        string,
+        Map<`${Extract<ViableUtilityClassMapKeys, "word" | "digit">}Map`,
+            Map<string, string> | undefined
+        > | undefined
+    >()
 
-    });
+};
 
-export const createSortedTailwindClasses = () => createSortedClassObject({
-    arbitraryProperties: new Map<string, Map<StringOrOmitFromString<"base">, string | undefined> | undefined>(),
-    tailwindCSSUtility: new Map<
+export class SortedTailwindClasses extends SortedClasses {
+    public readonly arbitraryProperties = new Map<string, Map<StringOrOmitFromString<"base">, string | undefined> | undefined>()
+    public readonly tailwindCSSUtility = new Map<
         string,
         Map<
             ViableUtilityClassMapKeys,
@@ -164,14 +141,14 @@ export const createSortedTailwindClasses = () => createSortedClassObject({
         > | undefined
     >()
 
-})
+}
 
 
 type AllSortedClasses = SortedClasses
-    & ReturnType<typeof createSortedBEMClasses>
-    & ReturnType<typeof createSortedBootstrapClasses>
-    & ReturnType<typeof createSortedBaseCN_EFSClasses>
-    & ReturnType<typeof createSortedTailwindClasses>
+    & SortedBEMClasses
+    & SortedBootstrapClasses
+    & SortedBaseCN_EFSClasses
+    & SortedTailwindClasses
 
 
 export type ClassNameMap = Map<
@@ -1670,22 +1647,24 @@ export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject: TypeA
 
     let classMapHasChanged = false
 
-    Object.entries(classTypeAndListObject).forEach(([classType, classList]) => {
+    const utilityClassVariantAndSelfGroups = tailwindCSSUtilityClassVariantAndSelfRE.exec(className)?.groups
 
 
-
-        const utilityClassVariantAndSelfGroups = tailwindCSSUtilityClassVariantAndSelfRE.exec(className)?.groups
-
-
-        if (!utilityClassVariantAndSelfGroups) return
+    if (!utilityClassVariantAndSelfGroups) { return classMapHasChanged }
 
 
-        const { variant = "base", class_type_and_value } = utilityClassVariantAndSelfGroups
+    const { variant = "base", class_type_and_value } = utilityClassVariantAndSelfGroups
 
 
 
 
-        if (!class_type_and_value) return
+    if (!class_type_and_value) { return classMapHasChanged }
+
+
+    for (const [classType, classList] of Object.entries(classTypeAndListObject)) {
+
+
+
 
         if (!classMap.has(classType) && classList.includes(class_type_and_value)) {
 
@@ -1718,9 +1697,7 @@ export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject: TypeA
 
 
 
-
-
-    })
+    }
 
     return classMapHasChanged
 
@@ -1934,66 +1911,62 @@ export const attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup =
 
 
 
-        let classMapHasChanged = false
 
         const variantGroupMatchGroups = variantGroupRE.exec(className)?.groups
 
 
-        if (!variantGroupMatchGroups) return classMapHasChanged
+        if (!variantGroupMatchGroups) return false
 
         const { variant, class_names } = variantGroupMatchGroups
 
 
-        if (!variant || !class_names) return classMapHasChanged
+        if (!variant || !class_names) return false
 
         const splitClassNames = class_names?.split(/\s/)
 
 
-        splitClassNames
+        const classNamesPrefixedWithVariant = splitClassNames
             .map(className => `${variant}${className}`)
-            .forEach((className) => {
 
-                const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValueResult =
-                    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, className)
+        for (const className of classNamesPrefixedWithVariant) {
 
-                if (attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValueResult) {
+            const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValueResult =
+                attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, className)
 
-                    classMapHasChanged = true
-                    return
+            if (attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValueResult) {
+
+                return true
+            }
+
+            const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClassResult =
+                attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass(tailwindCSSUtility, className)
+
+            if (attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClassResult) {
+
+                return true
+            }
+
+            const attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryPropertyResult = attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty(arbitraryProperties, className)
+
+            if (attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryPropertyResult) {
+
+                return true
+            }
+
+            if (filterObject) {
+
+                const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectResult = attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(customFiltered, className, filterObject)
+
+                if (attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectResult) {
+
+                    return true
                 }
+            }
 
-                const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClassResult =
-                    attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass(tailwindCSSUtility, className)
-
-                if (attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClassResult) {
-
-                    classMapHasChanged = true
-                    return
-                }
-
-                const attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryPropertyResult = attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty(arbitraryProperties, className)
-
-                if (attemptToChangeClassNameMapAccordingToIfTheClassIsAnArbitraryPropertyResult) {
-
-                    classMapHasChanged = true
-                    return
-                }
-
-                if (filterObject) {
-
-                    const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectResult = attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(customFiltered, className, filterObject)
-
-                    if (attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectResult) {
-
-                        classMapHasChanged = true
-                        return
-                    }
-                }
-
-            })
+        }
 
 
-        return classMapHasChanged
+        return false
 
 
     };
