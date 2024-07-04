@@ -8,9 +8,9 @@ import {
     attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty,
     attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass,
     attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup,
-    attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue, createSortedTailwindClasses,
-    createSortedBootstrapClasses,
-    createSortedBaseCN_EFSClasses,
+    attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue, SortedTailwindClasses,
+    SortedBootstrapClasses,
+    SortedBaseCN_EFSClasses,
     type FilterObject,
     attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue
 } from "./classMapChangers"
@@ -166,13 +166,9 @@ function getSortClassesBasedOnTheFilterObjectIfItsOneWordOrUseTheClassMapChanger
     }
 }
 
-function isMap(value: unknown): value is Map<string, any> {
-    return value instanceof Map
-}
 
-function isString(value: unknown): value is string {
-    return typeof value === "string"
-}
+
+
 
 
 
@@ -225,7 +221,7 @@ const getClassNamesEvaluatorFilterAndSorter =
 
 export const cnEFS = getClassNamesEvaluatorFilterAndSorter(
     {
-        sortedClassesCreator: createSortedBaseCN_EFSClasses,
+        sortedClassesCreator: () => new SortedBaseCN_EFSClasses(),
         classMapChanger(sortedClasses, value) {
 
 
@@ -250,7 +246,9 @@ export const cnEFS = getClassNamesEvaluatorFilterAndSorter(
             return sortedClasses
 
         },
-        classMapToStringTransformer(classNameMap, sortString) {
+        classMapToStringTransformer(classNameMap, _sortString) {
+
+            let sortString = _sortString
 
             if (classNameMap.bem.size !== 0) {
 
@@ -297,7 +295,7 @@ export const cnEFS = getClassNamesEvaluatorFilterAndSorter(
 
 
                     const utilityClassesFromValuesFromUtilityValueMap = valuesFromUtilityValueMap
-                        .filter(isString)
+                        .filter((value) => typeof value === "string")
                         .map((value) => `${utility}${value} `)
 
                     sortString = sortString.concat(
@@ -323,7 +321,7 @@ export const cnEFS = getClassNamesEvaluatorFilterAndSorter(
 
 export const tailwindOrWindiCN_EFS = getClassNamesEvaluatorFilterAndSorter({
 
-    sortedClassesCreator: createSortedTailwindClasses,
+    sortedClassesCreator: () => new SortedTailwindClasses(),
     classMapChanger(classNameMap, value, filterObject) {
 
 
@@ -359,8 +357,9 @@ export const tailwindOrWindiCN_EFS = getClassNamesEvaluatorFilterAndSorter({
 
 
     },
-    classMapToStringTransformer(classNameMap, sortString) {
+    classMapToStringTransformer(classNameMap, _sortString) {
 
+        let sortString = _sortString
 
         if (classNameMap.arbitraryProperties.size !== 0) {
 
@@ -419,10 +418,11 @@ export const tailwindOrWindiCN_EFS = getClassNamesEvaluatorFilterAndSorter({
 
                 const utilityClassesCreatedFromDefinedValuesFromTheUtilityValueMap =
                     valuesFromUtilityValueMap
-                        .filter(isMap)
+                        .filter((value) => value instanceof Map)
                         .map((prefixValueMap) => {
-                            const prefix = prefixValueMap?.get("prefix")!
-                            const value = prefixValueMap?.get("value")!
+                            const prefix = prefixValueMap?.get("prefix")
+                            const value = prefixValueMap?.get("value")
+
 
                             return `${utility}${prefix}${value} `
 
@@ -457,7 +457,7 @@ export const bootstrapCN_EFS = getClassNamesEvaluatorFilterAndSorter({
         layout: ["d-flex", "grid"],
         stack: ["vstack", "hstack"]
     },
-    sortedClassesCreator: createSortedBootstrapClasses,
+    sortedClassesCreator: () => new SortedBootstrapClasses(),
     classMapChanger(sortedClasses, value) {
 
         attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue(
@@ -469,8 +469,9 @@ export const bootstrapCN_EFS = getClassNamesEvaluatorFilterAndSorter({
 
 
     },
-    classMapToStringTransformer(sortedClasses, sortString) {
+    classMapToStringTransformer(sortedClasses, _sortString) {
 
+        let sortString = _sortString
         if (sortedClasses.bootstrapCSSUtility.size !== 0) {
 
 
