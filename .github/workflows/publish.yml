@@ -22,8 +22,11 @@ jobs:
         with:
           version: 9
 
+      - name: "Install Dependencies"
+        run: pnpm install 
+  
       - name: Publish
-        run: pnpm dlx jsr publish
+        run: pnpm dlx jsr publish --allow-dirty
     
       - name: Release
         env:
