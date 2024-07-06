@@ -23,10 +23,16 @@ jobs:
           version: 9
 
       - name: "Install Dependencies"
-        run: pnpm install 
+        run: pnpm install
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          cache: 'pnpm' 
   
-      - name: Publish
-        run: pnpm dlx jsr publish --allow-dirty
+      # - name: Publish
+      #   run: pnpm dlx jsr publish --allow-dirty
     
       - name: Release
         env:
