@@ -93,6 +93,39 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
     describe("Testing tailwindOrWindiCN_EFS", () => {
 
 
+        it.todo(
+            "resolves differences between single word and classes that can have a value",
+            () => {
+
+                const classes = [
+                    'transition-transform', 'transition'
+                ]
+
+                const sortedClasses = tailwindOrWindiCN_EFS(classes)
+
+
+                expect(sortedClasses).toBe(classes.at(-1))
+
+
+            }
+        )
+
+        it.todo(
+            "resolves differences between can have a value and classes that single word ",
+            () => {
+
+                const classes = [
+                    'transition-transform', 'transition'
+                ]
+
+                const sortedClasses = tailwindOrWindiCN_EFS(classes)
+
+
+                expect(sortedClasses).toBe(classes.at(-1))
+
+
+            }
+        )
 
         it(
             "filters out classes based on a it's filter object",
