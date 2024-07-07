@@ -9,10 +9,12 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
+      # This is needed for JSR to work 
       contents: write
       pull-requests:  write
       issues: write
-      id-token: write # The OIDC ID token is used for authentication with JSR.    
+      # The OIDC ID token is used for authentication with JSR.    
+      id-token: write 
     steps: 
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,9 +32,9 @@ jobs:
         with:
           node-version: "lts/*"
           cache: 'pnpm' 
-  
-      # - name: Publish
-      #   run: pnpm dlx jsr publish --allow-dirty
+  # The allow dirty flag allows me to not have to commit changes done by pnpm 
+      - name: Publish
+        run: pnpm dlx jsr publish --allow-dirty
     
       - name: Release
         env:
