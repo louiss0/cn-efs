@@ -94,6 +94,25 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
 
 
 
+        it(
+            "filters out classes based on a it's filter object",
+            () => {
+
+                const classes = [
+                    "fixed",
+                    "absolute",
+                    "sticky",
+                ]
+
+                const sortedClasses = tailwindOrWindiCN_EFS(classes)
+
+
+                expect(sortedClasses).toBe(classes.at(-1))
+
+
+            })
+
+
         it("filters and sorts utility classes", () => {
 
             const classes = [
