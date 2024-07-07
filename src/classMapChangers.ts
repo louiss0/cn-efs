@@ -24,11 +24,6 @@ const tailwindCSSTypeAndValueUtilityClassRE =
 
 
 
-const bootstrapCSSTypeBreakpointAndValueUtilityClassRE =
-    /^(?<type>[a-z]+|[a-z]+-[a-z]+)(?<breakpoint>-(?:sm|md|lg|xl|xxl))?-(?<value>[a-z0-9]+)(?<state>-[a-z]+)?$/
-
-const bootstrapCSSTypeBreakpointAndValueAsColorUtilityClassRE =
-    /^(?<type>[a-z]+|[a-z]+-[a-z]+)(?<breakpoint>-(?:sm|md|lg|xl|xxl))?-(?<value>(?:(?:(?:prim|second|terti)ary)|info|light|dark|danger|warning)+(?:-emphasis|-subtle)?)(?<state>-[a-z]+)?$/
 
 
 
@@ -351,7 +346,16 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
 };
 
 
+
+
 export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue: ClassMapChangerBasedOnClassName<AllSortedClasses["bootstrapCSSUtility"]> = (classMap, className) => {
+
+    const bootstrapCSSTypeBreakpointAndValueUtilityClassRE =
+        /^(?<type>[a-z]+|[a-z]+-[a-z]+)(?<breakpoint>-(?:sm|md|lg|xl|xxl))?-(?<value>[a-z0-9]+)(?<state>-[a-z]+)?$/
+
+    const bootstrapCSSTypeBreakpointAndValueAsColorUtilityClassRE =
+        /^(?<type>[a-z]+|[a-z]+-[a-z]+)(?<breakpoint>-(?:sm|md|lg|xl|xxl))?-(?<value>(?:(?:(?:prim|second|terti)ary)|info|light|dark|danger|warning)+(?:-emphasis|-subtle)?)(?<state>-[a-z]+)?$/
+
 
 
     const cssTypeValueUtilityClassMatchGroups =
