@@ -1,32 +1,6 @@
 
 export type FilterObject = Record<Lowercase<string>, Array<Lowercase<string>>>;
 
-const cssVariableWithOptionalPrefixedHintRE =
-    /^(?<variable_hint>[a-z]+:)?(?<variable_value>--_?[a-z0-9]+(?:(?:-|_)[a-z0-9]+)*)$/
-
-const checkIfStringIsACssVariableWithAnOptionalHint = (string: string) => cssVariableWithOptionalPrefixedHintRE.test(string)
-
-
-const variableHasAColorHint = (arbitraryValue: string) =>
-    cssVariableWithOptionalPrefixedHintRE.exec(arbitraryValue)?.groups?.variable_hint === "color:"
-
-const variableHasALengthHint = (arbitraryValue: string) =>
-    cssVariableWithOptionalPrefixedHintRE.exec(arbitraryValue)?.groups?.variable_hint === "length:"
-
-const variableHasAStringHint = (arbitraryValue: string) =>
-    cssVariableWithOptionalPrefixedHintRE.exec(arbitraryValue)?.groups?.variable_hint === "string:"
-
-
-
-
-const tailwindCSSTypeAndValueUtilityClassRE =
-    /^(?<variant>\S+:)?(?<prefix>!|-|!-)?(?<type>[a-z]+-)(?<subtype>(?<first>[a-z]+-)?(?<second>[a-z]+-))?(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d\/\][]+)$/
-
-
-
-
-
-
 const properCSSDigitRE = /^(?<digit>\d{1,4}(?:[a-z]{2,4})?)$/
 
 const checkIfStringIsAProperDigit = (string: string) => properCSSDigitRE.test(string)
@@ -38,12 +12,10 @@ const hexColorRE = /^(?<hex_color>#[A-Fa-f0-9]{3,6})$/
 
 const cssColorFunctionRE = /(?<css_color_function>[a-z]{3,9}\((?:\d{1,4}(?:%|[a-z]{3,4}|\.\d+)?(?:,|_)?){3,4}\))/
 
-const tailwindCSSUtilityClassVariantAndSelfRE = /(?<variant>\S+:)?(?<class_type_and_value>[a-z0-9\-_\]\[,)(%#!]+)/
-
-
 const isAColorRange = (string: string) => colorRangeRE.test(string)
 
-const subtypeUsesAnAryAsAPostFixWithMaybeAValueRE = /^(?<subtype>[a-z]+ary-)(?<value>[a-z\d]+)?$/
+const subtypeUsesAnAryAsAPostFixWithMaybeAValueRE =
+    /^(?<subtype>[a-z]+ary-)(?<value>[a-z\d]+)?$/
 
 const checkIfStringIsAProperColor = (string: string) =>
     hexColorRE.test(string)
@@ -919,6 +891,25 @@ const attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValue =
 export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue:
     ClassMapChangerBasedOnClassName<AllSortedClasses["tailwindCSSUtility"]> = (classMap, className) => {
 
+        const tailwindCSSTypeAndValueUtilityClassRE =
+            /^(?<variant>\S+:)?(?<prefix>!|-|!-)?(?<type>[a-z]+-)(?<subtype>(?<first>[a-z]+-)?(?<second>[a-z]+-))?(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d\/\][]+)$/
+
+
+
+        const cssVariableWithOptionalPrefixedHintRE =
+            /^(?<variable_hint>[a-z]+:)?(?<variable_value>--_?[a-z0-9]+(?:(?:-|_)[a-z0-9]+)*)$/
+
+        const checkIfStringIsACssVariableWithAnOptionalHint = (string: string) => cssVariableWithOptionalPrefixedHintRE.test(string)
+
+
+        const variableHasAColorHint = (arbitraryValue: string) =>
+            cssVariableWithOptionalPrefixedHintRE.exec(arbitraryValue)?.groups?.variable_hint === "color:"
+
+        const variableHasALengthHint = (arbitraryValue: string) =>
+            cssVariableWithOptionalPrefixedHintRE.exec(arbitraryValue)?.groups?.variable_hint === "length:"
+
+        const variableHasAStringHint = (arbitraryValue: string) =>
+            cssVariableWithOptionalPrefixedHintRE.exec(arbitraryValue)?.groups?.variable_hint === "string:"
 
 
         const cssTypeValueUtilityClassMatchGroups =
@@ -1650,6 +1641,9 @@ export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject: TypeA
 
 
     let classMapHasChanged = false
+
+    const tailwindCSSUtilityClassVariantAndSelfRE = /(?<variant>\S+:)?(?<class_type_and_value>[a-z0-9\-_\]\[,)(%#!]+)/
+
 
     const utilityClassVariantAndSelfGroups = tailwindCSSUtilityClassVariantAndSelfRE.exec(className)?.groups
 
