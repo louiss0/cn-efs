@@ -2,7 +2,7 @@ import {
     viableUtilityClassMapKeys,
     type ViableUtilityClassMapKeys,
     attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue,
-    attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject,
+    attemptToChangeClassNameMapBasedOnAFilterObject,
     attemptToChangeClassNameMapAccordingToIfTheBEMConvention,
     attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty,
     attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass,
@@ -1221,7 +1221,7 @@ describe("Test if all class map changers work", () => {
         itUsingBEMSortedClasses("doesn't change the map if there is a single word class", ({ customFiltered }) => {
 
 
-            attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(customFiltered, "nice", {})
+            attemptToChangeClassNameMapBasedOnAFilterObject(customFiltered, "nice", {})
 
 
 
@@ -1240,7 +1240,7 @@ describe("Test if all class map changers work", () => {
             ({ customFiltered }) => {
 
 
-                attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(
+                attemptToChangeClassNameMapBasedOnAFilterObject(
                     customFiltered,
                     "fixed",
                     {
@@ -1276,7 +1276,7 @@ describe("Test if all class map changers work", () => {
 
 
                 for (const value of classNames) {
-                    attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(
+                    attemptToChangeClassNameMapBasedOnAFilterObject(
                         customFiltered,
                         value,
                         filterObject,
@@ -1321,7 +1321,7 @@ describe("Test if all class map changers work", () => {
 
 
                 for (const value of classNames) {
-                    attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(
+                    attemptToChangeClassNameMapBasedOnAFilterObject(
                         customFiltered,
                         value,
                         filterObject,

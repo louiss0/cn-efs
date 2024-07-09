@@ -4,7 +4,7 @@ import {
     type SortedClasses,
     attemptToChangeClassNameMapAccordingToIfTheBEMConvention,
     attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue,
-    attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject,
+    attemptToChangeClassNameMapBasedOnAFilterObject,
     attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty,
     attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass,
     attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup,
@@ -116,7 +116,7 @@ function getSortClassesBasedOnTheFilterObjectIfItsOneWordOrUseTheClassMapChanger
 
         if (filterObject) {
 
-            const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectWasSuccessful = attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(
+            const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectWasSuccessful = attemptToChangeClassNameMapBasedOnAFilterObject(
                 carry.customFiltered,
                 value,
                 filterObject

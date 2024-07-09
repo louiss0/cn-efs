@@ -1636,42 +1636,43 @@ function deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMa
 
 type TypeAndListClassMapChanger = ClassMapChangerBasedOnClassName<AllSortedClasses["customFiltered"], Record<string, Array<string>>>
 
-export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject: TypeAndListClassMapChanger = (classMap, className, classTypeAndListObject) => {
+export const attemptToChangeClassNameMapBasedOnAFilterObject: TypeAndListClassMapChanger = (classMap, className, classTypeAndListObject) => {
 
 
 
     let classMapHasChanged = false
 
-    const tailwindCSSUtilityClassVariantAndSelfRE = /(?<variant>\S+:)?(?<class_type_and_value>[a-z0-9\-_\]\[,)(%#!]+)/
+    const tailwindCSSTypeAndValueUtilityClassRE =
+        /^(?<variant>\S+:)?(?<prefix>!|-|!-)?(?<type>[a-z]+-)(?<subtype>(?<first>[a-z]+-)?(?<second>[a-z]+-))?(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d\/\][]+)$/
 
-
-    const utilityClassVariantAndSelfGroups = tailwindCSSUtilityClassVariantAndSelfRE.exec(className)?.groups
+    const utilityClassVariantAndSelfGroups =
+        tailwindCSSTypeAndValueUtilityClassRE
+            .exec(className)?.groups
 
 
     if (!utilityClassVariantAndSelfGroups) { return classMapHasChanged }
 
 
-    const { variant = "base", class_type_and_value } = utilityClassVariantAndSelfGroups
+    const {
+        variant = "base", type, value = '', subtype = ''
+    } = utilityClassVariantAndSelfGroups
 
 
-
-
-    if (!class_type_and_value) { return classMapHasChanged }
+    if (!type) { return classMapHasChanged }
 
 
     for (const [classType, classList] of Object.entries(classTypeAndListObject)) {
 
+        const recreatedClass = `${type}${subtype}${value}`;
 
-
-
-        if (!classMap.has(classType) && classList.includes(class_type_and_value)) {
+        if (!classMap.has(classType) && classList.includes(recreatedClass)) {
 
             classMap.set(
                 classType,
                 new Map([
                     [
                         variant,
-                        class_type_and_value
+                        recreatedClass
                     ],
                 ])
             )
@@ -1680,11 +1681,11 @@ export const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject: TypeA
         }
 
 
-        if (classList.includes(class_type_and_value)) {
+        if (classList.includes(recreatedClass)) {
 
 
             classMap.get(classType,)
-                ?.set(variant, class_type_and_value)
+                ?.set(variant, recreatedClass)
 
             classMapHasChanged = true
 
@@ -1957,7 +1958,7 @@ export const attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup =
 
             if (filterObject) {
 
-                const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectResult = attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject(customFiltered, className, filterObject)
+                const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectResult = attemptToChangeClassNameMapBasedOnAFilterObject(customFiltered, className, filterObject)
 
                 if (attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectResult) {
 
