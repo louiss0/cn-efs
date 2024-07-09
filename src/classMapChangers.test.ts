@@ -1215,7 +1215,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-    describe("Testing attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObject()", () => {
+    describe("Testing attemptToChangeClassNameMapBasedOnAFilterObject()", () => {
 
 
         itUsingBEMSortedClasses("doesn't change the map if there is a single word class", ({ customFiltered }) => {
