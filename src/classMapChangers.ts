@@ -198,12 +198,6 @@ export const attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClas
 
             const map = sortedTailwindClasses.tailwindCSSUtility.get(`${variant}${type}-`)
 
-            console.log(
-                'attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass'
-            );
-
-            console.table(map);
-
             map?.delete('word')
 
             sortedTailwindClasses.safeListed.push(`${variant}${typeWithoutTheDash}`)
