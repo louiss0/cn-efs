@@ -134,7 +134,86 @@ type ClassMapChangerBasedOnClassName<
     ? (classMap: T, className: string,) => boolean
     : (classMap: T, className: string, data: U) => boolean
 
+export const attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass =
+    (sortedTailwindClasses: SortedTailwindClasses, className: string) => {
 
+        const aliasClassValueTypesAndNames = {
+            digit: ['border', 'invert', 'grow', 'shrink', 'grayscale', 'sepia',],
+            word: ['transition', 'resize', 'isolate']
+        }
+
+        const tailwindCSSTypeAndValueUtilityClassRE =
+            /^(?<variant>\S+:)?(?<prefix>!|-|!-)?(?<type>[a-z]+-?)(?<subtype>(?<first>[a-z]+-)?(?<second>[a-z]+-))?(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d\/\][]+)?$/
+
+        const tailwindCSSTypeAndValueUtilityClassGroups =
+            tailwindCSSTypeAndValueUtilityClassRE.exec(className)?.groups
+
+
+
+
+        if (!tailwindCSSTypeAndValueUtilityClassGroups) return false
+
+        const { variant = '', type, value } = tailwindCSSTypeAndValueUtilityClassGroups
+
+
+        if (!type) return false
+
+        const typeWithoutTheDash = type.replace('-', '')
+
+        if (value) {
+
+            const classTypeIsInAliasClassValueTypesAndNames =
+                Object.values(aliasClassValueTypesAndNames).flat()
+
+            if (classTypeIsInAliasClassValueTypesAndNames) {
+
+                const index = sortedTailwindClasses.safeListed.findIndex(
+                    value => value === `${variant}${type}`
+                )
+
+                sortedTailwindClasses.safeListed.splice(index, 1)
+
+                return true
+            }
+
+
+
+        }
+
+
+        if (aliasClassValueTypesAndNames.digit.includes(typeWithoutTheDash)) {
+
+            const map = sortedTailwindClasses.tailwindCSSUtility.get(`${variant}${type}-`)
+
+            map?.delete('digit')
+
+            sortedTailwindClasses.safeListed.push(`${variant}${typeWithoutTheDash}`)
+
+            return true
+        }
+
+
+
+        if (aliasClassValueTypesAndNames.word.includes(typeWithoutTheDash)) {
+
+            const map = sortedTailwindClasses.tailwindCSSUtility.get(`${variant}${type}-`)
+
+            console.log(
+                'attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass'
+            );
+
+            console.table(map);
+
+            map?.delete('word')
+
+            sortedTailwindClasses.safeListed.push(`${variant}${typeWithoutTheDash}`)
+
+            return true
+        }
+
+
+        return false
+    }
 
 
 export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue: ClassMapChangerBasedOnClassName<AllSortedClasses["basicUtility"]> = (classMap, className) => {
@@ -268,7 +347,6 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
 
 
     if (result) {
-
 
         if (valueIsAViableColor) {
 
