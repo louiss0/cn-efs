@@ -11,6 +11,7 @@ import {
     SortedBootstrapClasses,
     SortedTailwindClasses,
     SortedBEMClasses,
+    attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass,
 } from './classMapChangers';
 
 
@@ -23,7 +24,7 @@ const itUsingBootstrapSortedClasses = it.extend<typeof sortedBootstrapClasses>({
     async safeListed({ }, use) {
 
 
-        await use([...sortedBootstrapClasses.safeListed])
+        await use(structuredClone(sortedBootstrapClasses.safeListed))
 
 
     },
@@ -117,6 +118,81 @@ describe("Test if all class map changers work", () => {
 
 
 
+    describe("Testing attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass", () => {
+
+        itUsingTailwindSortedClasses(
+            "resolves differences between single word and classes that can have a value",
+            ({ safeListed, tailwindCSSUtility, customFiltered, arbitraryProperties }) => {
+
+
+                safeListed.push('transition')
+
+
+                attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass(
+                    {
+                        safeListed,
+                        tailwindCSSUtility,
+                        customFiltered,
+                        arbitraryProperties
+                    },
+                    'transition-transform'
+                )
+
+
+
+
+                expect(safeListed.includes('transition'))
+                    .toBeFalsy()
+
+                expect(tailwindCSSUtility.has('transition'))
+                    .not.toBeTruthy()
+
+
+            }
+        )
+
+        itUsingTailwindSortedClasses.only(
+            "resolves differences between classes that have a value and classes that are a single word ",
+            ({ safeListed, tailwindCSSUtility, customFiltered, arbitraryProperties }) => {
+
+                tailwindCSSUtility.set(
+                    "transition-",
+                    new Map().set(
+                        'word',
+                        new Map().set(
+                            'value',
+                            'transform'
+                        )
+                            .set('prefix', '')
+                    )
+                )
+
+
+                attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass(
+                    {
+                        safeListed,
+                        tailwindCSSUtility,
+                        customFiltered,
+                        arbitraryProperties
+                    },
+                    'transition'
+                )
+
+
+
+
+                expect(tailwindCSSUtility.get('transition-')?.has('word'))
+                    .toBeFalsy()
+
+
+                expect(safeListed.includes('transition'))
+                    .toBeTruthy()
+
+
+
+            }
+        )
+    })
 
 
     describe("Testing attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue()", () => {
