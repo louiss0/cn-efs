@@ -1642,11 +1642,10 @@ export const attemptToChangeClassNameMapBasedOnAFilterObject: TypeAndListClassMa
 
     let classMapHasChanged = false
 
-    const tailwindCSSTypeAndValueUtilityClassRE =
-        /^(?<variant>\S+:)?(?<prefix>!|-|!-)?(?<type>[a-z]+-)(?<subtype>(?<first>[a-z]+-)?(?<second>[a-z]+-))?(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d\/\][]+)$/
+    const tailwindCSSUtilityClassVariantAndSelfRE = /(?<variant>\S+:)?(?<prefix>!|-|!-)?(?<class_type_and_value>[a-z0-9\-_\]\[,)(%#!]+)/
 
     const utilityClassVariantAndSelfGroups =
-        tailwindCSSTypeAndValueUtilityClassRE
+        tailwindCSSUtilityClassVariantAndSelfRE
             .exec(className)?.groups
 
 
@@ -1654,25 +1653,24 @@ export const attemptToChangeClassNameMapBasedOnAFilterObject: TypeAndListClassMa
 
 
     const {
-        variant = "base", type, value = '', subtype = ''
+        variant = "base", class_type_and_value,
+        prefix = ''
     } = utilityClassVariantAndSelfGroups
 
 
-    if (!type) { return classMapHasChanged }
+    if (!class_type_and_value) { return classMapHasChanged }
 
 
     for (const [classType, classList] of Object.entries(classTypeAndListObject)) {
 
-        const recreatedClass = `${type}${subtype}${value}`;
-
-        if (!classMap.has(classType) && classList.includes(recreatedClass)) {
+        if (!classMap.has(classType) && classList.includes(class_type_and_value)) {
 
             classMap.set(
                 classType,
                 new Map([
                     [
                         variant,
-                        recreatedClass
+                        `${prefix}${class_type_and_value}`
                     ],
                 ])
             )
@@ -1681,11 +1679,11 @@ export const attemptToChangeClassNameMapBasedOnAFilterObject: TypeAndListClassMa
         }
 
 
-        if (classList.includes(recreatedClass)) {
+        if (classList.includes(class_type_and_value)) {
 
 
-            classMap.get(classType,)
-                ?.set(variant, recreatedClass)
+            classMap.get(classType)
+                ?.set(variant, `${prefix}${class_type_and_value}`)
 
             classMapHasChanged = true
 
