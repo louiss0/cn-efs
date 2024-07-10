@@ -347,8 +347,8 @@ export const tailwindOrWindiCN_EFS: (...args: Parameters<typeof clsx>) => string
 
 
             const classMapWasChangedByAClassMapChanger = [
-                () => attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass(classNameMap, value),
                 () => attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(classNameMap.tailwindCSSUtility, value),
+                () => attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass(classNameMap, value),
                 () =>
                     attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty(classNameMap.arbitraryProperties, value),
                 () => attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass(classNameMap.tailwindCSSUtility, value)
