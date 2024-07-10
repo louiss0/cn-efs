@@ -151,7 +151,7 @@ describe("Test if all class map changers work", () => {
             }
         )
 
-        itUsingTailwindSortedClasses.only(
+        itUsingTailwindSortedClasses(
             "resolves differences between classes that have a value and classes that are a single word ",
             ({ safeListed, tailwindCSSUtility, customFiltered, arbitraryProperties }) => {
 
