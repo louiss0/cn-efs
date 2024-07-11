@@ -162,8 +162,7 @@ describe("Test if all class map changers work", () => {
                         new Map().set(
                             'value',
                             'transform'
-                        )
-                            .set('prefix', '')
+                        ).set('prefix', '')
                     )
                 )
 
