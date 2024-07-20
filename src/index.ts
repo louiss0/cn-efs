@@ -111,7 +111,7 @@ function getSortClassesBasedOnTheFilterObjectIfItsOneWordOrUseTheClassMapChanger
     <T extends SortedClasses>
     (filterObject: FilterObject | undefined, classMapChanger: ClassMapChanger<T>):
     (previousValue: T, currentValue: string, currentIndex: number, array: string[]) => T {
-    return (carry, value) => {
+    return (carry, className) => {
         // ! It's important for safe-listed classes and classes in the class type and object to be accounted for first. 
 
 
@@ -119,7 +119,7 @@ function getSortClassesBasedOnTheFilterObjectIfItsOneWordOrUseTheClassMapChanger
 
             const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectWasSuccessful = attemptToChangeClassNameMapBasedOnAFilterObject(
                 carry.customFiltered,
-                value,
+                className,
                 filterObject
             )
 
@@ -131,11 +131,11 @@ function getSortClassesBasedOnTheFilterObjectIfItsOneWordOrUseTheClassMapChanger
 
         const oneWordClass = /^[a-z]+$/
 
-        if (oneWordClass.test(value)) {
+        if (oneWordClass.test(className)) {
 
 
 
-            if (carry.safeListed.includes(value)) {
+            if (carry.safeListed.includes(className)) {
 
 
                 throw new Error(
@@ -151,7 +151,7 @@ function getSortClassesBasedOnTheFilterObjectIfItsOneWordOrUseTheClassMapChanger
 
 
 
-            carry.safeListed.push(value)
+            carry.safeListed.push(className)
 
             return carry
 
@@ -165,7 +165,7 @@ function getSortClassesBasedOnTheFilterObjectIfItsOneWordOrUseTheClassMapChanger
 
 
 
-        return classMapChanger(carry, value, filterObject)
+        return classMapChanger(carry, className, filterObject)
 
     }
 }
@@ -234,11 +234,11 @@ const getClassNamesEvaluatorFilterAndSorter =
 export const cnEFS: (...args: Parameters<typeof clsx>) => string =
     getClassNamesEvaluatorFilterAndSorter({
         sortedClassesCreator: () => new SortedBaseCN_EFSClasses(),
-        classMapChanger(sortedClasses, value) {
+        classMapChanger(sortedClasses, className) {
             const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValueWasSuccessful =
                 attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue(
                     sortedClasses.basicUtility,
-                    value,
+                    className,
                 );
 
             if (
@@ -248,7 +248,7 @@ export const cnEFS: (...args: Parameters<typeof clsx>) => string =
 
             attemptToChangeClassNameMapAccordingToIfTheBEMConvention(
                 sortedClasses.bem,
-                value,
+                className,
                 sortedClasses.safeListed,
             );
 
@@ -284,8 +284,8 @@ export const cnEFS: (...args: Parameters<typeof clsx>) => string =
 
                     const utilityClassesFromValuesFromUtilityValueMap =
                         valuesFromUtilityValueMap
-                            .filter((value) => typeof value === "string")
-                            .map((value) => `${utility}${value} `);
+                            .filter((classNameValue) => typeof classNameValue === "string")
+                            .map((classNameValue) => `${utility}${classNameValue} `);
 
                     sortString = sortString.concat(
                         ...utilityClassesFromValuesFromUtilityValueMap,
@@ -359,17 +359,17 @@ export const tailwindOrWindiCN_EFS: (...args: Parameters<typeof clsx>) => string
 
         },
         sortedClassesCreator: () => new SortedTailwindClasses(),
-        classMapChanger(classNameMap, value, filterObject) {
+        classMapChanger(classNameMap, className, filterObject) {
 
 
 
             const classMapWasChangedByAClassMapChanger = [
-                () => attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass(classNameMap, value),
-                () => attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(classNameMap.tailwindCSSUtility, value),
+                () => attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass(classNameMap, className),
+                () => attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(classNameMap.tailwindCSSUtility, className),
                 () =>
-                    attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty(classNameMap.arbitraryProperties, value),
-                () => attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass(classNameMap.tailwindCSSUtility, value)
-            ].some(value => value() === true)
+                    attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty(classNameMap.arbitraryProperties, className),
+                () => attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass(classNameMap.tailwindCSSUtility, className)
+            ].some(callClassMapChanger => callClassMapChanger() === true)
 
 
             if (classMapWasChangedByAClassMapChanger)
@@ -384,7 +384,7 @@ export const tailwindOrWindiCN_EFS: (...args: Parameters<typeof clsx>) => string
                     arbitraryProperties,
                     customFiltered
                 },
-                value,
+                className,
                 filterObject
             )
 
@@ -504,11 +504,11 @@ export const bootstrapCN_EFS: (...args: Parameters<typeof clsx>) => string = get
         stack: ["vstack", "hstack"]
     },
     sortedClassesCreator: () => new SortedBootstrapClasses(),
-    classMapChanger(sortedClasses, value) {
+    classMapChanger(sortedClasses, className) {
 
         attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue(
             sortedClasses.bootstrapCSSUtility,
-            value
+            className
         )
 
         return sortedClasses
