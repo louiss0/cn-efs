@@ -315,30 +315,47 @@ export const tailwindOrWindiCN_EFS: (...args: Parameters<typeof clsx>) => string
     getClassNamesEvaluatorFilterAndSorter({
         filterObject: {
             position: ['absolute', 'sticky', 'relative', "static", "fixed"],
-            display: ['hidden', 'list-item', "contents", 'inline-grid', 'flow-root', "table-row", "table-row-group", 'table-header-group', 'table-footer-group', 'table-column-group', 'table-column', 'table-cell', "table-caption", "inline-table", 'inline-flex', 'inline-block', 'flex', 'grid', 'flex-col', 'table', 'inline', 'block'],
+            display: [
+                'hidden',
+                'list-item',
+                "contents",
+                'inline-grid',
+                'flow-root',
+                "table-row",
+                "table-row-group",
+                'table-header-group',
+                'table-footer-group',
+                'table-column-group',
+                'table-column',
+                'table-cell',
+                "table-caption",
+                "inline-table",
+                'inline-flex',
+                'inline-block',
+                'flex',
+                'grid',
+                'flex-col',
+                'table',
+                'inline',
+                'block'
+            ],
             visibility: ['visible', "invisible", 'collaspe'],
-            // isolation: ['isolate', 'isolate-auto'],
-            // invert: ['invert', 'invert-0'],
-            // grayscale: ['grayscale', 'grayscale-0'],
-            // sepia: ['sepia', 'sepia-0'],
-            /** TODO: Find a new way to handle single word classes
-             * I need to make it so that single word classes
-             * that can be replaced with a version with a value are
-             * taken into account. 
-             * {transition} vs {transition-transform}
-             * needs to be taken into account. 
-            */
-            // transition: ['transition-transform', 'transition-shadow', 'transition-opacity', 'transition-colors', 'transition', 'transition-all', 'transition-none'],
             sr: ['sr-only', 'not-sr-only'],
-            // resize: ['resize', 'resize-none', 'resize-x', 'resize-y'],
-            'flex-grow': ['grow', 'grow-0'],
-            'flex-shrink': ['shrink', 'shrink-0'],
-            'text-decoration': ['underline', 'overline', 'line-through', 'no-underline'],
-            'text-transform': ['uppercase', 'lowercase', 'capitalize', 'normal-case'],
-            'text-overflow': ['truncate', 'text-ellipsis', "text-clip"],
-            "font-style": ['italic', 'not-italic'],
-            "font-smoothing": ['antialiased', 'subpixel-antialiased'],
-            'font-variant-numeric': ['oldstyle-nums', 'diagonal-fractions', 'proportional-nums', 'tabular-nums', 'lining-nums', 'normal-nums', 'ordinal', 'slashed-zero'],
+            textDecoration: ['underline', 'overline', 'line-through', 'no-underline'],
+            textTransform: ['uppercase', 'lowercase', 'capitalize', 'normal-case'],
+            textOverflow: ['truncate', 'text-ellipsis', "text-clip"],
+            fontStyle: ['italic', 'not-italic'],
+            fontSmoothing: ['antialiased', 'subpixel-antialiased'],
+            fontVariantNumeric: [
+                'oldstyle-nums',
+                'diagonal-fractions',
+                'proportional-nums',
+                'tabular-nums',
+                'lining-nums',
+                'normal-nums',
+                'ordinal',
+                'slashed-zero'
+            ],
 
         },
         sortedClassesCreator: () => new SortedTailwindClasses(),

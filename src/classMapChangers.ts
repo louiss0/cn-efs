@@ -1,5 +1,5 @@
 
-export type FilterObject = Record<Lowercase<string>, Array<Lowercase<string>>>;
+export type FilterObject = Record<string, Array<Lowercase<string>>>;
 
 const properCSSDigitRE = /^(?<digit>\d{1,4}(?:[a-z]{2,4})?)$/
 
