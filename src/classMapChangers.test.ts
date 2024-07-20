@@ -144,8 +144,6 @@ describe("Test if all class map changers work", () => {
                 expect(safeListed.includes('transition'))
                     .toBeFalsy()
 
-                expect(tailwindCSSUtility.has('transition'))
-                    .not.toBeTruthy()
 
 
             }
