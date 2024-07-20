@@ -110,7 +110,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
 
 
                 expect(sortedClasses).toBe(
-                    'transition transition-transform border border-gray-300 border-dotted border-1'
+                    'transition-transform border-1 border-gray-300 border-dotted'
                 )
 
 
