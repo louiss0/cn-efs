@@ -163,13 +163,19 @@ export const attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClas
         if (value) {
 
             const classTypeIsInAliasClassValueTypesAndNames =
-                Object.values(aliasClassValueTypesAndNames).flat()
+                Object.values(aliasClassValueTypesAndNames)
+                    .flat().includes(typeWithoutTheDash)
+
+            const INVALID_INDEX = -1;
 
             if (classTypeIsInAliasClassValueTypesAndNames) {
 
                 const index = sortedTailwindClasses.safeListed.findIndex(
-                    value => value === `${variant}${type}`
+                    value => value === `${variant}${typeWithoutTheDash}`
                 )
+
+
+                if (index === INVALID_INDEX) return false
 
                 sortedTailwindClasses.safeListed.splice(index, 1)
 
