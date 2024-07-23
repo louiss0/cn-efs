@@ -151,9 +151,9 @@ function getSortClassesBasedOnTheFilterObjectIfItsOneWordOrUseTheClassMapChanger
 
 
 
-            carry.safeListed.push(className)
+            // carry.safeListed.push(className)
 
-            return carry
+            // return carry
 
 
 
@@ -362,14 +362,29 @@ export const tailwindOrWindiCN_EFS: (...args: Parameters<typeof clsx>) => string
         classMapChanger(classNameMap, className, filterObject) {
 
 
-
             const classMapWasChangedByAClassMapChanger = [
-                () => attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass(classNameMap, className),
-                () => attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(classNameMap.tailwindCSSUtility, className),
                 () =>
-                    attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty(classNameMap.arbitraryProperties, className),
-                () => attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass(classNameMap.tailwindCSSUtility, className)
-            ].some(callClassMapChanger => callClassMapChanger() === true)
+                    attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass(
+                        classNameMap,
+                        className
+                    )
+                ,
+                () =>
+                    attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(
+                        classNameMap.tailwindCSSUtility,
+                        className
+                    ),
+                () =>
+                    attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty(
+                        classNameMap.arbitraryProperties,
+                        className
+                    ),
+                () =>
+                    attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass(
+                        classNameMap.tailwindCSSUtility,
+                        className
+                    )
+            ].some(callClassMapChanger => callClassMapChanger())
 
 
             if (classMapWasChangedByAClassMapChanger)
