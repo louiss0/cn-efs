@@ -81,7 +81,8 @@ const classNameFilterSorterFactory = <
 
         const { customFiltered, safeListed, ...restOfTheMap } = classNames
             .reduce(
-                getSortClassesBasedOnTheFilterObjectIfItsOneWordOrUseTheClassMapChanger<T>(filterObject, classMapChanger),
+                (sortedClassesObject, className) =>
+                    classMapChanger(sortedClassesObject, className, filterObject),
                 sortedClassesObject
             )
 
@@ -106,35 +107,6 @@ const classNameFilterSorterFactory = <
 
 
 }
-
-
-function getSortClassesBasedOnTheFilterObjectIfItsOneWordOrUseTheClassMapChanger
-    <T extends SortedClasses>
-    (filterObject: FilterObject | undefined, classMapChanger: ClassMapChanger<T>):
-    (previousValue: T, currentValue: string, currentIndex: number, array: string[]) => T {
-    return (carry, className) => {
-        // ! It's important for safe-listed classes and classes in the class type and object to be accounted for first. 
-
-
-        if (filterObject) {
-
-            const attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectWasSuccessful = attemptToChangeClassNameMapBasedOnAFilterObject(
-                carry.customFiltered,
-                className,
-                filterObject
-            )
-
-            if (attemptToChangeClassNameMapBasedOnTypeOfClassToClassesObjectWasSuccessful)
-                return carry
-
-
-        }
-
-        return classMapChanger(carry, className, filterObject)
-
-    }
-}
-
 
 
 
@@ -357,7 +329,16 @@ export const tailwindOrWindiCN_EFS: (...args: Parameters<typeof clsx>) => string
                     attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass(
                         classNameMap.tailwindCSSUtility,
                         className
-                    )
+                    ),
+                () => !!filterObject && attemptToChangeClassNameMapBasedOnAFilterObject(
+                    classNameMap.customFiltered,
+                    className,
+                    filterObject
+                ),
+                () => attemptToChangeClassMapIfAClassIsASingleWordClass(
+                    classNameMap.safeListed,
+                    className
+                ),
             ].some(callClassMapChanger => callClassMapChanger())
 
 
@@ -493,15 +474,37 @@ export const bootstrapCN_EFS: (...args: Parameters<typeof clsx>) => string = get
         stack: ["vstack", "hstack"]
     },
     sortedClassesCreator: () => new SortedBootstrapClasses(),
-    classMapChanger(sortedClasses, className) {
+    classMapChanger(sortedClasses, className, filterObject) {
 
-        attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue(
-            sortedClasses.bootstrapCSSUtility,
-            className
-        )
+
+
+        const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValueWasSuccessful =
+            attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue(
+                sortedClasses.bootstrapCSSUtility,
+                className
+            )
+
+        if (attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValueWasSuccessful)
+            return sortedClasses
+
+        const classMapHasChanged = [
+
+            () => !!filterObject && attemptToChangeClassNameMapBasedOnAFilterObject(
+                sortedClasses.customFiltered,
+                className,
+                filterObject
+            ),
+
+            () => attemptToChangeClassMapIfAClassIsASingleWordClass(
+                sortedClasses.safeListed,
+                className
+            ),
+        ].some(classMapChanger => classMapChanger())
+
+        if (classMapHasChanged)
+            return sortedClasses
 
         return sortedClasses
-
 
     },
     classMapToStringTransformer(sortedClasses, _sortString) {
