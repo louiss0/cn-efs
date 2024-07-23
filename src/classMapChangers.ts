@@ -134,6 +134,22 @@ type ClassMapChangerBasedOnClassName<
     ? (classMap: T, className: string,) => boolean
     : (classMap: T, className: string, data: U) => boolean
 
+export const attemptToChangeClassMapIfAClassIsASingleWordClass =
+    (arrayOfStrings: Array<string>, className: string) => {
+
+        const isLowerCaseWordRE = lowerCaseWordRE.test(className)
+
+        if (!isLowerCaseWordRE) return false
+
+        if (!arrayOfStrings.includes(className)) return false
+
+
+        arrayOfStrings.push(className)
+
+        return true
+
+    }
+
 export const attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass =
     (sortedTailwindClasses: SortedTailwindClasses, className: string) => {
 
@@ -281,11 +297,12 @@ export const attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClas
 
         if (aliasClassValueTypesAndNames.digit.includes(typeWithoutTheDash)) {
 
-            const map = sortedTailwindClasses.tailwindCSSUtility.get(`${variant}${type}-`)
+            const map = tailwindCSSUtility
+                .get(`${variant}${type}-`)
 
             map?.delete('digit')
 
-            sortedTailwindClasses.safeListed.push(`${variant}${typeWithoutTheDash}`)
+            safeListed.push(`${variant}${type}`)
 
             return true
         }
@@ -294,11 +311,12 @@ export const attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClas
 
         if (aliasClassValueTypesAndNames.word.includes(typeWithoutTheDash)) {
 
-            const map = sortedTailwindClasses.tailwindCSSUtility.get(`${variant}${type}-`)
+            const map = sortedTailwindClasses.tailwindCSSUtility
+                .get(`${variant}${type}-`)
 
             map?.delete('word')
 
-            sortedTailwindClasses.safeListed.push(`${variant}${typeWithoutTheDash}`)
+            safeListed.push(`${variant}${type}`)
 
             return true
         }

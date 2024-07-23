@@ -129,42 +129,6 @@ function getSortClassesBasedOnTheFilterObjectIfItsOneWordOrUseTheClassMapChanger
 
         }
 
-        const oneWordClass = /^[a-z]+$/
-
-        if (oneWordClass.test(className)) {
-
-
-
-            if (carry.safeListed.includes(className)) {
-
-
-                throw new Error(
-                    `You have this class in the safelist and as a class name.
-                     Classes that are safe listed are not filtered just prepended
-                     to the start result of this function.
-                     If you want them filtered then please use a filter map instead.
-                    `
-                )
-
-            }
-
-
-
-
-            // carry.safeListed.push(className)
-
-            // return carry
-
-
-
-
-        }
-
-
-
-
-
-
         return classMapChanger(carry, className, filterObject)
 
     }
