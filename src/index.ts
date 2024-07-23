@@ -13,7 +13,8 @@ import {
     SortedBaseCN_EFSClasses,
     type FilterObject,
     attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue,
-    attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass
+    attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass,
+    attemptToChangeClassMapIfAClassIsASingleWordClass
 } from "./classMapChangers"
 
 
@@ -199,16 +200,25 @@ export const cnEFS: (...args: Parameters<typeof clsx>) => string =
     getClassNamesEvaluatorFilterAndSorter({
         sortedClassesCreator: () => new SortedBaseCN_EFSClasses(),
         classMapChanger(sortedClasses, className) {
-            const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValueWasSuccessful =
-                attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue(
-                    sortedClasses.basicUtility,
-                    className,
-                );
 
-            if (
-                attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValueWasSuccessful
-            )
+
+
+            const classMapIsChanged = [
+                () =>
+                    attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue(
+                        sortedClasses.basicUtility,
+                        className,
+                    ),
+                () => attemptToChangeClassMapIfAClassIsASingleWordClass(
+                    sortedClasses.safeListed,
+                    className,
+                ),
+            ].some(classMapChanger => classMapChanger())
+
+
+            if (classMapIsChanged)
                 return sortedClasses;
+
 
             attemptToChangeClassNameMapAccordingToIfTheBEMConvention(
                 sortedClasses.bem,
