@@ -62,19 +62,20 @@ const createStringFromSafeListedMapIfItIsNotEmptyAnEmptyStringIfItIs = (safeList
 
 }
 
-type ClassMapChanger<T extends SortedClasses> = (sortedClasses: T, value: string, filterObject: FilterObject | undefined) => T
+type ClassMapChanger<T extends SortedClasses, U extends FilterObject | undefined> = (sortedClasses: T, value: string, filterObject: U) => T
 
 type ClassMapTransformer<T extends SortedClasses> = (sortedClasses: Omit<T, "customFiltered" | "safeListed">, value: string) => string
 
 const classNameFilterSorterFactory = <
     T extends SortedClasses
+    , U extends FilterObject | undefined
 >(
     sortedClassesCreator: () => T,
-    classMapChanger: ClassMapChanger<T>,
+    classMapChanger: ClassMapChanger<T, U>,
     classMapToStringTransformer: ClassMapTransformer<T>
 ) => {
 
-    return (classNames: Array<string>, filterObject?: FilterObject) => {
+    return (classNames: Array<string>, filterObject: U) => {
 
 
         const sortedClassesObject = sortedClassesCreator()
@@ -113,15 +114,16 @@ const classNameFilterSorterFactory = <
 
 
 
-type GetClassNamesEvaluatorFilterAndSorterOptions<T extends SortedClasses> = {
-    filterObject?: FilterObject
-    sortedClassesCreator: () => T,
-    classMapChanger: ClassMapChanger<T>,
-    classMapToStringTransformer: ClassMapTransformer<T>
-}
+type GetClassNamesEvaluatorFilterAndSorterOptions
+    <T extends SortedClasses, U extends FilterObject | undefined> = {
+        filterObject?: U
+        sortedClassesCreator: () => T,
+        classMapChanger: ClassMapChanger<T, U>,
+        classMapToStringTransformer: ClassMapTransformer<T>
+    }
 
 const getClassNamesEvaluatorFilterAndSorter =
-    <T extends SortedClasses>(options: GetClassNamesEvaluatorFilterAndSorterOptions<T>) =>
+    <T extends SortedClasses, U extends FilterObject | undefined>(options: GetClassNamesEvaluatorFilterAndSorterOptions<T, U>) =>
         (...args: Parameters<typeof clsx>): string => {
 
             const {
@@ -154,7 +156,7 @@ const getClassNamesEvaluatorFilterAndSorter =
 
             return classNameFilterSorter(
                 splitClassNames,
-                filterObject
+                filterObject as U
             )
 
         }
@@ -330,7 +332,7 @@ export const tailwindOrWindiCN_EFS: (...args: Parameters<typeof clsx>) => string
                         classNameMap.tailwindCSSUtility,
                         className
                     ),
-                () => !!filterObject && attemptToChangeClassNameMapBasedOnAFilterObject(
+                () => attemptToChangeClassNameMapBasedOnAFilterObject(
                     classNameMap.customFiltered,
                     className,
                     filterObject
@@ -489,7 +491,7 @@ export const bootstrapCN_EFS: (...args: Parameters<typeof clsx>) => string = get
 
         const classMapHasChanged = [
 
-            () => !!filterObject && attemptToChangeClassNameMapBasedOnAFilterObject(
+            () => attemptToChangeClassNameMapBasedOnAFilterObject(
                 sortedClasses.customFiltered,
                 className,
                 filterObject
