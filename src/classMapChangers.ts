@@ -508,105 +508,118 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
 
 
 
-export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue: ClassMapChangerBasedOnClassName<AllSortedClasses["bootstrapCSSUtility"]> = (classMap, className) => {
+export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue: ClassMapChangerBasedOnClassName<AllSortedClasses["bootstrapCSSUtility"]> =
+    (classMap, className) => {
 
-    const bootstrapCSSTypeBreakpointAndValueUtilityClassRE =
-        /^(?<type>[a-z]+|[a-z]+-[a-z]+)(?<breakpoint>-(?:sm|md|lg|xl|xxl))?-(?<value>[a-z0-9]+)(?<state>-[a-z]+)?$/
+        const bootstrapCSSTypeBreakpointAndValueUtilityClassRE =
+            /^(?<type>[a-z]+|[a-z]+-[a-z]+)(?<breakpoint>-(?:sm|md|lg|xl|xxl))?-(?<value>[a-z0-9]+)(?<state>-[a-z]+)?$/
 
-    const bootstrapCSSTypeBreakpointAndValueAsColorUtilityClassRE =
-        /^(?<type>[a-z]+|[a-z]+-[a-z]+)(?<breakpoint>-(?:sm|md|lg|xl|xxl))?-(?<value>(?:(?:(?:prim|second|terti)ary)|info|light|dark|danger|warning)+(?:-emphasis|-subtle)?)(?<state>-[a-z]+)?$/
-
-
-
-    const cssTypeValueUtilityClassMatchGroups =
-        bootstrapCSSTypeBreakpointAndValueAsColorUtilityClassRE.exec(className)?.groups
-        || bootstrapCSSTypeBreakpointAndValueUtilityClassRE.exec(className)?.groups
+        const bootstrapCSSTypeBreakpointAndValueAsColorUtilityClassRE =
+            /^(?<type>[a-z]+|[a-z]+-[a-z]+)(?<breakpoint>-(?:sm|md|lg|xl|xxl))?-(?<value>(?:(?:(?:prim|second|terti)ary)|info|light|dark|danger|warning)+(?:-emphasis|-subtle)?)(?<state>-[a-z]+)?$/
 
 
 
-    if (!cssTypeValueUtilityClassMatchGroups) return false
-
-
-    const { type, value, breakpoint = "", state = "base" } = cssTypeValueUtilityClassMatchGroups
-
-
-    if (!type || !value) return false
-
-
-    const classTypeAndBreakpoint = `${type}${breakpoint}`
-
-    const valueIsAViableDigit = checkIfStringIsAProperDigit(value)
-
-
-    const valueIsAViableWord = /[a-z\-_]+/.test(value)
+        const cssTypeValueUtilityClassMatchGroups =
+            bootstrapCSSTypeBreakpointAndValueAsColorUtilityClassRE.exec(className)?.groups
+            || bootstrapCSSTypeBreakpointAndValueUtilityClassRE.exec(className)?.groups
 
 
 
-
-    if (!classMap.has(classTypeAndBreakpoint)) {
-
-
-        if (valueIsAViableDigit) {
+        if (!cssTypeValueUtilityClassMatchGroups) return false
 
 
+        const { type, value, breakpoint = "", state = "base" } = cssTypeValueUtilityClassMatchGroups
 
-            classMap.set(classTypeAndBreakpoint, new Map([["digitMap", new Map().set(state, value)]]))
+
+        if (!type || !value) return false
 
 
-            return true
+        const classTypeAndBreakpoint = `${type}${breakpoint}`
+
+        const valueIsAViableDigit = checkIfStringIsAProperDigit(value)
+
+
+        const valueIsAViableWord = /[a-z\-_]+/.test(value)
+
+
+
+
+        if (!classMap.has(classTypeAndBreakpoint)) {
+
+
+            if (valueIsAViableDigit) {
+
+
+
+                classMap.set(
+                    classTypeAndBreakpoint,
+                    new Map(
+                        [["digitMap", new Map().set(state, value)]]
+                    )
+                )
+
+
+                return true
+
+            }
+
+
+            if (valueIsAViableWord) {
+
+
+
+                classMap.set(
+                    classTypeAndBreakpoint,
+                    new Map([[
+                        "wordMap",
+                        new Map().set(state, value)
+                    ]])
+                )
+
+
+
+                return true
+            }
+
+
+        }
+
+        const result = classMap.get(classTypeAndBreakpoint)
+
+
+        if (result) {
+
+            if (valueIsAViableDigit) {
+
+                if (!result.has("digitMap")) {
+
+                    result.set("digitMap", new Map())
+                }
+
+                result.get("digitMap")?.set(state, value)
+
+                return true
+            }
+
+
+            if (valueIsAViableWord) {
+
+                if (!result.has("wordMap")) {
+
+                    result.set("wordMap", new Map())
+                }
+
+                result.get("wordMap")?.set(state, value)
+
+                return true
+            }
 
         }
 
 
-        if (valueIsAViableWord) {
+        return false
 
-
-
-            classMap.set(
-                classTypeAndBreakpoint,
-                new Map([[
-                    "wordMap",
-                    new Map().set(state, value)
-                ]])
-            )
-
-
-
-            return true
-        }
-
-
-    }
-
-    const result = classMap.get(classTypeAndBreakpoint)
-
-
-    if (result) {
-
-        if (valueIsAViableDigit) {
-
-            result.get("digitMap")?.set(state, value)
-
-            return true
-        }
-
-
-        if (valueIsAViableWord) {
-
-            result.get("wordMap")?.set(state, value)
-
-
-
-            return true
-
-        }
-
-    }
-
-
-    return false
-
-};
+    };
 
 
 type DirectionClassParts = Record<"up" | "down", `${string}-`>
