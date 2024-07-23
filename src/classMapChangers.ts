@@ -141,7 +141,7 @@ export const attemptToChangeClassMapIfAClassIsASingleWordClass =
 
         if (!isLowerCaseWordRE) return false
 
-        if (!arrayOfStrings.includes(className)) return false
+        if (arrayOfStrings.includes(className)) return false
 
 
         arrayOfStrings.push(className)
