@@ -57,7 +57,7 @@ type ViableBemClassMapKeys = typeof viableBEMClassMapKeys[number]
 type StringOrOmitFromString<T extends string> = T | Omit<string, T>
 
 
-export class SortedClasses {
+export class ClassNamesMap {
 
     public readonly customFiltered: Map<
         string,
@@ -68,12 +68,12 @@ export class SortedClasses {
 }
 
 
-export class SortedBEMClasses extends SortedClasses {
+export class BEMClassNamesMap extends ClassNamesMap {
     public readonly bem: Map<string, Map<ViableBemClassMapKeys, string | undefined> | undefined> = new Map()
 }
 
-export class SortedBaseCN_EFSClasses extends SortedBEMClasses {
-    public readonly basicUtility: Map<
+export class BaseCN_EFSClassNamesMap extends BEMClassNamesMap {
+    public readonly utility: Map<
         string, Map<
             Extract<
                 ViableUtilityClassMapKeys,
@@ -88,8 +88,8 @@ export class SortedBaseCN_EFSClasses extends SortedBEMClasses {
 
 
 
-export class SortedBootstrapClasses extends SortedClasses {
-    public readonly bootstrapCSSUtility: Map<
+export class BootstrapClassNamesMap extends ClassNamesMap {
+    public readonly utility: Map<
         string,
         Map<`${Extract<ViableUtilityClassMapKeys, "word" | "digit">}Map`,
             Map<string, string> | undefined
@@ -98,9 +98,9 @@ export class SortedBootstrapClasses extends SortedClasses {
 
 };
 
-export class SortedTailwindClasses extends SortedClasses {
+export class TailwindClassNamesMap extends ClassNamesMap {
     public readonly arbitraryProperties: Map<string, Map<StringOrOmitFromString<"base">, string | undefined> | undefined> = new Map()
-    public readonly tailwindCSSUtility: Map<
+    public readonly utility: Map<
         string,
         Map<
             ViableUtilityClassMapKeys,
@@ -111,11 +111,6 @@ export class SortedTailwindClasses extends SortedClasses {
 }
 
 
-type AllSortedClasses = SortedClasses
-    & SortedBEMClasses
-    & SortedBootstrapClasses
-    & SortedBaseCN_EFSClasses
-    & SortedTailwindClasses
 
 
 export type ClassNameMap = Map<
@@ -151,9 +146,9 @@ export const attemptToChangeClassMapIfAClassIsASingleWordClass =
     }
 
 export const attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass =
-    (sortedTailwindClasses: SortedTailwindClasses, className: string) => {
+    (sortedTailwindClasses: TailwindClassNamesMap, className: string) => {
 
-        const { safeListed, tailwindCSSUtility } = sortedTailwindClasses
+        const { safeListed, utility: tailwindCSSUtility } = sortedTailwindClasses
 
         const aliasClassValueTypesAndNames = {
             digit: ['border', 'invert', 'grow', 'shrink', 'grayscale', 'sepia'],
@@ -311,7 +306,7 @@ export const attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClas
 
         if (aliasClassValueTypesAndNames.word.includes(typeWithoutTheDash)) {
 
-            const map = sortedTailwindClasses.tailwindCSSUtility
+            const map = sortedTailwindClasses.utility
                 .get(`${variant}${type}-`)
 
             map?.delete('word')
@@ -326,7 +321,7 @@ export const attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClas
     }
 
 
-export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue: ClassMapChangerBasedOnClassName<AllSortedClasses["basicUtility"]> = (classMap, className) => {
+export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue: ClassMapChangerBasedOnClassName<BaseCN_EFSClassNamesMap["utility"]> = (classMap, className) => {
 
 
     const cssTypeValueUtilityClassMatchGroups =
@@ -508,7 +503,7 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
 
 
 
-export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue: ClassMapChangerBasedOnClassName<AllSortedClasses["bootstrapCSSUtility"]> =
+export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue: ClassMapChangerBasedOnClassName<BootstrapClassNamesMap["utility"]> =
     (classMap, className) => {
 
         const bootstrapCSSTypeBreakpointAndValueUtilityClassRE =
@@ -638,7 +633,7 @@ const getDeleteKeyBasedOnDirectionBasedClasses = (
     requiredClassParts: DirectionClassParts
 
 ) => (
-    classMap: AllSortedClasses['tailwindCSSUtility'],
+    classMap: TailwindClassNamesMap['utility'],
     valueKey: "color" | "digit",
     classTypeAndSubtype: {
         type: string,
@@ -826,7 +821,7 @@ type ClassTypesWithRelationShipsWithOtherClassTypes = Record<
 
 const attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValue =
     (
-        classMap: AllSortedClasses["tailwindCSSUtility"],
+        classMap: TailwindClassNamesMap["utility"],
         classGroups:
             Record<
                 "type" | "variant" | "value" | "prefix",
@@ -1090,7 +1085,7 @@ const attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValue =
     }
 
 export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue:
-    ClassMapChangerBasedOnClassName<AllSortedClasses["tailwindCSSUtility"]> = (classMap, className) => {
+    ClassMapChangerBasedOnClassName<TailwindClassNamesMap["utility"]> = (classMap, className) => {
 
         const tailwindCSSTypeAndValueUtilityClassRE =
             /^(?<variant>\S+:)?(?<prefix>!|-|!-)?(?<type>[a-z]+-)(?<subtype>(?<first>[a-z]+-)?(?<second>[a-z]+-))?(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d\/\][]+)$/
@@ -1762,7 +1757,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
 
 function deleteIdenticalValueTypeUsingTheKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(
-    classMap: AllSortedClasses['tailwindCSSUtility'],
+    classMap: TailwindClassNamesMap['utility'],
     classNameType: string,
     valueType: ViableUtilityClassMapKeys
 ) {
@@ -1799,7 +1794,7 @@ function deleteIdenticalValueTypeUsingTheKeyFromClassMapIfItsATailwindClassTypeA
 
 }
 
-function deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap: AllSortedClasses["tailwindCSSUtility"], classNameType: string, valueType: ViableUtilityClassMapKeys) {
+function deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMap: TailwindClassNamesMap["utility"], classNameType: string, valueType: ViableUtilityClassMapKeys) {
 
     const tailwindClassVariantAndTypeRE = /^(?<variant>\S+:)(?<type>[a-z]+-)$/
 
@@ -1835,7 +1830,7 @@ function deleteIdenticalKeyFromClassMapIfItsATailwindClassVariantAndType(classMa
 
 }
 
-type TypeAndListClassMapChanger = ClassMapChangerBasedOnClassName<AllSortedClasses["customFiltered"], Record<string, Array<string>>>
+type TypeAndListClassMapChanger = ClassMapChangerBasedOnClassName<BaseCN_EFSClassNamesMap["customFiltered"], Record<string, Array<string>>>
 
 export const attemptToChangeClassNameMapBasedOnAFilterObject: TypeAndListClassMapChanger = (classMap, className, classTypeAndListObject) => {
 
@@ -1912,7 +1907,7 @@ const aBlockModifierClassName =
 
 
 export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapChangerBasedOnClassName<
-    AllSortedClasses["bem"],
+    BEMClassNamesMap["bem"],
     Array<string>
 > =
     (classMap, className, classNames) => {
@@ -2004,7 +1999,7 @@ const arbitraryPropertyRE =
     /(?<variant>\S+:)?\[(?<property_key>[a-z]+(?:\-[a-z]+)*:)(?<property_value>[_\-),.\/(a-z0-9]+)\]/
 
 
-export const attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty: ClassMapChangerBasedOnClassName<AllSortedClasses["arbitraryProperties"]> =
+export const attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty: ClassMapChangerBasedOnClassName<TailwindClassNamesMap["arbitraryProperties"]> =
     (classMap, className) => {
 
 
@@ -2057,7 +2052,7 @@ const relationClassUtilityRE = /^(?<relationship>@?[a-z-]+\/)(?<name>[a-z]+)$/
 
 
 
-export const attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass: ClassMapChangerBasedOnClassName<AllSortedClasses["tailwindCSSUtility"]> =
+export const attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass: ClassMapChangerBasedOnClassName<TailwindClassNamesMap["utility"]> =
     (classMap, className) => {
 
 
@@ -2097,14 +2092,10 @@ export const attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass
 const variantGroupRE =
     /(?<variant>\S+:)\((?<class_names>(?:[\w\-\]\[$.#),(%:\/]+)(?:\s[\w\-\]\[$.#)\/,(%:]+)+)\)/
 
-type PropsNeededFromClassMap = {
-    tailwindCSSUtility: AllSortedClasses["tailwindCSSUtility"]
-    customFiltered: AllSortedClasses["customFiltered"]
-    arbitraryProperties: AllSortedClasses["arbitraryProperties"]
-}
+type PropsNeededFromClassMap = Omit<TailwindClassNamesMap, 'safeListed'>
 
 export const attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup =
-    ({ arbitraryProperties, customFiltered, tailwindCSSUtility, }: PropsNeededFromClassMap, className: string, filterObject?: FilterObject): boolean => {
+    ({ arbitraryProperties, customFiltered, utility, }: PropsNeededFromClassMap, className: string, filterObject?: FilterObject): boolean => {
 
 
 
@@ -2133,7 +2124,7 @@ export const attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup =
         for (const className of classNamesPrefixedWithVariant) {
 
             const attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValueResult =
-                attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(tailwindCSSUtility, className)
+                attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, className)
 
             if (attemptToChangeClassMapBasedOnTheUtilityClassTypeAndValueResult) {
 
@@ -2141,7 +2132,7 @@ export const attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup =
             }
 
             const attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClassResult =
-                attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass(tailwindCSSUtility, className)
+                attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass(utility, className)
 
             if (attemptToChangeClassMapBasedOnIfItIsARelationalUtilityClassResult) {
 

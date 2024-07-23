@@ -8,9 +8,9 @@ import {
     attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass,
     attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup,
     attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue,
-    SortedBootstrapClasses,
-    SortedTailwindClasses,
-    SortedBEMClasses,
+    BootstrapClassNamesMap,
+    TailwindClassNamesMap,
+    BEMClassNamesMap,
     attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass,
 } from './classMapChangers';
 
@@ -18,36 +18,36 @@ import {
 
 
 
-const itUsingBootstrapSortedClasses = it.extend<{ sortedBootstrapClasses: SortedBootstrapClasses }>({
+const itUsingBootstrapSortedClasses = it.extend<{ sortedBootstrapClasses: BootstrapClassNamesMap }>({
     // biome-ignore lint/correctness/noEmptyPattern: Vitest will not run without object destructuring
     async sortedBootstrapClasses({ }, use) {
 
 
-        await use(new SortedBootstrapClasses())
+        await use(new BootstrapClassNamesMap())
 
 
     },
 
 })
 
-const itUsingTailwindSortedClasses = it.extend<{ sortedTailwindClasses: SortedTailwindClasses }>({
+const itUsingTailwindSortedClasses = it.extend<{ sortedTailwindClasses: TailwindClassNamesMap }>({
     // biome-ignore lint/correctness/noEmptyPattern: Vitest will not run without object destructuring
     async sortedTailwindClasses({ }, use) {
 
 
 
-        await use(new SortedTailwindClasses())
+        await use(new TailwindClassNamesMap())
 
 
     },
 
 })
 
-const itUsingBEMSortedClasses = it.extend<{ sortedBEMClasses: SortedBEMClasses }>({
+const itUsingBEMSortedClasses = it.extend<{ sortedBEMClasses: BEMClassNamesMap }>({
     // biome-ignore lint/correctness/noEmptyPattern: Vitest will not run without object destructuring
     async sortedBEMClasses({ }, use) {
 
-        await use(new SortedBEMClasses())
+        await use(new BEMClassNamesMap())
 
     },
 })
@@ -86,10 +86,10 @@ describe("Test if all class map changers work", () => {
                 expect(sortedTailwindClasses.safeListed.includes('transition'))
                     .toBeFalsy()
 
-                expect(sortedTailwindClasses.tailwindCSSUtility.has('transition-'))
+                expect(sortedTailwindClasses.utility.has('transition-'))
                     .toBeTruthy()
 
-                expect(sortedTailwindClasses.tailwindCSSUtility.get('transition-')?.has('word'))
+                expect(sortedTailwindClasses.utility.get('transition-')?.has('word'))
                     .toBeTruthy()
 
 
@@ -101,7 +101,7 @@ describe("Test if all class map changers work", () => {
             "resolves differences between classes that have a value and classes that are a single word ",
             ({ sortedTailwindClasses }) => {
 
-                sortedTailwindClasses.tailwindCSSUtility.set(
+                sortedTailwindClasses.utility.set(
                     "transition-",
                     new Map().set(
                         'word',
@@ -121,7 +121,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-                expect(sortedTailwindClasses.tailwindCSSUtility.get('transition-')
+                expect(sortedTailwindClasses.utility.get('transition-')
                     ?.has('word')
                 ).toBeFalsy()
 
@@ -139,7 +139,7 @@ describe("Test if all class map changers work", () => {
     describe("Testing attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue()", () => {
 
 
-        itUsingBootstrapSortedClasses("doesn't change the map if there is a single word class", ({ sortedBootstrapClasses: { bootstrapCSSUtility: utility } }) => {
+        itUsingBootstrapSortedClasses("doesn't change the map if there is a single word class", ({ sortedBootstrapClasses: { utility: utility } }) => {
 
 
 
@@ -165,7 +165,7 @@ describe("Test if all class map changers work", () => {
             () => {
 
 
-                itUsingBootstrapSortedClasses("changes the map when a class with a digit is passed in", ({ sortedBootstrapClasses: { bootstrapCSSUtility: utility } }) => {
+                itUsingBootstrapSortedClasses("changes the map when a class with a digit is passed in", ({ sortedBootstrapClasses: { utility: utility } }) => {
 
 
                     attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue(utility, "outline-0")
@@ -182,7 +182,7 @@ describe("Test if all class map changers work", () => {
                 itUsingBootstrapSortedClasses(
                     `${insertMessagePrefix} called digit a map with the key called of base where it is the value of that key.
                       When the value is a number.`,
-                    ({ sortedBootstrapClasses: { bootstrapCSSUtility: utility } }) => {
+                    ({ sortedBootstrapClasses: { utility: utility } }) => {
 
 
                         attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue(utility, "outline-0")
@@ -216,7 +216,7 @@ describe("Test if all class map changers work", () => {
 
         itUsingBootstrapSortedClasses(
             "Changes the class map when a utility class with a breakpoint is inserted",
-            ({ sortedBootstrapClasses: { bootstrapCSSUtility } }) => {
+            ({ sortedBootstrapClasses: { utility: bootstrapCSSUtility } }) => {
 
 
                 attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue(bootstrapCSSUtility, "outline-md-0")
@@ -230,7 +230,7 @@ describe("Test if all class map changers work", () => {
 
         itUsingBootstrapSortedClasses(
             "Inserts a map into the value with a state is a key and a value at the end",
-            ({ sortedBootstrapClasses: { bootstrapCSSUtility } }) => {
+            ({ sortedBootstrapClasses: { utility: bootstrapCSSUtility } }) => {
 
 
                 attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue(bootstrapCSSUtility, "outline-0-hover")
@@ -249,7 +249,7 @@ describe("Test if all class map changers work", () => {
 
         itUsingBootstrapSortedClasses(
             "Stores multiple states each with a different value in the same map",
-            ({ sortedBootstrapClasses: { bootstrapCSSUtility } }) => {
+            ({ sortedBootstrapClasses: { utility: bootstrapCSSUtility } }) => {
 
                 attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue(bootstrapCSSUtility, "outline-0-hover")
 
@@ -275,7 +275,7 @@ describe("Test if all class map changers work", () => {
 
         itUsingBootstrapSortedClasses(
             "Stores multiple states each with a different value in the same map in the word property",
-            ({ sortedBootstrapClasses: { bootstrapCSSUtility } }) => {
+            ({ sortedBootstrapClasses: { utility: bootstrapCSSUtility } }) => {
 
                 attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue(bootstrapCSSUtility, "bg-primary-hover")
 
@@ -299,7 +299,7 @@ describe("Test if all class map changers work", () => {
 
         itUsingBootstrapSortedClasses(
             "it places the breakpoint after the utility type and places the value in the map",
-            ({ sortedBootstrapClasses: { bootstrapCSSUtility } }) => {
+            ({ sortedBootstrapClasses: { utility: bootstrapCSSUtility } }) => {
 
 
                 attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue(
@@ -396,7 +396,7 @@ describe("Test if all class map changers work", () => {
 
         itUsingTailwindSortedClasses(
             "doesn't change the map if there is a single word class",
-            ({ sortedTailwindClasses: { tailwindCSSUtility: utility } }) => {
+            ({ sortedTailwindClasses: { utility: utility } }) => {
 
 
                 attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(
@@ -423,7 +423,7 @@ describe("Test if all class map changers work", () => {
 
 
                 itUsingTailwindSortedClasses(
-                    "changes the map when a class with a digit is passed in", ({ sortedTailwindClasses: { tailwindCSSUtility: utility } }) => {
+                    "changes the map when a class with a digit is passed in", ({ sortedTailwindClasses: { utility: utility } }) => {
 
 
                         attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "outline-0")
@@ -439,7 +439,7 @@ describe("Test if all class map changers work", () => {
 
                 itUsingTailwindSortedClasses(
                     `${insertMessagePrefix} called digit with it as the value when the value is a number.`,
-                    ({ sortedTailwindClasses: { tailwindCSSUtility: utility } }) => {
+                    ({ sortedTailwindClasses: { utility: utility } }) => {
 
 
                         attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "outline-0")
@@ -545,7 +545,7 @@ describe("Test if all class map changers work", () => {
 
             itUsingTailwindSortedClasses(
                 `${insertMessagePrefix} called word with it as the value when the value is a word.`,
-                ({ sortedTailwindClasses: { tailwindCSSUtility: utility } }) => {
+                ({ sortedTailwindClasses: { utility: utility } }) => {
 
 
                     attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "outline-solid")
@@ -569,7 +569,7 @@ describe("Test if all class map changers work", () => {
 
             itUsingTailwindSortedClasses(
                 `${insertMessagePrefix} called args with it as the value when multiple args are passed.`,
-                ({ sortedTailwindClasses: { tailwindCSSUtility: utility } }) => {
+                ({ sortedTailwindClasses: { utility: utility } }) => {
 
 
                     attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "grid-cols-[2fr_auto]")
@@ -667,7 +667,7 @@ describe("Test if all class map changers work", () => {
 
             itUsingTailwindSortedClasses(
                 `${insertMessagePrefix} called color with it as the value when the value is a color-range.`,
-                ({ sortedTailwindClasses: { tailwindCSSUtility: utility } }) => {
+                ({ sortedTailwindClasses: { utility: utility } }) => {
 
 
                     attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "outline-gray-500")
@@ -820,7 +820,7 @@ describe("Test if all class map changers work", () => {
         describe("It works well with variables", () => {
 
 
-            itUsingTailwindSortedClasses("puts the value in map with a key called variable when key is not specified", ({ sortedTailwindClasses: { tailwindCSSUtility: utility } }) => {
+            itUsingTailwindSortedClasses("puts the value in map with a key called variable when key is not specified", ({ sortedTailwindClasses: { utility: utility } }) => {
 
                 const classNameAndExpectedKeyAndValue = {
                     className: "bg-[--primary-color]",
@@ -841,7 +841,7 @@ describe("Test if all class map changers work", () => {
             })
 
 
-            itUsingTailwindSortedClasses("puts the value in a map with a key called color when a variable is hinted with color:", ({ sortedTailwindClasses: { tailwindCSSUtility: utility } }) => {
+            itUsingTailwindSortedClasses("puts the value in a map with a key called color when a variable is hinted with color:", ({ sortedTailwindClasses: { utility: utility } }) => {
 
                 const classNameAndExpectedKeyAndValue = {
                     className: "border-[color:--gray-9]",
@@ -859,7 +859,7 @@ describe("Test if all class map changers work", () => {
 
             })
 
-            itUsingTailwindSortedClasses("puts the value in a map with a key called digit when a variable is hinted with length:", ({ sortedTailwindClasses: { tailwindCSSUtility: utility } }) => {
+            itUsingTailwindSortedClasses("puts the value in a map with a key called digit when a variable is hinted with length:", ({ sortedTailwindClasses: { utility: utility } }) => {
 
                 const classNameAndExpectedKeyAndValue = {
                     className: "font-size-[length:--step-2]",
@@ -878,7 +878,7 @@ describe("Test if all class map changers work", () => {
             })
 
 
-            itUsingTailwindSortedClasses("puts the value in a map with a key called word when a variable is hinted with string:", ({ sortedTailwindClasses: { tailwindCSSUtility: utility } }) => {
+            itUsingTailwindSortedClasses("puts the value in a map with a key called word when a variable is hinted with string:", ({ sortedTailwindClasses: { utility: utility } }) => {
 
                 const classNameAndExpectedKeyAndValue = {
                     className: "outline-[string:--line-type]",
@@ -907,7 +907,7 @@ describe("Test if all class map changers work", () => {
 
             itUsingTailwindSortedClasses(
                 "The - prefix is inserted as a prefix to the value when a - is put in a utility class",
-                ({ sortedTailwindClasses: { tailwindCSSUtility: utility } }) => {
+                ({ sortedTailwindClasses: { utility: utility } }) => {
 
                     attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "-z-index-1")
 
@@ -923,7 +923,7 @@ describe("Test if all class map changers work", () => {
 
         describe("It works with relational variants", () => {
 
-            itUsingTailwindSortedClasses("Works with relational variants that use the / syntax", ({ sortedTailwindClasses: { tailwindCSSUtility: utility } }) => {
+            itUsingTailwindSortedClasses("Works with relational variants that use the / syntax", ({ sortedTailwindClasses: { utility: utility } }) => {
 
 
                 attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "peer-checked/draft:text-sky-500")
@@ -938,7 +938,7 @@ describe("Test if all class map changers work", () => {
             })
 
 
-            itUsingTailwindSortedClasses("Works with arbitrary relational variants", ({ sortedTailwindClasses: { tailwindCSSUtility: utility, } }) => {
+            itUsingTailwindSortedClasses("Works with arbitrary relational variants", ({ sortedTailwindClasses: { utility: utility, } }) => {
 
 
                 attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "group-[.is-published]:opacity-50")
@@ -953,7 +953,7 @@ describe("Test if all class map changers work", () => {
             })
 
 
-            itUsingTailwindSortedClasses("Works with arbitrary pseudo class variants", ({ sortedTailwindClasses: { tailwindCSSUtility: utility, } }) => {
+            itUsingTailwindSortedClasses("Works with arbitrary pseudo class variants", ({ sortedTailwindClasses: { utility: utility, } }) => {
 
 
                 attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "[&:nth-child(3)]:opacity-50")
@@ -968,7 +968,7 @@ describe("Test if all class map changers work", () => {
             })
 
 
-            itUsingTailwindSortedClasses("Works with is or where selectors", ({ sortedTailwindClasses: { tailwindCSSUtility: utility, } }) => {
+            itUsingTailwindSortedClasses("Works with is or where selectors", ({ sortedTailwindClasses: { utility: utility, } }) => {
 
 
                 attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(utility, "[&:is(:hover,:focus)]:opacity-50")
@@ -997,7 +997,7 @@ describe("Test if all class map changers work", () => {
                     `When a class with a subtype is inserted. 
             If a class has a similar subtype and the value is in the map.
             The same value type is removed from the map.`,
-                    ({ sortedTailwindClasses: { tailwindCSSUtility: utility, } }) => {
+                    ({ sortedTailwindClasses: { utility: utility, } }) => {
 
 
                         const classes = [
@@ -1032,7 +1032,7 @@ describe("Test if all class map changers work", () => {
 
                         itUsingTailwindSortedClasses(
                             "Removes all values from classes with directionClassParts when a - is introduced",
-                            ({ sortedTailwindClasses: { tailwindCSSUtility } }) => {
+                            ({ sortedTailwindClasses: { utility: tailwindCSSUtility } }) => {
 
                                 const marginClasses = [
                                     "mt-2",
@@ -1062,7 +1062,7 @@ describe("Test if all class map changers work", () => {
 
                         itUsingTailwindSortedClasses(
                             "Removes a class with - when a directionClassPart is introduced ",
-                            ({ sortedTailwindClasses: { tailwindCSSUtility } }) => {
+                            ({ sortedTailwindClasses: { utility: tailwindCSSUtility } }) => {
 
                                 const classes = [
                                     "border-4",
@@ -1097,7 +1097,7 @@ describe("Test if all class map changers work", () => {
 
                         itUsingTailwindSortedClasses(
                             "Removes identical from type only classes with variants",
-                            ({ sortedTailwindClasses: { tailwindCSSUtility } }) => {
+                            ({ sortedTailwindClasses: { utility: tailwindCSSUtility } }) => {
 
                                 const classes = [
                                     "border-4",
@@ -1127,7 +1127,7 @@ describe("Test if all class map changers work", () => {
 
                         itUsingTailwindSortedClasses(
                             "Removes identical value types from type and subtype classes with variants",
-                            ({ sortedTailwindClasses: { tailwindCSSUtility } }) => {
+                            ({ sortedTailwindClasses: { utility: tailwindCSSUtility } }) => {
 
                                 const classes = [
                                     "border-4",
@@ -1168,7 +1168,7 @@ describe("Test if all class map changers work", () => {
 
                 itUsingTailwindSortedClasses(
                     "Adds the slash value to the class map then removes it's related classes.",
-                    ({ sortedTailwindClasses: { tailwindCSSUtility } }) => {
+                    ({ sortedTailwindClasses: { utility: tailwindCSSUtility } }) => {
 
                         const classes = ["leading-6", "text-sm", "text-lg/6"]
 
@@ -1194,7 +1194,7 @@ describe("Test if all class map changers work", () => {
 
                 itUsingTailwindSortedClasses(
                     "Adds the slash value to the class map then removes related directional classes.",
-                    ({ sortedTailwindClasses: { tailwindCSSUtility } }) => {
+                    ({ sortedTailwindClasses: { utility: tailwindCSSUtility } }) => {
 
                         const classes = ["border-gray-500", "border-x-gray-500/50"]
 
@@ -1651,7 +1651,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-        itUsingTailwindSortedClasses("works with container queries", ({ sortedTailwindClasses: { tailwindCSSUtility: utility } }) => {
+        itUsingTailwindSortedClasses("works with container queries", ({ sortedTailwindClasses: { utility: utility } }) => {
 
 
             attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass(utility, "@container/main")
@@ -1668,7 +1668,7 @@ describe("Test if all class map changers work", () => {
 
 
 
-        itUsingTailwindSortedClasses("works with named groups", ({ sortedTailwindClasses: { tailwindCSSUtility: utility } }) => {
+        itUsingTailwindSortedClasses("works with named groups", ({ sortedTailwindClasses: { utility: utility } }) => {
 
             attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass(utility, "group/main")
 
@@ -1695,7 +1695,7 @@ describe("Test if all class map changers work", () => {
 
             itUsingTailwindSortedClasses(
                 "works",
-                ({ sortedTailwindClasses: { tailwindCSSUtility, arbitraryProperties, customFiltered } }) => {
+                ({ sortedTailwindClasses: { utility: tailwindCSSUtility, arbitraryProperties, customFiltered } }) => {
 
                     attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup(
                         { tailwindCSSUtility, arbitraryProperties, customFiltered },
@@ -1711,7 +1711,7 @@ describe("Test if all class map changers work", () => {
 
             itUsingTailwindSortedClasses(
                 "Works with relational variants that use the / syntax",
-                ({ sortedTailwindClasses: { tailwindCSSUtility, arbitraryProperties, customFiltered } }) => {
+                ({ sortedTailwindClasses: { utility: tailwindCSSUtility, arbitraryProperties, customFiltered } }) => {
 
 
                     attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup({ tailwindCSSUtility, arbitraryProperties, customFiltered }, "peer-checked/draft:(text-sky-500 bg-gray-500)")
@@ -1732,7 +1732,7 @@ describe("Test if all class map changers work", () => {
 
             itUsingTailwindSortedClasses(
                 "works with arbitrary relational variants",
-                ({ sortedTailwindClasses: { tailwindCSSUtility, arbitraryProperties, customFiltered } }) => {
+                ({ sortedTailwindClasses: { utility: tailwindCSSUtility, arbitraryProperties, customFiltered } }) => {
 
 
                     attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup(
@@ -1756,7 +1756,7 @@ describe("Test if all class map changers work", () => {
 
             itUsingTailwindSortedClasses(
                 "works with utilities that have variants as prefixes",
-                ({ sortedTailwindClasses: { tailwindCSSUtility, arbitraryProperties, customFiltered } }) => {
+                ({ sortedTailwindClasses: { utility: tailwindCSSUtility, arbitraryProperties, customFiltered } }) => {
 
                     attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup(
                         { tailwindCSSUtility, arbitraryProperties, customFiltered },
@@ -1772,7 +1772,7 @@ describe("Test if all class map changers work", () => {
 
             itUsingTailwindSortedClasses(
                 "Works with arbitrary pseudo class variants",
-                ({ sortedTailwindClasses: { tailwindCSSUtility, arbitraryProperties, customFiltered } }) => {
+                ({ sortedTailwindClasses: { utility: tailwindCSSUtility, arbitraryProperties, customFiltered } }) => {
 
 
                     attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup({ tailwindCSSUtility, arbitraryProperties, customFiltered }, "[&:nth-child(3)]:(opacity-50 border-gray-500)")
@@ -1793,7 +1793,7 @@ describe("Test if all class map changers work", () => {
 
             itUsingTailwindSortedClasses(
                 "Works with is or where selectors",
-                ({ sortedTailwindClasses: { tailwindCSSUtility, arbitraryProperties, customFiltered } }) => {
+                ({ sortedTailwindClasses: { utility: tailwindCSSUtility, arbitraryProperties, customFiltered } }) => {
 
 
                     attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup({ tailwindCSSUtility, arbitraryProperties, customFiltered }, "[&:is(:hover,:focus)]:(opacity-50 bg-gray-900)")
