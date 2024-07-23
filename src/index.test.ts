@@ -110,7 +110,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
 
 
                 expect(sortedClasses).toBe(
-                    'transition-transform border-1 border-gray-300 border-dotted'
+                    'transition-transform border-1 border-dotted border-gray-300'
                 )
 
 
@@ -133,8 +133,8 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
                 const sortedClasses = tailwindOrWindiCN_EFS(classes)
 
 
-                expect(sortedClasses).toBe(
-                    'transition border border-gray-300 border-dotted')
+                expect(sortedClasses)
+                    .toBe('transition border border-dotted border-gray-300')
 
 
             }
