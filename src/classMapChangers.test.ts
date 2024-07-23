@@ -86,6 +86,12 @@ describe("Test if all class map changers work", () => {
                 expect(sortedTailwindClasses.safeListed.includes('transition'))
                     .toBeFalsy()
 
+                expect(sortedTailwindClasses.tailwindCSSUtility.has('transition-'))
+                    .toBeTruthy()
+
+                expect(sortedTailwindClasses.tailwindCSSUtility.get('transition-')?.has('word'))
+                    .toBeTruthy()
+
 
 
             }
@@ -93,9 +99,9 @@ describe("Test if all class map changers work", () => {
 
         itUsingTailwindSortedClasses(
             "resolves differences between classes that have a value and classes that are a single word ",
-            ({ sortedTailwindClasses: { safeListed, tailwindCSSUtility, customFiltered, arbitraryProperties } }) => {
+            ({ sortedTailwindClasses }) => {
 
-                tailwindCSSUtility.set(
+                sortedTailwindClasses.tailwindCSSUtility.set(
                     "transition-",
                     new Map().set(
                         'word',
@@ -108,23 +114,19 @@ describe("Test if all class map changers work", () => {
 
 
                 attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass(
-                    {
-                        safeListed,
-                        tailwindCSSUtility,
-                        customFiltered,
-                        arbitraryProperties
-                    },
+                    sortedTailwindClasses,
                     'transition'
                 )
 
 
 
 
-                expect(tailwindCSSUtility.get('transition-')?.has('word'))
-                    .toBeFalsy()
+                expect(sortedTailwindClasses.tailwindCSSUtility.get('transition-')
+                    ?.has('word')
+                ).toBeFalsy()
 
 
-                expect(safeListed.includes('transition'))
+                expect(sortedTailwindClasses.safeListed.includes('transition'))
                     .toBeTruthy()
 
 
