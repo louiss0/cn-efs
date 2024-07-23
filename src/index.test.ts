@@ -6,9 +6,45 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
 
 
 
-
-
     describe("Testing cnEFS", () => {
+
+
+        it(
+            `It sorts classes with this order,
+            1.Safe Listed
+            2.BEM
+            3.Basic Utility
+            `,
+            () => {
+
+                const safeListedClasses = "card rain"
+
+                const bemClass = "card__title"
+
+                const basicUtilityClass = "text-xl text-red-50"
+
+
+                const sortedClasses = cnEFS(
+                    basicUtilityClass,
+                    safeListedClasses,
+                    bemClass,
+                )
+
+
+                expect(sortedClasses)
+                    .toBe(
+                        safeListedClasses.concat(
+                            bemClass.padStart(bemClass.length + 1),
+                            basicUtilityClass.padStart(basicUtilityClass.length + 1)
+                        )
+                    )
+
+
+
+
+            }
+        )
+
 
         it("filters bem classes based on block and modifier", () => {
 
@@ -233,9 +269,9 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
 
         it(
             `It sorts classes with this order.
-                1. Custom Filtered classes.
-                2. Arbitrary Properties.
-                3. Utility Classes.
+            1. Custom Filtered classes.
+            2. Arbitrary Properties.
+            3. Utility Classes.
             `,
             () => {
 
@@ -261,9 +297,9 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
 
         it(
             `It sorts classes with this order.
-                1. Safe listed Properties.
-                2. Custom Filtered classes.
-                3. Utility Classes.
+            1. Safe listed Properties.
+            2. Custom Filtered classes.
+            3. Utility Classes.
             `,
             () => {
 
