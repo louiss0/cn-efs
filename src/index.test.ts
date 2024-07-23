@@ -259,6 +259,52 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
     describe("Testing bootstrapCN_EFS", () => {
 
 
+        it(
+            `It sorts classes with this order.
+                1. Safe listed Properties.
+                2. Custom Filtered classes.
+                3. Utility Classes.
+            `,
+            () => {
+
+                const safeListedClasses = "absolute"
+
+                const customFilteredClasses = [
+                    "invisible",
+                    "collapse",
+                    "visible",
+                ]
+
+                const bootstrapUtilityClass = "border-1 border-primary"
+
+
+                const sortedClasses = bootstrapCN_EFS(
+                    bootstrapUtilityClass,
+                    customFilteredClasses,
+                    safeListedClasses
+                )
+
+                /** biome-ignore lint/style/noNonNullAssertion:
+                 * customFilteredClasses is on top the value will be derived 
+                 *  
+                */
+                const lastClassName = customFilteredClasses.at(-1)!
+
+                expect(sortedClasses)
+                    .toBe(
+                        safeListedClasses.concat(
+                            lastClassName.padStart(lastClassName.length + 1),
+                            bootstrapUtilityClass.padStart(bootstrapUtilityClass.length + 1)
+                        )
+                    )
+
+
+            })
+
+
+
+
+
         it("works", () => {
 
 
