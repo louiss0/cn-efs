@@ -64,7 +64,8 @@ const createStringFromSafeListedMapIfItIsNotEmptyAnEmptyStringIfItIs = (safeList
 
 type ClassMapChanger<T extends SortedClasses, U extends FilterObject | undefined> = (sortedClasses: T, value: string, filterObject: U) => T
 
-type ClassMapTransformer<T extends SortedClasses> = (sortedClasses: Omit<T, "customFiltered" | "safeListed">, value: string) => string
+type ClassMapTransformer<T extends SortedClasses> =
+    (sortedClasses: Omit<T, "customFiltered" | "safeListed">, value: string) => string
 
 const classNameFilterSorterFactory = <
     T extends SortedClasses
