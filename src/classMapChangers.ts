@@ -137,11 +137,12 @@ type ClassMapChangerBasedOnClassName<
 export const attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass =
     (sortedTailwindClasses: SortedTailwindClasses, className: string) => {
 
+        const { safeListed, tailwindCSSUtility } = sortedTailwindClasses
+
         const aliasClassValueTypesAndNames = {
-            digit: ['border', 'invert', 'grow', 'shrink', 'grayscale', 'sepia',],
+            digit: ['border', 'invert', 'grow', 'shrink', 'grayscale', 'sepia'],
             word: ['transition', 'resize', 'isolate']
         }
-
         const tailwindCSSTypeAndValueUtilityClassRE =
             /^(?<variant>\S+:)?(?<prefix>!|-|!-)?(?<type>[a-z]+-?)(?<subtype>(?<first>[a-z]+-)?(?<second>[a-z]+-))?(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d\/\][]+)?$/
 
@@ -153,38 +154,129 @@ export const attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClas
 
         if (!tailwindCSSTypeAndValueUtilityClassGroups) return false
 
-        const { variant = '', type, value } = tailwindCSSTypeAndValueUtilityClassGroups
+        const { variant = '', type, subtype, value, prefix = '' } = tailwindCSSTypeAndValueUtilityClassGroups
 
 
         if (!type) return false
+
+        if (subtype) return false
 
         const typeWithoutTheDash = type.replace('-', '')
 
         if (value) {
 
+            const variantAndType = `${variant}${type}`;
+
             const classTypeIsInAliasClassValueTypesAndNames =
                 Object.values(aliasClassValueTypesAndNames)
-                    .flat().includes(typeWithoutTheDash)
+                    .flat()
+                    .includes(typeWithoutTheDash)
 
-            const INVALID_INDEX = -1;
 
-            if (classTypeIsInAliasClassValueTypesAndNames) {
+            if (!classTypeIsInAliasClassValueTypesAndNames) return false
 
-                const index = sortedTailwindClasses.safeListed.findIndex(
+            const index = sortedTailwindClasses.safeListed
+                .findIndex(
                     value => value === `${variant}${typeWithoutTheDash}`
                 )
 
+            const INVALID_INDEX = -1;
 
-                if (index === INVALID_INDEX) return false
+            if (index === INVALID_INDEX) return false
 
-                sortedTailwindClasses.safeListed.splice(index, 1)
+            const valueIsAViableDigit = checkIfStringIsAProperDigit(value)
+
+
+            const valueIsAViableWord = checkIfStringIsALowerCaseWord(value)
+
+            if (aliasClassValueTypesAndNames.digit.includes(typeWithoutTheDash) && valueIsAViableDigit) {
+
+
+                const utilityMap = tailwindCSSUtility.get(variantAndType)
+
+                if (!utilityMap) {
+
+                    tailwindCSSUtility.set(
+                        variantAndType,
+                        new Map().set('digit', new Map()
+                            .set("prefix", prefix)
+                            .set("value", value))
+                    )
+
+                    safeListed.splice(index, 1)
+
+                    return true
+
+                }
+
+
+                let digitMap = utilityMap?.get("digit")
+
+                if (!digitMap) {
+
+                    digitMap = utilityMap.set(
+                        "digit",
+                        new Map()
+                    )
+                        .get("digit")
+
+                }
+
+                digitMap?.set("prefix", prefix)
+                    .set("value", value)
+
+                safeListed.splice(index, 1)
 
                 return true
             }
 
 
 
+            if (aliasClassValueTypesAndNames.word.includes(typeWithoutTheDash) && valueIsAViableWord) {
+
+                const utilityMap = tailwindCSSUtility.get(variantAndType)
+
+                if (!utilityMap) {
+
+                    tailwindCSSUtility.set(
+                        variantAndType,
+                        new Map().set('word', new Map()
+                            .set("prefix", prefix)
+                            .set("value", value))
+                    )
+                    safeListed.splice(index, 1)
+
+                    return true
+                }
+
+
+                let wordMap = utilityMap?.get("word")
+
+                if (!wordMap) {
+                    wordMap = utilityMap.set(
+                        "word",
+                        new Map()
+                    )
+                        .get("word")
+
+
+                }
+
+                wordMap
+                    ?.set("prefix", prefix)
+                    .set("value", value)
+
+                safeListed.splice(index, 1)
+
+
+                return true
+            }
+
+
+            return false
         }
+
+
 
 
         if (aliasClassValueTypesAndNames.digit.includes(typeWithoutTheDash)) {
