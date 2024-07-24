@@ -1,3 +1,12 @@
+import {
+    type BEMClassNamesMap,
+    type BootstrapClassNamesMap,
+    viableUtilityClassMapKeys,
+    type BaseCN_EFSClassNamesMap,
+    type ClassNameMap,
+    type TailwindClassNamesMap,
+    type ViableUtilityClassMapKeys
+} from "./ClassNameMaps";
 
 export type FilterObject = Record<string, Array<Lowercase<string>>>;
 
