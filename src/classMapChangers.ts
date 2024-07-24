@@ -53,83 +53,6 @@ const checkIfStringIsASetOfArgs = (string: string) => cssTwoOrMoreArgsRE.test(st
 
 
 
-export const viableUtilityClassMapKeys = ["digit", "word", "color", "variable", "function", "args", "slashValue"] as const
-
-export const viableBEMClassMapKeys = ["element", "modifier"] as const
-
-export type ViableUtilityClassMapKeys = typeof viableUtilityClassMapKeys[number]
-
-
-type ViableBemClassMapKeys = typeof viableBEMClassMapKeys[number]
-
-
-type StringOrOmitFromString<T extends string> = T | Omit<string, T>
-
-
-export class ClassNamesMap {
-
-    public readonly customFiltered: Map<
-        string,
-        Map<StringOrOmitFromString<"base">,
-            string | undefined> | undefined
-    > = new Map()
-    public readonly safeListed: Array<string> = []
-}
-
-
-export class BEMClassNamesMap extends ClassNamesMap {
-    public readonly bem: Map<string, Map<ViableBemClassMapKeys, string | undefined> | undefined> = new Map()
-}
-
-export class BaseCN_EFSClassNamesMap extends BEMClassNamesMap {
-    public readonly utility: Map<
-        string, Map<
-            Extract<
-                ViableUtilityClassMapKeys,
-                "word" | "digit" | "color"
-            >,
-            string | undefined
-        >
-        | undefined
-    > = new Map()
-
-}
-
-
-
-export class BootstrapClassNamesMap extends ClassNamesMap {
-    public readonly utility: Map<
-        string,
-        Map<`${Extract<ViableUtilityClassMapKeys, "word" | "digit">}Map`,
-            Map<string, string> | undefined
-        > | undefined
-    > = new Map()
-
-};
-
-export class TailwindClassNamesMap extends ClassNamesMap {
-    public readonly arbitraryProperties: Map<string, Map<StringOrOmitFromString<"base">, string | undefined> | undefined> = new Map()
-    public readonly utility: Map<
-        string,
-        Map<
-            ViableUtilityClassMapKeys,
-            Map<"prefix" | "value", string> | undefined
-        > | undefined
-    > = new Map()
-
-}
-
-
-
-
-export type ClassNameMap = Map<
-    string,
-    Map<
-        string | Omit<string, string>,
-        string | Map<string, string> | undefined
-    >
-    | undefined
->;
 
 type ClassMapChangerBasedOnClassName<
     T extends ClassNameMap,
@@ -154,180 +77,6 @@ export const attemptToChangeClassMapIfAClassIsASingleWordClass =
 
     }
 
-export const attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass =
-    (sortedTailwindClasses: TailwindClassNamesMap, className: string) => {
-
-        const { safeListed, utility: tailwindCSSUtility } = sortedTailwindClasses
-
-        const aliasClassValueTypesAndNames = {
-            digit: ['border', 'invert', 'grow', 'shrink', 'grayscale', 'sepia'],
-            word: ['transition', 'resize', 'isolate']
-        }
-        const tailwindCSSTypeAndValueUtilityClassRE =
-            /^(?<variant>\S+:)?(?<prefix>!|-|!-)?(?<type>[a-z]+-?)(?<subtype>(?<first>[a-z]+-)?(?<second>[a-z]+-))?(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d\/\][]+)?$/
-
-        const tailwindCSSTypeAndValueUtilityClassGroups =
-            tailwindCSSTypeAndValueUtilityClassRE.exec(className)?.groups
-
-
-
-
-        if (!tailwindCSSTypeAndValueUtilityClassGroups) return false
-
-        const { variant = '', type, subtype, value, prefix = '' } = tailwindCSSTypeAndValueUtilityClassGroups
-
-
-        if (!type) return false
-
-        if (subtype) return false
-
-        const typeWithoutTheDash = type.replace('-', '')
-
-        if (value) {
-
-            const variantAndType = `${variant}${type}`;
-
-            const classTypeIsInAliasClassValueTypesAndNames =
-                Object.values(aliasClassValueTypesAndNames)
-                    .flat()
-                    .includes(typeWithoutTheDash)
-
-
-            if (!classTypeIsInAliasClassValueTypesAndNames) return false
-
-            const index = sortedTailwindClasses.safeListed
-                .findIndex(
-                    value => value === `${variant}${typeWithoutTheDash}`
-                )
-
-            const INVALID_INDEX = -1;
-
-            if (index === INVALID_INDEX) return false
-
-            const valueIsAViableDigit = checkIfStringIsAProperDigit(value)
-
-
-            const valueIsAViableWord = checkIfStringIsALowerCaseWord(value)
-
-            if (aliasClassValueTypesAndNames.digit.includes(typeWithoutTheDash) && valueIsAViableDigit) {
-
-
-                const utilityMap = tailwindCSSUtility.get(variantAndType)
-
-                if (!utilityMap) {
-
-                    tailwindCSSUtility.set(
-                        variantAndType,
-                        new Map().set('digit', new Map()
-                            .set("prefix", prefix)
-                            .set("value", value))
-                    )
-
-                    safeListed.splice(index, 1)
-
-                    return true
-
-                }
-
-
-                let digitMap = utilityMap?.get("digit")
-
-                if (!digitMap) {
-
-                    digitMap = utilityMap.set(
-                        "digit",
-                        new Map()
-                    )
-                        .get("digit")
-
-                }
-
-                digitMap?.set("prefix", prefix)
-                    .set("value", value)
-
-                safeListed.splice(index, 1)
-
-                return true
-            }
-
-
-
-            if (aliasClassValueTypesAndNames.word.includes(typeWithoutTheDash) && valueIsAViableWord) {
-
-                const utilityMap = tailwindCSSUtility.get(variantAndType)
-
-                if (!utilityMap) {
-
-                    tailwindCSSUtility.set(
-                        variantAndType,
-                        new Map().set('word', new Map()
-                            .set("prefix", prefix)
-                            .set("value", value))
-                    )
-                    safeListed.splice(index, 1)
-
-                    return true
-                }
-
-
-                let wordMap = utilityMap?.get("word")
-
-                if (!wordMap) {
-                    wordMap = utilityMap.set(
-                        "word",
-                        new Map()
-                    )
-                        .get("word")
-
-
-                }
-
-                wordMap
-                    ?.set("prefix", prefix)
-                    .set("value", value)
-
-                safeListed.splice(index, 1)
-
-
-                return true
-            }
-
-
-            return false
-        }
-
-
-
-
-        if (aliasClassValueTypesAndNames.digit.includes(typeWithoutTheDash)) {
-
-            const map = tailwindCSSUtility
-                .get(`${variant}${type}-`)
-
-            map?.delete('digit')
-
-            safeListed.push(`${variant}${type}`)
-
-            return true
-        }
-
-
-
-        if (aliasClassValueTypesAndNames.word.includes(typeWithoutTheDash)) {
-
-            const map = sortedTailwindClasses.utility
-                .get(`${variant}${type}-`)
-
-            map?.delete('word')
-
-            safeListed.push(`${variant}${type}`)
-
-            return true
-        }
-
-
-        return false
-    }
 
 
 export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue: ClassMapChangerBasedOnClassName<BaseCN_EFSClassNamesMap["utility"]> = (classMap, className) => {
@@ -813,7 +562,7 @@ const attemptToDeleteKeysInTheTailwindUtilityClassMapWhenAClassThatHasDirectionP
         }
     );
 
-type ClassTypesWithRelationShipsWithOtherClassTypes = Record<
+export type ClassTypesWithRelationShipsWithOtherClassTypes = Record<
     string,
     {
         isDirectional?: true
@@ -827,89 +576,277 @@ type ClassTypesWithRelationShipsWithOtherClassTypes = Record<
     }
 >
 
+const crossValueUtilityClassRelationShipWithClassesObject: ClassTypesWithRelationShipsWithOtherClassTypes = {
+    text: {
+        classType: "text-",
+        valueType: "word",
+        secondary: {
+            classType: "leading-",
+            valueType: "digit"
+        }
+    },
+    shadow: {
+        classType: "shadow-",
+        valueType: "color",
+        secondary: {
+            classType: "opacity-",
+            valueType: "digit",
+        },
+    },
+    accent: {
+        classType: "accent-",
+        valueType: "color",
+        secondary: {
+            classType: "opacity-",
+            valueType: "digit"
+        }
+    },
+    bg: {
+        classType: "bg-",
+        valueType: "color",
+        secondary: {
+            classType: "opacity-",
+            valueType: "digit"
+        }
+    },
+    border: {
+        isDirectional: true,
+        classType: "border-",
+        valueType: "color",
+        secondary: {
+            classType: "opacity-",
+            valueType: "digit"
+        }
+    },
+    divide: {
+        isDirectional: true,
+        classType: "divide-",
+        valueType: "color",
+        secondary: {
+            classType: "opacity-",
+            valueType: "digit"
+        }
+    },
+    ring: {
+        classType: "ring-",
+        valueType: "color",
+        secondary: {
+            classType: "opacity-",
+            valueType: "digit"
+        }
+    },
+}
 
-const attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValue =
+const tailwindCSSTypeAndValueUtilityClassRE =
+    /^(?<variant>\S+:)?(?<prefix>!|-|!-)?(?<type>[a-z]+-)(?<subtype>(?<first>[a-z]+-)?(?<second>[a-z]+-))?(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d\/\][]+)$/
+
+export const attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass =
+    (sortedTailwindClasses: TailwindClassNamesMap, className: string) => {
+
+        const { safeListed, utility: tailwindCSSUtility } = sortedTailwindClasses
+
+        const aliasClassValueTypesAndNames = {
+            digit: ['border', 'invert', 'grow', 'shrink', 'grayscale', 'sepia'],
+            word: ['transition', 'resize', 'isolate']
+        }
+
+        const tailwindCSSTypeAndValueUtilityClassGroups =
+            tailwindCSSTypeAndValueUtilityClassRE.exec(className)?.groups
+
+
+
+
+        if (!tailwindCSSTypeAndValueUtilityClassGroups) return false
+
+        const { variant = '', type, subtype, value, prefix = '' } = tailwindCSSTypeAndValueUtilityClassGroups
+
+
+        if (!type) return false
+
+        if (subtype) return false
+
+        const typeWithoutTheDash = type.replace('-', '')
+
+        if (value) {
+
+            const variantAndType = `${variant}${type}`;
+
+            const classTypeIsInAliasClassValueTypesAndNames =
+                Object.values(aliasClassValueTypesAndNames)
+                    .flat()
+                    .includes(typeWithoutTheDash)
+
+
+            if (!classTypeIsInAliasClassValueTypesAndNames) return false
+
+            const index = sortedTailwindClasses.safeListed
+                .findIndex(
+                    value => value === `${variant}${typeWithoutTheDash}`
+                )
+
+            const INVALID_INDEX = -1;
+
+            if (index === INVALID_INDEX) return false
+
+            const valueIsAViableDigit = checkIfStringIsAProperDigit(value)
+
+
+            const valueIsAViableWord = checkIfStringIsALowerCaseWord(value)
+
+            if (aliasClassValueTypesAndNames.digit.includes(typeWithoutTheDash) && valueIsAViableDigit) {
+
+
+                const utilityMap = tailwindCSSUtility.get(variantAndType)
+
+                if (!utilityMap) {
+
+                    tailwindCSSUtility.set(
+                        variantAndType,
+                        new Map().set('digit', new Map()
+                            .set("prefix", prefix)
+                            .set("value", value))
+                    )
+
+                    safeListed.splice(index, 1)
+
+                    return true
+
+                }
+
+
+                let digitMap = utilityMap?.get("digit")
+
+                if (!digitMap) {
+
+                    digitMap = utilityMap.set(
+                        "digit",
+                        new Map()
+                    )
+                        .get("digit")
+
+                }
+
+                digitMap?.set("prefix", prefix)
+                    .set("value", value)
+
+                safeListed.splice(index, 1)
+
+                return true
+            }
+
+
+
+            if (aliasClassValueTypesAndNames.word.includes(typeWithoutTheDash) && valueIsAViableWord) {
+
+                const utilityMap = tailwindCSSUtility.get(variantAndType)
+
+                if (!utilityMap) {
+
+                    tailwindCSSUtility.set(
+                        variantAndType,
+                        new Map().set('word', new Map()
+                            .set("prefix", prefix)
+                            .set("value", value))
+                    )
+                    safeListed.splice(index, 1)
+
+                    return true
+                }
+
+
+                let wordMap = utilityMap?.get("word")
+
+                if (!wordMap) {
+                    wordMap = utilityMap.set(
+                        "word",
+                        new Map()
+                    )
+                        .get("word")
+
+
+                }
+
+                wordMap
+                    ?.set("prefix", prefix)
+                    .set("value", value)
+
+                safeListed.splice(index, 1)
+
+
+                return true
+            }
+
+
+            return false
+        }
+
+
+
+
+        if (aliasClassValueTypesAndNames.digit.includes(typeWithoutTheDash)) {
+
+            const map = tailwindCSSUtility
+                .get(`${variant}${type}-`)
+
+            map?.delete('digit')
+
+            safeListed.push(`${variant}${type}`)
+
+            return true
+        }
+
+
+
+        if (aliasClassValueTypesAndNames.word.includes(typeWithoutTheDash)) {
+
+            const map = sortedTailwindClasses.utility
+                .get(`${variant}${type}-`)
+
+            map?.delete('word')
+
+            safeListed.push(`${variant}${type}`)
+
+            return true
+        }
+
+
+        return false
+    }
+
+
+export const attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValue: ClassMapChangerBasedOnClassName<TailwindClassNamesMap["utility"], ClassTypesWithRelationShipsWithOtherClassTypes> =
     (
-        classMap: TailwindClassNamesMap["utility"],
-        classGroups:
-            Record<
-                "type" | "variant" | "value" | "prefix",
-                string
-            > & Record<
-                "firstSubtype" | "secondSubtype",
-                string | undefined
-            >
+        classMap,
+        className,
+        crossValueUtilityClassAndRelatedClassMap,
     ) => {
 
 
         let classMapHasChanged = false
 
 
-        const crossValueUtilityClassRelationShipWithClassesObject: ClassTypesWithRelationShipsWithOtherClassTypes = {
-            text: {
-                classType: "text-",
-                valueType: "word",
-                secondary: {
-                    classType: "leading-",
-                    valueType: "digit"
-                }
-            },
-            shadow: {
-                classType: "shadow-",
-                valueType: "color",
-                secondary: {
-                    classType: "opacity-",
-                    valueType: "digit",
-                },
-            },
-            accent: {
-                classType: "accent-",
-                valueType: "color",
-                secondary: {
-                    classType: "opacity-",
-                    valueType: "digit"
-                }
-            },
-            bg: {
-                classType: "bg-",
-                valueType: "color",
-                secondary: {
-                    classType: "opacity-",
-                    valueType: "digit"
-                }
-            },
-            border: {
-                isDirectional: true,
-                classType: "border-",
-                valueType: "color",
-                secondary: {
-                    classType: "opacity-",
-                    valueType: "digit"
-                }
-            },
-            divide: {
-                isDirectional: true,
-                classType: "divide-",
-                valueType: "color",
-                secondary: {
-                    classType: "opacity-",
-                    valueType: "digit"
-                }
-            },
-            ring: {
-                classType: "ring-",
-                valueType: "color",
-                secondary: {
-                    classType: "opacity-",
-                    valueType: "digit"
-                }
-            },
-        }
-
-        const { variant, prefix, type, firstSubtype, secondSubtype = "", value } = classGroups
 
 
-        const valueFromCrossValueUtilityClassRelationShipWithClassesMapUsingTypeWithNoDash = crossValueUtilityClassRelationShipWithClassesObject[type.replace("-", "")]
+        const cssTypeValueUtilityClassMatchGroups =
+            tailwindCSSTypeAndValueUtilityClassRE.exec(className)?.groups
+
+
+        if (!cssTypeValueUtilityClassMatchGroups) return false
+
+        const {
+            type,
+            value,
+            variant = "",
+            prefix = "",
+            first: firstSubtype = '',
+            second: secondSubtype = '',
+        } = cssTypeValueUtilityClassMatchGroups
+
+
+        if (!type || !value) return false
+
+
+        const valueFromCrossValueUtilityClassAndRelatedClassMapUsingTypeWithNoDash = crossValueUtilityClassAndRelatedClassMap[type.replace("-", "")]
 
         const classVariantAndSubTypeFromClassGroups =
             firstSubtype
@@ -923,11 +860,12 @@ const attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValue =
 
 
 
-        const valueIsASlashValueAndClassTypeIsAKeyInCrossValueUtilityClassRelationShipWithClassesObject =
-            valueFromCrossValueUtilityClassRelationShipWithClassesMapUsingTypeWithNoDash
+        const valueIsASlashValueAndClassTypeIsAKeyInCrossValueUtilityClassAndRelatedClassMap =
+            valueFromCrossValueUtilityClassAndRelatedClassMapUsingTypeWithNoDash
             && valueIsASlashValue;
+
         if (
-            valueIsASlashValueAndClassTypeIsAKeyInCrossValueUtilityClassRelationShipWithClassesObject
+            valueIsASlashValueAndClassTypeIsAKeyInCrossValueUtilityClassAndRelatedClassMap
         ) {
 
             const secondSubtypeAndValue = `${secondSubtype}${value}`;
@@ -1051,7 +989,7 @@ const attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValue =
                 secondary,
                 classType,
                 valueType
-            } = valueFromCrossValueUtilityClassRelationShipWithClassesMapUsingTypeWithNoDash
+            } = valueFromCrossValueUtilityClassAndRelatedClassMapUsingTypeWithNoDash
 
             if (isDirectional) {
 
@@ -1094,10 +1032,9 @@ const attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValue =
     }
 
 export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue:
-    ClassMapChangerBasedOnClassName<TailwindClassNamesMap["utility"]> = (classMap, className) => {
+    ClassMapChangerBasedOnClassName<TailwindClassNamesMap["utility"]> =
+    (classMap, className) => {
 
-        const tailwindCSSTypeAndValueUtilityClassRE =
-            /^(?<variant>\S+:)?(?<prefix>!|-|!-)?(?<type>[a-z]+-)(?<subtype>(?<first>[a-z]+-)?(?<second>[a-z]+-))?(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d\/\][]+)$/
 
 
 
@@ -1129,8 +1066,6 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
             variant = "",
             subtype = "",
             prefix = "",
-            first: firstSubtype,
-            second: secondSubtype
         } = cssTypeValueUtilityClassMatchGroups
 
 
@@ -1468,23 +1403,7 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
             }
 
 
-            const attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValueResult =
-                attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValue(
-                    classMap,
-                    {
-                        type,
-                        firstSubtype,
-                        secondSubtype,
-                        value,
-                        variant,
-                        prefix,
-                    }
-                )
 
-            if (attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValueResult) {
-
-                return true
-            }
 
 
 
@@ -1737,26 +1656,6 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
 
         }
-
-
-        const attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValueResult =
-            attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValue(
-                classMap,
-                {
-                    type,
-                    firstSubtype,
-                    secondSubtype,
-                    value,
-                    variant,
-                    prefix,
-                }
-            )
-
-        if (attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValueResult) {
-
-            return true
-        }
-
 
 
         return false
