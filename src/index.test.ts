@@ -10,7 +10,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
 
 
         it(
-            `It sorts classes with this order,
+            `It sorts classes with this order.
             1.Safe Listed
             2.BEM
             3.Basic Utility
