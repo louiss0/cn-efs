@@ -650,6 +650,8 @@ export const attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClas
             word: ['transition', 'resize', 'isolate']
         }
 
+        const tailwindCSSTypeAndValueUtilityClassRE =
+            /^(?<variant>\S+:)?(?<prefix>!|-|!-)?(?<type>[a-z]+-?)(?<subtype>(?<first>[a-z]+-)?(?<second>[a-z]+-))?(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d\/\][]+)?$/
         const tailwindCSSTypeAndValueUtilityClassGroups =
             tailwindCSSTypeAndValueUtilityClassRE.exec(className)?.groups
 
