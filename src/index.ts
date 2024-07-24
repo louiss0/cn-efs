@@ -1,22 +1,25 @@
 
 import clsx from "clsx"
 import {
-    type ClassNamesMap,
     attemptToChangeClassNameMapAccordingToIfTheBEMConvention,
     attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue,
     attemptToChangeClassNameMapBasedOnAFilterObject,
     attemptToChangeClassNameMapAccordingToIfTheClassIsATailwindArbitraryProperty,
     attemptToChangeClassMapBasedOnIfItIsATailwindRelationalUtilityClass,
     attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup,
-    attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue, TailwindClassNamesMap,
-    BootstrapClassNamesMap,
-    BaseCN_EFSClassNamesMap,
+    attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue,
     type FilterObject,
     attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue,
     attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass,
     attemptToChangeClassMapIfAClassIsASingleWordClass
 } from "./classMapChangers"
 
+import {
+    type ClassNamesMap,
+    TailwindClassNamesMap,
+    BootstrapClassNamesMap,
+    BaseCN_EFSClassNamesMap,
+} from './ClassNameMaps';
 
 
 
