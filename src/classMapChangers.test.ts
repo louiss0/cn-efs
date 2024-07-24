@@ -7,6 +7,8 @@ import {
     attemptToChangeClassMapBasedOnIfItIsAWindiVariantGroup,
     attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndValue,
     attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass,
+    attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValue,
+    type ClassTypesWithRelationShipsWithOtherClassTypes,
 } from './classMapChangers';
 
 
@@ -64,6 +66,137 @@ const insertMessagePrefix = "inserts the word before the dash as key and the wor
 
 describe("Test if all class map changers work", () => {
 
+
+    describe(
+        "Testing attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValue",
+        () => {
+
+            describe(
+                "Changes the class map based on the value of a slashValue utility class.",
+                () => {
+
+                    const crossValueUtilityClassRelationShipWithClassesObject: ClassTypesWithRelationShipsWithOtherClassTypes = {
+                        text: {
+                            classType: "text-",
+                            valueType: "word",
+                            secondary: {
+                                classType: "leading-",
+                                valueType: "digit"
+                            }
+                        },
+                        shadow: {
+                            classType: "shadow-",
+                            valueType: "color",
+                            secondary: {
+                                classType: "opacity-",
+                                valueType: "digit",
+                            },
+                        },
+                        accent: {
+                            classType: "accent-",
+                            valueType: "color",
+                            secondary: {
+                                classType: "opacity-",
+                                valueType: "digit"
+                            }
+                        },
+                        bg: {
+                            classType: "bg-",
+                            valueType: "color",
+                            secondary: {
+                                classType: "opacity-",
+                                valueType: "digit"
+                            }
+                        },
+                        border: {
+                            isDirectional: true,
+                            classType: "border-",
+                            valueType: "color",
+                            secondary: {
+                                classType: "opacity-",
+                                valueType: "digit"
+                            }
+                        },
+                        divide: {
+                            isDirectional: true,
+                            classType: "divide-",
+                            valueType: "color",
+                            secondary: {
+                                classType: "opacity-",
+                                valueType: "digit"
+                            }
+                        },
+                        ring: {
+                            classType: "ring-",
+                            valueType: "color",
+                            secondary: {
+                                classType: "opacity-",
+                                valueType: "digit"
+                            }
+                        },
+                    }
+
+                    itUsingTailwindSortedClasses(
+                        "Adds the slash value to the class map then removes it's related classes.",
+                        ({ sortedTailwindClasses: { utility } }) => {
+
+                            const classes = ["leading-6", "text-sm", "text-lg/6"]
+
+                            for (const value of classes) {
+                                attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValue(
+                                    utility,
+                                    value,
+                                    crossValueUtilityClassRelationShipWithClassesObject
+                                )
+                            }
+
+
+
+                            expect(utility.get("text-")?.has("slashValue")).toBeTruthy()
+
+                            expect(utility.get("leading-")?.has("color")).toBeFalsy()
+
+                            expect(utility.get("text-")?.has("word")).toBeFalsy()
+
+
+                        }
+                    )
+
+
+                    itUsingTailwindSortedClasses(
+                        "Adds the slash value to the class map then removes related directional classes.",
+                        ({ sortedTailwindClasses: { utility } }) => {
+
+                            const classes = ["border-gray-500", "border-x-gray-500/50"]
+
+                            for (const value of classes) {
+                                attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashValue(
+                                    utility,
+                                    value,
+                                    crossValueUtilityClassRelationShipWithClassesObject
+                                )
+                            }
+
+
+
+                            expect(utility.get("border-x-")?.has("slashValue"))
+                                .toBeTruthy()
+
+
+                            expect(utility.get("border-")?.has("color")).toBeFalsy()
+
+
+                        }
+                    )
+
+                }
+
+            )
+
+
+
+
+        })
 
 
     describe("Testing attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass", () => {
@@ -1162,65 +1295,6 @@ describe("Test if all class map changers work", () => {
 
 
 
-        describe(
-            "Changes the class map based on the value of a slashValue utility class.",
-            () => {
-
-
-                itUsingTailwindSortedClasses(
-                    "Adds the slash value to the class map then removes it's related classes.",
-                    ({ sortedTailwindClasses: { utility } }) => {
-
-                        const classes = ["leading-6", "text-sm", "text-lg/6"]
-
-                        for (const value of classes) {
-                            attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(
-                                utility,
-                                value
-                            )
-                        }
-
-
-
-                        expect(utility.get("text-")?.has("slashValue")).toBeTruthy()
-
-                        expect(utility.get("leading-")?.has("color")).toBeFalsy()
-
-                        expect(utility.get("text-")?.has("word")).toBeFalsy()
-
-
-                    }
-                )
-
-
-                itUsingTailwindSortedClasses(
-                    "Adds the slash value to the class map then removes related directional classes.",
-                    ({ sortedTailwindClasses: { utility } }) => {
-
-                        const classes = ["border-gray-500", "border-x-gray-500/50"]
-
-                        for (const value of classes) {
-                            attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValue(
-                                utility,
-                                value
-                            )
-                        }
-
-
-
-                        expect(utility.get("border-x-")?.has("slashValue"))
-                            .toBeTruthy()
-
-
-                        expect(utility.get("border-")?.has("color")).toBeFalsy()
-
-
-                    }
-                )
-
-            }
-
-        )
 
 
 

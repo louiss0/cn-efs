@@ -576,66 +576,7 @@ export type ClassTypesWithRelationShipsWithOtherClassTypes = Record<
     }
 >
 
-const crossValueUtilityClassRelationShipWithClassesObject: ClassTypesWithRelationShipsWithOtherClassTypes = {
-    text: {
-        classType: "text-",
-        valueType: "word",
-        secondary: {
-            classType: "leading-",
-            valueType: "digit"
-        }
-    },
-    shadow: {
-        classType: "shadow-",
-        valueType: "color",
-        secondary: {
-            classType: "opacity-",
-            valueType: "digit",
-        },
-    },
-    accent: {
-        classType: "accent-",
-        valueType: "color",
-        secondary: {
-            classType: "opacity-",
-            valueType: "digit"
-        }
-    },
-    bg: {
-        classType: "bg-",
-        valueType: "color",
-        secondary: {
-            classType: "opacity-",
-            valueType: "digit"
-        }
-    },
-    border: {
-        isDirectional: true,
-        classType: "border-",
-        valueType: "color",
-        secondary: {
-            classType: "opacity-",
-            valueType: "digit"
-        }
-    },
-    divide: {
-        isDirectional: true,
-        classType: "divide-",
-        valueType: "color",
-        secondary: {
-            classType: "opacity-",
-            valueType: "digit"
-        }
-    },
-    ring: {
-        classType: "ring-",
-        valueType: "color",
-        secondary: {
-            classType: "opacity-",
-            valueType: "digit"
-        }
-    },
-}
+
 
 const tailwindCSSTypeAndValueUtilityClassRE =
     /^(?<variant>\S+:)?(?<prefix>!|-|!-)?(?<type>[a-z]+-)(?<subtype>(?<first>[a-z]+-)?(?<second>[a-z]+-))?(?<value>\[[\w\-0-9$.#),(%\/:]+\]|[\w\d\/\][]+)$/
