@@ -5,7 +5,7 @@ This library is a library has a set of functions that are created to **Evaluate*
 filter sorters or `cnEFS`'s.
 
 ```js
-  const classes = tailwindOrWindiCN_EFS('border-2 border-6')
+  const classes = windiCN_EFS('border-2 border-6')
   console.log(classes)// output: border-6
   
 ```
@@ -160,11 +160,11 @@ bootstrap people or be a part of this [discussion](https://github.com/orgs/twbs/
 ```vue
 
 <script setup>
-import { tailwindOrWindiCN_EFS } from "@code-fixer-23/cn-efs"
+import { windiCN_EFS } from "@code-fixer-23/cn-efs"
 
 const {class:$class} = useAttrs()
 
-const sortedClasses = tailwindOrWindiCN_EFS(
+const sortedClasses = windiCN_EFS(
    "border", 
    "border-gray-500", 
    $class
@@ -179,7 +179,7 @@ const sortedClasses = tailwindOrWindiCN_EFS(
 
 ```
 
-`tailwindOrWindiCN_EFS()` is a function that will preserve and filter out conflicting
+`windiCN_EFS()` is a function that will preserve and filter out conflicting
 classes that abide by the `Tailwind` and `Windi` CSS Framework.
 It filters out conflicts between variants, states and breakpoints for each utility class.
 It resolves conflicts between important and not important values.

@@ -267,7 +267,7 @@ export const cnEFS: (...args: Parameters<typeof clsx>) => string =
  @returns A string of sorted classes 
 
  */
-export const tailwindOrWindiCN_EFS: (...args: Parameters<typeof clsx>) => string =
+export const windiCN_EFS: (...args: Parameters<typeof clsx>) => string =
     getClassNamesEvaluatorFilterAndSorter({
         filterObject: {
             position: ['absolute', 'sticky', 'relative', "static", "fixed"],

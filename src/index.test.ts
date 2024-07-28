@@ -1,4 +1,4 @@
-import { bootstrapCN_EFS, cnEFS, tailwindOrWindiCN_EFS } from "."
+import { bootstrapCN_EFS, cnEFS, windiCN_EFS } from "."
 
 
 
@@ -126,7 +126,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
     })
 
 
-    describe("Testing tailwindOrWindiCN_EFS", () => {
+    describe("Testing windiCN_EFS", () => {
 
 
         it(
@@ -142,7 +142,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
                     'border-1',
                 ]
 
-                const sortedClasses = tailwindOrWindiCN_EFS(classes)
+                const sortedClasses = windiCN_EFS(classes)
 
 
                 expect(sortedClasses).toBe(
@@ -166,7 +166,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
                     'border',
                 ]
 
-                const sortedClasses = tailwindOrWindiCN_EFS(classes)
+                const sortedClasses = windiCN_EFS(classes)
 
 
                 expect(sortedClasses)
@@ -186,7 +186,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
                     "sticky",
                 ]
 
-                const sortedClasses = tailwindOrWindiCN_EFS(classes)
+                const sortedClasses = windiCN_EFS(classes)
 
 
                 expect(sortedClasses).toBe(classes.at(-1))
@@ -204,7 +204,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
                 "outline-[#FFF333]"
             ]
 
-            const sortedClasses = tailwindOrWindiCN_EFS(classes)
+            const sortedClasses = windiCN_EFS(classes)
 
 
             expect(sortedClasses).not.toBe(classes)
@@ -229,7 +229,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
                 const classes = "random-solid random-[2_4_6] random-1 random-[#FFF333] random-[url(/foo)] random-[--foo]"
 
 
-                const sortedClasses = tailwindOrWindiCN_EFS(classes)
+                const sortedClasses = windiCN_EFS(classes)
 
                 expect(sortedClasses).toBe("random-1 random-solid random-[#FFF333] random-[url(/foo)] random-[--foo] random-[2_4_6]")
 
@@ -246,7 +246,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
             const classes = "[font-size:2px] [font-size:4px] [font-size:8px]"
 
 
-            const sortedClasses = tailwindOrWindiCN_EFS(classes)
+            const sortedClasses = windiCN_EFS(classes)
 
 
             expect(sortedClasses).toBe("[font-size:8px]")
@@ -259,7 +259,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
             const classes = "[font-size:2px] md:[font-size:4px] md:[font-size:8px] lg:[font-size:6px] lg:[font-size:7px]"
 
 
-            const sortedClasses = tailwindOrWindiCN_EFS(classes)
+            const sortedClasses = windiCN_EFS(classes)
 
 
             expect(sortedClasses).toBe("[font-size:2px] md:[font-size:8px] lg:[font-size:7px]")
@@ -278,7 +278,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
                 const classes = "absolute border-1 border-dashed border-gray-500 [font-size:2px]"
 
 
-                const sortedClasses = tailwindOrWindiCN_EFS(classes)
+                const sortedClasses = windiCN_EFS(classes)
 
                 expect(sortedClasses).toBe("absolute [font-size:2px] border-1 border-dashed border-gray-500")
 

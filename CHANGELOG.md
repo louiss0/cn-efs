@@ -8,7 +8,7 @@
 
 ### Fixed
 
-- All possible variants are now detected when using `tailwindOrWindiCN_EFS()`.
+- All possible variants are now detected when using `windiCN_EFS()`.
 
 ## [2.2.3] - 2023-11-19
 
@@ -66,8 +66,8 @@ a class with directional part that is similar to a specific class type.
 
 ## Changed
 
-- `tailwindOrWindiCN_EFS()` now resolves conflicts between classes that use l|t|b|e|r|s.
-- `tailwindOrWindiCN_EFS()` now resolves conflicts between classes that have the same type
+- `windiCN_EFS()` now resolves conflicts between classes that use l|t|b|e|r|s.
+- `windiCN_EFS()` now resolves conflicts between classes that have the same type
 but different subtype.
 - Hide the Api's for users to create their own CN_EFS implementations.
 
