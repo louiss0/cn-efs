@@ -18,14 +18,18 @@ export class ClassNamesMap {
     public readonly customFiltered: Map<
         string,
         Map<StringOrOmitFromString<"base">,
-            string | undefined> | undefined
+            string | undefined
+        > | undefined
     > = new Map()
     public readonly safeListed: Array<string> = []
 }
 
 
 export class BEMClassNamesMap extends ClassNamesMap {
-    public readonly bem: Map<string, Map<ViableBemClassMapKeys, string | undefined> | undefined> = new Map()
+    public readonly bem: Map<
+        string,
+        Map<ViableBemClassMapKeys, string | undefined> | undefined
+    > = new Map()
 }
 
 export class BaseCN_EFSClassNamesMap extends BEMClassNamesMap {
@@ -35,7 +39,8 @@ export class BaseCN_EFSClassNamesMap extends BEMClassNamesMap {
                 ViableUtilityClassMapKeys,
                 "word" | "digit" | "color"
             >,
-            string | undefined
+            Map<"prefix" | "value", string>
+            | undefined
         >
         | undefined
     > = new Map()
@@ -56,11 +61,13 @@ export class BootstrapClassNamesMap extends ClassNamesMap {
 
 export class TailwindClassNamesMap extends ClassNamesMap {
     public readonly arbitraryProperties: Map<string, Map<StringOrOmitFromString<"base">, string | undefined> | undefined> = new Map()
+
     public readonly utility: Map<
         string,
         Map<
             ViableUtilityClassMapKeys,
-            Map<"prefix" | "value", string> | undefined
+            Map<"prefix" | "value", string>
+            | undefined
         > | undefined
     > = new Map()
 

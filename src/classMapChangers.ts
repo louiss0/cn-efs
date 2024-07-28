@@ -83,15 +83,16 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
 
 
     const cssTypeValueUtilityClassMatchGroups =
-        /(?<type>[a-z]+-)(?<subtype>(?:[a-z]+-)*)?(?<value>[a-z\d]+)/.exec(className)?.groups
-        || /(?<type>[a-z]+)(?<value>\d+)/.exec(className)?.groups
+        /(?<prefix>!|-|!-)?(?<type>[a-z]+-)(?<subtype>(?:[a-z]+-)*)?(?<value>[a-z\d]+)/.exec(className)?.groups
+
+    // || /(?<prefix>!|-|!-)?(?<type>[a-z]+)(?<value>\d+)/.exec(className)?.groups
 
 
     if (!cssTypeValueUtilityClassMatchGroups) return false
 
 
 
-    const { type, value, subtype = "", } = cssTypeValueUtilityClassMatchGroups
+    const { type, value, subtype = "", prefix } = cssTypeValueUtilityClassMatchGroups
 
 
     if (!type || !value) return false
@@ -135,7 +136,15 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
 
 
 
-                classMap.set(type, new Map([[viableUtilityClassMapKeys[2], `${color}${range}`]]))
+                classMap.set(
+                    type,
+                    new Map().set(
+                        viableUtilityClassMapKeys[2],
+                        new Map()
+                            .set('prefix', prefix)
+                            .set('value', value)
+                    )
+                )
 
                 return true
 
@@ -143,7 +152,15 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
 
 
 
-            classMap.set(type, new Map([[viableUtilityClassMapKeys[2], subTypeAndValue]]))
+            classMap.set(
+                type,
+                new Map().set(
+                    viableUtilityClassMapKeys[2],
+                    new Map()
+                        .set('prefix', prefix)
+                        .set('value', subTypeAndValue)
+                )
+            )
 
             return true
 
@@ -154,7 +171,16 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
 
 
 
-            classMap.set(typeAndSubtype, new Map([[viableUtilityClassMapKeys[0], value]]))
+            classMap.set(
+                typeAndSubtype,
+                new Map()
+                    .set(
+                        viableUtilityClassMapKeys[0],
+                        new Map()
+                            .set('prefix', prefix)
+                            .set('value', value)
+                    )
+            )
 
 
             return true
@@ -175,7 +201,12 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
 
                     classMap.set(
                         type,
-                        new Map([[viableUtilityClassMapKeys[1], `${first_word}${middle_words}${last_word}`]])
+                        new Map().set(
+                            viableUtilityClassMapKeys[1],
+                            new Map()
+                                .set('prefix', prefix)
+                                .set('value', `${first_word}${middle_words}${last_word}`)
+                        )
                     )
 
                     return true
@@ -183,14 +214,25 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
 
                 classMap.get(type)?.set(
                     viableUtilityClassMapKeys[1],
-                    `${first_word}${middle_words}${last_word}`
+                    new Map()
+                        .set('prefix', prefix)
+                        .set('value', `${first_word}${middle_words}${last_word}`)
+
                 )
 
 
                 return true
             }
 
-            classMap.set(typeAndSubtype, new Map([[viableUtilityClassMapKeys[1], value]]))
+            classMap.set(
+                typeAndSubtype,
+                new Map().set(
+                    viableUtilityClassMapKeys[1],
+                    new Map()
+                        .set('prefix', prefix)
+                        .set('value', value)
+                )
+            )
 
 
 
@@ -215,14 +257,23 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
 
             if (!colorRangeGroups) {
 
-                result.set(viableUtilityClassMapKeys[2], value)
+                result.set(viableUtilityClassMapKeys[2], new Map()
+                    .set('prefix', prefix)
+                    .set('value', value))
 
                 return true
 
             }
 
 
-            result.set(viableUtilityClassMapKeys[2], `${colorRangeGroups.color}${colorRangeGroups.range}`)
+            result.set(
+                viableUtilityClassMapKeys[2],
+                new Map()
+                    .set('prefix', prefix)
+                    .set('value', `${colorRangeGroups.color}${colorRangeGroups.range}`
+
+                    )
+            )
 
 
             return true
@@ -233,7 +284,9 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
 
         if (valueIsAViableDigit) {
 
-            result.set(viableUtilityClassMapKeys[0], value)
+            result.set(viableUtilityClassMapKeys[0], new Map()
+                .set('prefix', prefix)
+                .set('value', value))
 
             return true
         }
@@ -241,7 +294,9 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
 
         if (valueIsAViableWord) {
 
-            result.set(viableUtilityClassMapKeys[1], value)
+            result.set(viableUtilityClassMapKeys[1], new Map()
+                .set('prefix', prefix)
+                .set('value', value))
 
 
 
