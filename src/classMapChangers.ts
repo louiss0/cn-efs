@@ -79,13 +79,199 @@ export const attemptToChangeClassMapIfAClassIsASingleWordClass =
 
 
 
+type DirectionClassParts = Record<"up" | "down", `${string}-`>
+    & Record<
+        "left" | "right" |
+        "topLeft" | "topRight" |
+        "bottomLeft" | "bottomRight",
+        {
+            primary: `${string}-`;
+            secondary?: `${string}-`;
+        }>
+    & Record<"horizontal" | "vertical" | "both", `${string}-`>;
+
+const attemptToDeleteKeyBasedOnDirectionBasedClassesFactory = (
+    classTypesThatUseDirectionParts: ReadonlyArray<string>,
+    requiredClassParts: DirectionClassParts
+) => <T extends Map<string, Map<'digit' | Omit<string, 'digit'>, Map<"prefix" | "value", string> | undefined> | undefined>>(
+    classMap: T,
+    classTypeAndSubtype: {
+        type: string,
+        subtype: string
+    }
+) => {
+
+        const { type, subtype } = classTypeAndSubtype
+
+        const classTypeIsAPartOfOrIsAClassThatUsesDirectionParts = classTypesThatUseDirectionParts
+            .some(value => type.startsWith(value) || type === value)
+
+
+        if (!classTypeIsAPartOfOrIsAClassThatUsesDirectionParts) return false
+
+
+        const deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts =
+            (directionClassPart: string, opposingDirectionClassPart: string) => {
+
+
+                if (type.endsWith(directionClassPart)) {
+
+                    const valueMap = classMap.get(
+                        `${type.replace(directionClassPart, "")}${opposingDirectionClassPart}`
+                    )
+
+
+                    return valueMap?.delete(viableUtilityClassMapKeys[0])
+
+
+                }
+
+
+
+                if (subtype === directionClassPart) {
+
+                    const valueMap = classMap
+                        .get(`${type}${opposingDirectionClassPart === "-" ? "" : opposingDirectionClassPart}`)
+
+
+                    return valueMap?.delete(viableUtilityClassMapKeys[0])
+
+
+                }
+
+                return false
+
+            }
+
+
+        const {
+            up,
+            down,
+            left,
+            right,
+            horizontal,
+            both,
+            vertical,
+            bottomLeft,
+            bottomRight,
+            topLeft,
+            topRight
+        } = requiredClassParts
+
+
+
+
+        return [
+            deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts(both, up),
+            deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts(up, both),
+            deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts(down, both),
+
+            deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts(left.primary, both),
+            deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts(both, left.primary),
+
+            deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts(right.primary, both),
+            deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts(both, right.primary),
+
+            deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts(topLeft.primary, both),
+            deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts(both, topLeft.primary),
+
+            deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts(topRight.primary, both),
+            deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts(both, topRight.primary),
+
+            deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts(bottomLeft.primary, both),
+            deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts(both, bottomLeft.primary),
+
+            deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts(bottomRight.primary, both),
+            deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts(both, bottomRight.primary),
+
+            deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts(horizontal, both),
+            deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts(both, horizontal),
+            deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts(vertical, both),
+            deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts(both, vertical),
+
+            // ! It's best to leave these conditions at the bottom since they will rarely be reached
+            left?.secondary && right?.secondary && deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts(left.secondary, both),
+            left?.secondary && right?.secondary && deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts(both, left.secondary),
+            topLeft?.secondary && topRight?.secondary && deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts(topRight.secondary, both),
+            topLeft?.secondary && topRight?.secondary && deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts(both, topRight.secondary),
+
+            bottomLeft?.secondary && bottomRight?.secondary && deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts(bottomRight.secondary, both),
+            bottomLeft?.secondary && bottomRight?.secondary && deleteDigitValueTypeBasedOnClassPartsOpposingDirectionParts(both, bottomRight.secondary),
+
+        ].reduce(value => value === true)
+
+
+
+    }
+
+const attemptToDeleteKeysInTheBaseCN_EFSClassNamesMapWhenAClassThatHasDirectionPartsIsFoundAndASimilarClassIsFound =
+    attemptToDeleteKeyBasedOnDirectionBasedClassesFactory(
+        [
+            "m",
+            "margin",
+            "z-index",
+            "border",
+            "p",
+            "padding",
+            "start",
+            "end",
+            "overflow",
+            "gap",
+            "scale",
+            "translate",
+            "rotate",
+            "skew",
+            "rounded",
+            "border-radius",
+            "scroll",
+            "scroll-m",
+            "scroll-margin",
+            "touch-pan",
+            "bg-repeat",
+            "background-repeat",
+            "divide",
+            "space",
+        ],
+        {
+            up: "t-",
+            down: "b-",
+            left: {
+                primary: "l-",
+                secondary: "left-"
+            },
+            topLeft: {
+                primary: "tl-",
+                secondary: "top-left-"
+            },
+            bottomLeft: {
+                primary: "bl-",
+                secondary: "bottom-left-"
+            },
+            right: {
+                primary: "r-",
+                secondary: "right-"
+            },
+            topRight: {
+                primary: "tr-",
+                secondary: "top-right-"
+            },
+            bottomRight: {
+                primary: "br-",
+                secondary: "bottom-right-"
+            },
+            horizontal: "x-",
+            both: "-",
+            vertical: "y-"
+        }
+    );
+
+
 export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue: ClassMapChangerBasedOnClassName<BaseCN_EFSClassNamesMap["utility"]> = (classMap, className) => {
 
 
     const cssTypeValueUtilityClassMatchGroups =
         /(?<prefix>!|-|!-)?(?<type>[a-z]+-)(?<subtype>(?:[a-z]+-)*)?(?<value>[a-z\d]+)/.exec(className)?.groups
 
-    // || /(?<prefix>!|-|!-)?(?<type>[a-z]+)(?<value>\d+)/.exec(className)?.groups
 
 
     if (!cssTypeValueUtilityClassMatchGroups) return false
@@ -288,6 +474,16 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
                 .set('prefix', prefix)
                 .set('value', value))
 
+
+            attemptToDeleteKeysInTheBaseCN_EFSClassNamesMapWhenAClassThatHasDirectionPartsIsFoundAndASimilarClassIsFound(
+                classMap,
+                {
+                    type,
+                    subtype
+                }
+            );
+
+
             return true
         }
 
@@ -430,160 +626,31 @@ export const attemptToChangeClassMapBasedOnTheBootstrapCSSUtilityClassTypeAndVal
     };
 
 
-type DirectionClassParts = Record<"up" | "down", `${string}-`>
-    & Record<
-        "left" | "right" |
-        "topLeft" | "topRight" |
-        "bottomLeft" | "bottomRight",
-        {
-            primary: `${string}-`;
-            secondary?: `${string}-`;
-        }>
-    & Record<"horizontal" | "vertical" | "both", `${string}-`>;
-
-const getDeleteKeyBasedOnDirectionBasedClasses = (
-    classTypesThatUseDirectionParts: Array<string>,
-    requiredClassParts: DirectionClassParts
-
-) => (
-    classMap: TailwindClassNamesMap['utility'],
-    valueKey: "color" | "digit",
-    classTypeAndSubtype: {
-        type: string,
-        subtype: string
-    }
-) => {
-
-        const { type, subtype } = classTypeAndSubtype
-
-        const classTypeIsAPartOfOrIsAClassThatUsesDirectionParts = classTypesThatUseDirectionParts
-            .some(value => type.startsWith(value) || type === value)
-
-
-        if (!classTypeIsAPartOfOrIsAClassThatUsesDirectionParts) return false
-
-
-        const deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts =
-            (directionClassPart: string, opposingDirectionClassPart: string) => {
-
-
-                if (type.endsWith(directionClassPart)) {
-
-                    const valueMap = classMap.get(
-                        `${type.replace(directionClassPart, "")}${opposingDirectionClassPart}`
-                    )
-
-
-                    return valueMap?.delete(valueKey)
-
-
-                }
 
 
 
-                if (subtype === directionClassPart) {
-
-                    const valueMap = classMap
-                        .get(`${type}${opposingDirectionClassPart === "-" ? "" : opposingDirectionClassPart}`)
-
-
-                    return valueMap?.delete(valueKey)
-
-
-                }
-
-                return false
-
-            }
-
-
-        const {
-            up,
-            down,
-            left,
-            right,
-            horizontal,
-            both,
-            vertical,
-            bottomLeft,
-            bottomRight,
-            topLeft,
-            topRight
-        } = requiredClassParts
-
-
-
-
-        return [
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, up),
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(up, both),
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(down, both),
-
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(left.primary, both),
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, left.primary),
-
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(right.primary, both),
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, right.primary),
-
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(topLeft.primary, both),
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, topLeft.primary),
-
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(topRight.primary, both),
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, topRight.primary),
-
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(bottomLeft.primary, both),
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, bottomLeft.primary),
-
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(bottomRight.primary, both),
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, bottomRight.primary),
-
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(horizontal, both),
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, horizontal),
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(vertical, both),
-            deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, vertical),
-
-            // ! It's best to leave these conditions at the bottom since they will rarely be reached
-            left?.secondary && right?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(left.secondary, both),
-            left?.secondary && right?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, left.secondary),
-            topLeft?.secondary && topRight?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(topRight.secondary, both),
-            topLeft?.secondary && topRight?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, topRight.secondary),
-
-            bottomLeft?.secondary && bottomRight?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(bottomRight.secondary, both),
-            bottomLeft?.secondary && bottomRight?.secondary && deleteColorValueTypeBasedOnClassPartsOpposingDirectionParts(both, bottomRight.secondary),
-
-        ].reduce(value => value === true)
-
-
-
-
-
-
-    }
-
-
-const classTypesWithDirectionalClassParts = [
-    "m",
-    "z-index",
-    "border",
-    "p",
-    "start",
-    "end",
-    "overflow",
-    "gap",
-    "scale",
-    "translate",
-    "rotate",
-    "skew",
-    "rounded",
-    "scroll",
-    "scroll-m",
-    "touch-pan",
-    "bg-repeat",
-    "divide",
-];
 const attemptToDeleteKeysInTheTailwindUtilityClassMapWhenAClassThatHasDirectionPartsIsFoundAndASimilarClassIsFound =
-    getDeleteKeyBasedOnDirectionBasedClasses(
-        classTypesWithDirectionalClassParts,
+    attemptToDeleteKeyBasedOnDirectionBasedClassesFactory(
+        [
+            "m",
+            "z-index",
+            "border",
+            "p",
+            "start",
+            "end",
+            "overflow",
+            "gap",
+            "scale",
+            "translate",
+            "rotate",
+            "skew",
+            "rounded",
+            "scroll",
+            "scroll-m",
+            "touch-pan",
+            "bg-repeat",
+            "divide",
+        ],
         {
             up: "t-",
             down: "b-",
@@ -995,7 +1062,6 @@ export const attemptToChangeTailwindCSSUtilityClassMapBasedOnIfAClassHasASlashVa
 
                 attemptToDeleteKeysInTheTailwindUtilityClassMapWhenAClassThatHasDirectionPartsIsFoundAndASimilarClassIsFound(
                     classMap,
-                    viableUtilityClassMapKeys[2],
                     {
                         type: `${variant}${classType}`,
                         subtype: firstSubtype ?? secondSubtype
@@ -1187,7 +1253,6 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
                     const keyDeletionAttemptResult = attemptToDeleteKeysInTheTailwindUtilityClassMapWhenAClassThatHasDirectionPartsIsFoundAndASimilarClassIsFound(
                         classMap,
-                        viableUtilityClassMapKeys[0],
                         {
                             type: classVariantAndType,
                             subtype
@@ -1249,10 +1314,12 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
                 if (arbitraryValueIsAViableCSSVariable) {
 
-                    classMap.set(classVariantTypeAndSubtype, new Map([[viableUtilityClassMapKeys[3], new Map([
-                        ["prefix", prefix],
-                        ["value", value]
-                    ])]]))
+                    classMap.set(
+                        classVariantTypeAndSubtype,
+                        new Map([[viableUtilityClassMapKeys[3], new Map([
+                            ["prefix", prefix],
+                            ["value", value]
+                        ])]]))
 
                     deleteIdenticalValueTypeUsingTheKeyFromClassMapIfItsATailwindClassTypeAndSubtypeWithOptionalVariantPrefix(
                         classMap,
@@ -1305,7 +1372,6 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
                     const keyDeletionAttemptResult = attemptToDeleteKeysInTheTailwindUtilityClassMapWhenAClassThatHasDirectionPartsIsFoundAndASimilarClassIsFound(
                         classMap,
-                        viableUtilityClassMapKeys[0],
                         {
                             type: classVariantAndType,
                             subtype
@@ -1444,7 +1510,6 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
                 const keyDeletionAttemptResult = attemptToDeleteKeysInTheTailwindUtilityClassMapWhenAClassThatHasDirectionPartsIsFoundAndASimilarClassIsFound(
                     classMap,
-                    viableUtilityClassMapKeys[0],
                     {
                         type: classVariantAndType,
                         subtype
@@ -1580,7 +1645,6 @@ export const attemptToChangeClassMapBasedOnTheTailwindCSSUtilityClassTypeAndValu
 
                 const keyDeletionAttemptResult = attemptToDeleteKeysInTheTailwindUtilityClassMapWhenAClassThatHasDirectionPartsIsFoundAndASimilarClassIsFound(
                     classMap,
-                    viableUtilityClassMapKeys[0],
                     {
                         type: classVariantAndType,
                         subtype
