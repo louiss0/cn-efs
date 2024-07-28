@@ -238,8 +238,10 @@ export const cnEFS: (...args: Parameters<typeof clsx>) => string =
 
                     const utilityClassesFromValuesFromUtilityValueMap =
                         valuesFromUtilityValueMap
-                            .filter((classNameValue) => typeof classNameValue === "string")
-                            .map((classNameValue) => `${utility}${classNameValue} `);
+                            .filter((value) => value instanceof Map)
+                            .map((classNameValueMap) =>
+                                `${classNameValueMap.get('prefix') ?? ''}${utility}${classNameValueMap.get('value') ?? ''} `
+                            );
 
                     sortString = sortString.concat(
                         ...utilityClassesFromValuesFromUtilityValueMap,
