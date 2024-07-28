@@ -11,8 +11,9 @@ import {
 export type FilterObject = Record<string, Array<Lowercase<string>>>;
 
 const properCSSDigitRE = /^(?<digit>\d{1,4}(?:[a-z]{2,4})?)$/
-
+const pxWordRE = /^px$/
 const checkIfStringIsAProperDigit = (string: string) => properCSSDigitRE.test(string)
+    || pxWordRE.test(string)
 
 
 const colorRangeRE = /^(?<color>[a-z]+-)(?<range>[0-9]{2,4})$/
