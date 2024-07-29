@@ -1,12 +1,14 @@
 {
     "$schema": "https://unpkg.com/release-it@17/schema/release-it.json",
     "hooks": {
-        "before:init": [],
+        "before:init": [
+            "pnpm tsup"
+        ],
         "after:git:release": "echo After git push, before github release",
-        "after:release": "echo Successfully released Legacy ${name} v${version} to ${repo.repository}."
+        "after:release": "echo Successfully released Legacy ${npm.name} v${version} to ${repo.repository}."
     },
     "git": {
-        "tagName": "Legacy ${name}v${version}",
+        "tagName": "Legacy ${npm.name}v${version}",
         "commitMessage": "Legacy chore: release v${version}"
     },
     "github": {
