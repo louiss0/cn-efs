@@ -21,6 +21,7 @@
   },
   "scripts": {
     "dev": "vitest",
+    "build": "tsup",
     "coverage": "vitest run --coverage",
     "release": "release-it --ci"
   },

@@ -1,10 +1,8 @@
 {
     "$schema": "https://unpkg.com/release-it@17/schema/release-it.json",
     "hooks": {
-        "before:init": [
-            "pnpm tsup"
-        ],
         "after:git:release": "echo After git push, before github release",
+        "after:bump": "pnpm run build",
         "after:release": "echo Successfully released Legacy ${npm.name} v${version} to ${repo.repository}."
     },
     "git": {
@@ -12,7 +10,10 @@
         "commitMessage": "Legacy chore: release v${version}"
     },
     "github": {
-        "release": true
+        "release": true,
+        "assets": [
+            "dist/**/*"
+        ]
     },
     "plugins": {
         "release-it-pnpm": {},
