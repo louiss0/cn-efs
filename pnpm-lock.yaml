@@ -11,9 +11,6 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
-      release-it-pnpm:
-        specifier: ^4.6.3
-        version: 4.6.3(magicast@0.3.4)(release-it@17.6.0(typescript@5.5.3))
     devDependencies:
       '@release-it/keep-a-changelog':
         specifier: ^5.0.0
@@ -30,6 +27,9 @@ importers:
       release-it:
         specifier: ^17.6.0
         version: 17.6.0(typescript@5.5.3)
+      release-it-pnpm:
+        specifier: ^4.6.3
+        version: 4.6.3(magicast@0.3.4)(release-it@17.6.0(typescript@5.5.3))
       semantic-release:
         specifier: ^24.0.0
         version: 24.0.0(typescript@5.5.3)
