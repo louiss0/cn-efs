@@ -54,6 +54,7 @@
     "url": "https://github.com/louiss0"
   },
   "dependencies": {
-    "clsx": "^2.1.1"
+    "clsx": "^2.1.1",
+    "release-it-pnpm": "^4.6.3"
   }
 }

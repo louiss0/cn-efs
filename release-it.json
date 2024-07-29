@@ -12,6 +12,7 @@
         "release": true
     },
     "plugins": {
+        "release-it-pnpm": {},
         "@release-it/keep-a-changelog": {
             "addUnreleased": true
         }
