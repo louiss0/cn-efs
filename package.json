@@ -22,7 +22,7 @@
   "scripts": {
     "dev": "vitest",
     "coverage": "vitest run --coverage",
-    "release": "tsup && dotenv release-it"
+    "release": "release-it --ci"
   },
   "license": "MIT",
   "devDependencies": {
