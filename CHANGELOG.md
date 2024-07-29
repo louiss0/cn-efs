@@ -4,6 +4,28 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- a one decimal that allows only up to four numbers after it is allowed to be a viable number
+- create named groups for properCSSDigitRE Regex to make it work as expected.
+- make the word px into a viable digit.
+- reimplement tagify utility regex inside attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue
+- use regex specifically made for attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass.
+  implement deletion of direction based classes based on in attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue
+- make attemptToChangeClassMapIfAClassIsASingleWordClass add a class to the list if the class isn't in the list.
+- make attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass change classes properly.
+- comment out safe listing logic for classes
+- resolve conflict between single word and utility classes
+- add attemptToChangeClassMapIfAClassIsASingleWordClassATailwindAliasClass to tailwindCN_EFS
+
+### Added
+
+- implement deletion of direction based classes based on in attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue
+
+### Changed
+
+- Change tailwindOrWindiCN_EFS to windiCN_EFS.
+
 ## [2.2.4] - 2023-11-24
 
 ### Fixed
