@@ -1,6 +1,6 @@
 <!-- markdownlint-disable-file MD024 a changelog must have multiple headings -->
 
-# Changelog
+# Legacy Changelog
 
 ## [Unreleased]
 
