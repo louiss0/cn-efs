@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [3.0.0-beta.1] - 2024-07-29
+
 ### Fixed
 
 - a one decimal that allows only up to four numbers after it is allowed to be a viable number
