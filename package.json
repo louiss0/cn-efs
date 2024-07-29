@@ -1,6 +1,6 @@
 {
   "name": "@code-fixer-23/cn-efs",
-  "version": "2.2.5",
+  "version": "2.2.4",
   "description": "This is the repo for creating a Class Name Filter Sorter",
   "type": "module",
   "main": "./dist/index.cjs",
