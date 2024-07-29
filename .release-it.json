@@ -1,8 +1,8 @@
 {
     "$schema": "https://unpkg.com/release-it@17/schema/release-it.json",
     "hooks": {
+        "before:init": "pnpm run build",
         "after:git:release": "echo After git push, before github release",
-        "after:bump": "pnpm run build",
         "after:release": "echo Successfully released Legacy ${npm.name} v${version} to ${repo.repository}."
     },
     "git": {
