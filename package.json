@@ -21,7 +21,7 @@
     "prepare": "tshy",
     "coverage": "vitest run --coverage"
   },
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@total-typescript/ts-reset": "^0.5.1",
     "@vitest/coverage-v8": "^1.6.0",
