@@ -6,7 +6,7 @@
         "after:release": "echo Successfully released Legacy ${npm.name} v${version} to ${repo.repository}."
     },
     "git": {
-        "tagName": "Legacy ${npm.name}v${version}",
+        "tagName": "legacy--${npm.name}v${version}",
         "commitMessage": "Legacy chore: release v${version}"
     },
     "github": {
