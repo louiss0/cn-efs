@@ -267,59 +267,82 @@ const attemptToDeleteKeysInTheBaseCN_EFSClassNamesMapWhenAClassThatHasDirectionP
     );
 
 
-export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue: ClassMapChangerBasedOnClassName<BaseCN_EFSClassNamesMap["utility"]> = (classMap, className) => {
+const normalUtilityClassRE =
+    /(?<prefix>!|-|!-)?(?<type>[a-z]+-)(?<subtype>(?:[a-z]+-)*)?(?<value>[a-z\d]+)/;
+
+const tagifyUtilityClassRE =
+    /(?<prefix>!|-|!-)?(?<type>[a-z]+)(?<value>\d+)/;
+
+export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValue: ClassMapChangerBasedOnClassName<BaseCN_EFSClassNamesMap["utility"]> =
+    (classMap, className) => {
 
 
-    const cssTypeValueUtilityClassMatchGroups =
-        /(?<prefix>!|-|!-)?(?<type>[a-z]+-)(?<subtype>(?:[a-z]+-)*)?(?<value>[a-z\d]+)/.exec(className)?.groups
+        const cssTypeValueUtilityClassMatchGroups =
+            normalUtilityClassRE.exec(className)?.groups
+            || tagifyUtilityClassRE.exec(className)?.groups
 
 
-
-    if (!cssTypeValueUtilityClassMatchGroups) return false
-
-
-
-    const { type, value, subtype = "", prefix } = cssTypeValueUtilityClassMatchGroups
-
-
-    if (!type || !value) return false
-
-
-    const typeAndSubtype = `${type}${subtype}`
-
-    const subTypeAndValue = `${subtype}${value}`
+        if (!cssTypeValueUtilityClassMatchGroups) return false
 
 
 
-
-    const valueIsAViableDigit = checkIfStringIsAProperDigit(value)
-
-
-    const valueIsAViableWord = checkIfStringIsALowerCaseWord(value)
+        const { type, value, subtype = "", prefix } = cssTypeValueUtilityClassMatchGroups
 
 
-    const valueIsAViableColor = isAColorRange(subTypeAndValue)
-        || subtypeUsesAnAryAsAPostFixWithMaybeAValueRE.test(subTypeAndValue)
+        if (!type || !value) return false
 
 
-    const colorRangeGroups = colorRangeRE.exec(subTypeAndValue)?.groups
+        const typeAndSubtype = `${type}${subtype}`
+
+        const subTypeAndValue = `${subtype}${value}`
 
 
-    const dashedLowerCaseWordGroups = dashedLowerCaseWordRE.exec(subTypeAndValue)?.groups
 
 
-    if (!classMap.has(type)) {
+        const valueIsAViableDigit = checkIfStringIsAProperDigit(value)
 
 
-        if (valueIsAViableColor) {
+        const valueIsAViableWord = checkIfStringIsALowerCaseWord(value)
 
 
-            if (colorRangeGroups) {
+        const valueIsAViableColor = isAColorRange(subTypeAndValue)
+            || subtypeUsesAnAryAsAPostFixWithMaybeAValueRE.test(subTypeAndValue)
 
 
-                const { color, range } = colorRangeGroups
+        const colorRangeGroups = colorRangeRE.exec(subTypeAndValue)?.groups
 
-                if (!color || !range) return false
+
+        const dashedLowerCaseWordGroups = dashedLowerCaseWordRE.exec(subTypeAndValue)?.groups
+
+
+        if (!classMap.has(type)) {
+
+
+            if (valueIsAViableColor) {
+
+
+                if (colorRangeGroups) {
+
+
+                    const { color, range } = colorRangeGroups
+
+                    if (!color || !range) return false
+
+
+
+                    classMap.set(
+                        type,
+                        new Map().set(
+                            viableUtilityClassMapKeys[2],
+                            new Map()
+                                .set('prefix', prefix)
+                                .set('value', value)
+                        )
+                    )
+
+                    return true
+
+                }
 
 
 
@@ -329,7 +352,7 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
                         viableUtilityClassMapKeys[2],
                         new Map()
                             .set('prefix', prefix)
-                            .set('value', value)
+                            .set('value', subTypeAndValue)
                     )
                 )
 
@@ -338,177 +361,161 @@ export const attemptToChangeClassMapBasedOnIfItIsATypicalUtilityClassTypeAndValu
             }
 
 
+            if (valueIsAViableDigit) {
 
-            classMap.set(
-                type,
-                new Map().set(
-                    viableUtilityClassMapKeys[2],
+
+
+                classMap.set(
+                    typeAndSubtype,
                     new Map()
-                        .set('prefix', prefix)
-                        .set('value', subTypeAndValue)
-                )
-            )
-
-            return true
-
-        }
-
-
-        if (valueIsAViableDigit) {
-
-
-
-            classMap.set(
-                typeAndSubtype,
-                new Map()
-                    .set(
-                        viableUtilityClassMapKeys[0],
-                        new Map()
-                            .set('prefix', prefix)
-                            .set('value', value)
-                    )
-            )
-
-
-            return true
-
-        }
-
-
-        if (valueIsAViableWord) {
-
-
-            if (dashedLowerCaseWordGroups) {
-
-
-                const { first_word, middle_words = "", last_word } = dashedLowerCaseWordGroups
-
-
-                if (first_word && last_word) {
-
-                    classMap.set(
-                        type,
-                        new Map().set(
-                            viableUtilityClassMapKeys[1],
+                        .set(
+                            viableUtilityClassMapKeys[0],
                             new Map()
                                 .set('prefix', prefix)
-                                .set('value', `${first_word}${middle_words}${last_word}`)
+                                .set('value', value)
                         )
+                )
+
+
+                return true
+
+            }
+
+
+            if (valueIsAViableWord) {
+
+
+                if (dashedLowerCaseWordGroups) {
+
+
+                    const { first_word, middle_words = "", last_word } = dashedLowerCaseWordGroups
+
+
+                    if (first_word && last_word) {
+
+                        classMap.set(
+                            type,
+                            new Map().set(
+                                viableUtilityClassMapKeys[1],
+                                new Map()
+                                    .set('prefix', prefix)
+                                    .set('value', `${first_word}${middle_words}${last_word}`)
+                            )
+                        )
+
+                        return true
+                    }
+
+                    classMap.get(type)?.set(
+                        viableUtilityClassMapKeys[1],
+                        new Map()
+                            .set('prefix', prefix)
+                            .set('value', `${first_word}${middle_words}${last_word}`)
+
                     )
+
 
                     return true
                 }
 
-                classMap.get(type)?.set(
-                    viableUtilityClassMapKeys[1],
-                    new Map()
-                        .set('prefix', prefix)
-                        .set('value', `${first_word}${middle_words}${last_word}`)
-
+                classMap.set(
+                    typeAndSubtype,
+                    new Map().set(
+                        viableUtilityClassMapKeys[1],
+                        new Map()
+                            .set('prefix', prefix)
+                            .set('value', value)
+                    )
                 )
+
 
 
                 return true
             }
 
-            classMap.set(
-                typeAndSubtype,
-                new Map().set(
-                    viableUtilityClassMapKeys[1],
-                    new Map()
-                        .set('prefix', prefix)
-                        .set('value', value)
-                )
-            )
 
 
 
-            return true
+
+
         }
 
 
 
+        const result = classMap.get(type) || classMap.get(typeAndSubtype)
+
+
+        if (result) {
+
+            if (valueIsAViableColor) {
+
+                if (!colorRangeGroups) {
+
+                    result.set(viableUtilityClassMapKeys[2], new Map()
+                        .set('prefix', prefix)
+                        .set('value', value))
+
+                    return true
+
+                }
+
+
+                result.set(
+                    viableUtilityClassMapKeys[2],
+                    new Map()
+                        .set('prefix', prefix)
+                        .set('value', `${colorRangeGroups.color}${colorRangeGroups.range}`
+
+                        )
+                )
+
+
+                return true
+
+            }
 
 
 
-    }
+            if (valueIsAViableDigit) {
 
-
-
-    const result = classMap.get(type) || classMap.get(typeAndSubtype)
-
-
-    if (result) {
-
-        if (valueIsAViableColor) {
-
-            if (!colorRangeGroups) {
-
-                result.set(viableUtilityClassMapKeys[2], new Map()
+                result.set(viableUtilityClassMapKeys[0], new Map()
                     .set('prefix', prefix)
                     .set('value', value))
 
+
+                attemptToDeleteKeysInTheBaseCN_EFSClassNamesMapWhenAClassThatHasDirectionPartsIsFoundAndASimilarClassIsFound(
+                    classMap,
+                    {
+                        type,
+                        subtype
+                    }
+                );
+
+
+                return true
+            }
+
+
+            if (valueIsAViableWord) {
+
+                result.set(viableUtilityClassMapKeys[1], new Map()
+                    .set('prefix', prefix)
+                    .set('value', value))
+
+
+
                 return true
 
             }
 
 
-            result.set(
-                viableUtilityClassMapKeys[2],
-                new Map()
-                    .set('prefix', prefix)
-                    .set('value', `${colorRangeGroups.color}${colorRangeGroups.range}`
-
-                    )
-            )
-
-
-            return true
 
         }
 
+        return false
 
 
-        if (valueIsAViableDigit) {
-
-            result.set(viableUtilityClassMapKeys[0], new Map()
-                .set('prefix', prefix)
-                .set('value', value))
-
-
-            attemptToDeleteKeysInTheBaseCN_EFSClassNamesMapWhenAClassThatHasDirectionPartsIsFoundAndASimilarClassIsFound(
-                classMap,
-                {
-                    type,
-                    subtype
-                }
-            );
-
-
-            return true
-        }
-
-
-        if (valueIsAViableWord) {
-
-            result.set(viableUtilityClassMapKeys[1], new Map()
-                .set('prefix', prefix)
-                .set('value', value))
-
-
-
-            return true
-
-        }
-
-
-
-    }
-
-    return false
-
-
-};
+    };
 
 
 
