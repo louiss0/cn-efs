@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [3.0.0-beta.2] - 2024-07-29
+
 ### Changed
 
 - Release It is now configured to run build before bump.
