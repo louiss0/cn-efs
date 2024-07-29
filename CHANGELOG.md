@@ -8,7 +8,7 @@
 
 - Release It is now configured to run build before bump.
 
-## [3.0.0-beta.1] - 2024-07-29
+## [legacy--3.0.0-beta.1] - 2024-07-29
 
 ### Fixed
 
