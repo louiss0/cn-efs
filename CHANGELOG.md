@@ -1,10 +1,12 @@
 <!-- markdownlint-disable-file MD024 a changelog must have multiple headings -->
-
+<!-- You must prefix every release in this changelog with legacy--v from now on.
+Git tags are prefixed with that term making things difficult.
+ -->
 # Legacy Changelog
 
 ## [Unreleased]
 
-## [3.0.0-beta.2] - 2024-07-29
+## [legacy--v3.0.0-beta.2] - 2024-07-29
 
 ### Changed
 
