@@ -293,7 +293,7 @@ export const cnEFS: (...args: Parameters<typeof clsx>) => string =
  
  ```ts
    windiCN_EFS('[font-size:45rem]', '[font-size:35rem]',)
-   // output 'margin-6 border-left-3'
+   // output '[font-size:35rem]'
  ```
 @example variants
  
@@ -306,7 +306,10 @@ export const cnEFS: (...args: Parameters<typeof clsx>) => string =
    )
 // output 'hover:bg-red-900, hover:text-green-400 focus:border-red-50'
  ```
- 
+ @description This function doesn't resolve differences 
+ between **arbitrary properties** and **utility-classes**.
+ Fixing this problem will lead to the bad practice of writing 
+ one after the other.
 
  */
 export const windiCN_EFS: (...args: Parameters<typeof clsx>) => string =
