@@ -141,7 +141,7 @@ Each function is tailored to a specific framework.
 
 ## Contributions
 
-To contribute to this library fork this [branch](https://github.com/louiss0/cn-efs/tree/legacy).
+To contribute to this library fork this [branch](https://github.com/louiss0/cn-efs).
 If you have an issue go to [cn-efs issues](https://github.com/louiss0/cn-efs/issues).
 
 ## Recommendations
