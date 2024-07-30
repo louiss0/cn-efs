@@ -6,6 +6,14 @@ Git tags are prefixed with that term making things difficult.
 
 ## [Unreleased]
 
+### Added
+
+- All `cn-efs` functions each have examples in their doc blocks
+
+### Changed
+
+- Read Me now only contains theory recommendations and contributions.
+
 ## [legacy--v3.0.0-beta.2] - 2024-07-29
 
 ### Changed
