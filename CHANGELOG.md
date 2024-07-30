@@ -6,6 +6,8 @@ Git tags are prefixed with that term making things difficult.
 
 ## [Unreleased]
 
+## [3.0.0] - 2024-07-30
+
 ### Added
 
 - All `cn-efs` functions each have examples in their doc blocks
