@@ -4,6 +4,11 @@
     "version": "2.1.0",
     "exports": "./src/index.ts",
     "publish": {
+        "include": [
+            "src",
+            "LICENSE.txt",
+            "README.md"
+        ],
         "exclude": [
             "./src/**/*.test.ts"
         ]
