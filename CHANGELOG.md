@@ -6,6 +6,8 @@ Git tags are prefixed with that term making things difficult.
 
 ## [Unreleased]
 
+## [3.0.1] - 2024-11-05
+
 ### Fixed
 
 - Make `tsup` generate d.{ts|cts} files.
