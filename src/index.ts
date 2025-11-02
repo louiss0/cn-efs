@@ -143,13 +143,14 @@ const getClassNamesEvaluatorFilterAndSorter =
 
             const oneOrMoreSpacesRE = /\s+/
 
-            const splitClassNames = clsx(...args).split(oneOrMoreSpacesRE)
+            const splitClassNames = clsx(...args)
+                .trim()
+                .split(oneOrMoreSpacesRE)
+                .filter((className) => className.length !== 0)
 
-            if (splitClassNames.length < 2) {
+            if (splitClassNames.length === 0) {
 
-                throw new Error(
-                    "This string has no sets of classes please add spaces between classes that need to be sorted"
-                )
+                return ""
 
             }
 
@@ -192,7 +193,7 @@ const getClassNamesEvaluatorFilterAndSorter =
  @example B-E-M 
  ```ts
    cnEFS('card', 'card--red', 'card--blue', 'card__image', 'card__image--alt')
-   // output 'card--blue card__image--alt'
+   // output 'card card--red card--blue card__image--alt'
  ```
  */
 export const cnEFS: (...args: Parameters<typeof clsx>) => string =
@@ -232,15 +233,19 @@ export const cnEFS: (...args: Parameters<typeof clsx>) => string =
 
             if (classNameMap.bem.size !== 0) {
                 for (const [block, value] of classNameMap.bem) {
-                    const modifier = value?.get("modifier");
-                    const element = value?.get("element");
+                    const modifiers = value?.modifiers;
+                    const elements = value?.elements;
 
-                    if (modifier) {
-                        sortString = sortString.concat(`${block} ${block}${modifier} `);
+                    if (modifiers?.size) {
+                        for (const modifier of modifiers) {
+                            sortString = sortString.concat(`${block}${modifier} `);
+                        }
                     }
 
-                    if (element) {
-                        sortString = sortString.concat(`${block}${element} `);
+                    if (elements?.size) {
+                        for (const element of elements.values()) {
+                            sortString = sortString.concat(`${block}${element} `);
+                        }
                     }
                 }
             }

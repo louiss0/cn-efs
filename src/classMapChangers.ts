@@ -1885,6 +1885,26 @@ const aBlockElementClassName =
 const aBlockModifierClassName =
     /^(?<lower_case_word>[a-z]+)(?<modifier>--[a-z0-9]+)$/
 
+const getOrCreateBEMBlockMaps = (
+    classMap: BEMClassNamesMap["bem"],
+    block: string,
+) => {
+
+    const blockMaps = classMap.get(block)
+
+    if (blockMaps) return blockMaps
+
+    const newBlockMaps = {
+        elements: new Map<string, string>(),
+        modifiers: new Set<string>(),
+    }
+
+    classMap.set(block, newBlockMaps)
+
+    return newBlockMaps
+}
+
+const getBlockElementKey = (element: string) => element.split("--").at(0) ?? element
 
 export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapChangerBasedOnClassName<
     BEMClassNamesMap["bem"],
@@ -1909,22 +1929,16 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapC
             if (!lower_case_word || !element) return false
 
 
-            if (!classMap.has(lower_case_word)) {
+            if (!classNames.includes(lower_case_word)) {
 
-                classMap.set(
-                    lower_case_word,
-                    new Map([
-                        ["element", element],
-
-                    ])
-                )
-
-                return true
+                classNames.push(lower_case_word)
 
             }
 
-            classMap.get(lower_case_word)
-                ?.set("element", element)
+
+            const blockMaps = getOrCreateBEMBlockMaps(classMap, lower_case_word)
+
+            blockMaps.elements.set(getBlockElementKey(element), element)
 
 
             return true
@@ -1943,24 +1957,14 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapC
 
             if (!classNames.includes(lower_case_word)) {
 
-                throw new Error(
-                    `To have a modifier you must have the block ${lower_case_word} in the list of classes already.
-                    Please put the block as the class that requires the use of the modifier.`
-                )
+                classNames.push(lower_case_word)
 
             }
 
 
-            if (!classMap.has(lower_case_word)) {
+            const blockMaps = getOrCreateBEMBlockMaps(classMap, lower_case_word)
 
-                classMap.set(lower_case_word, new Map([["modifier", modifier]]))
-
-                return true
-
-            }
-
-
-            classMap.get(lower_case_word)?.set("modifier", modifier)
+            blockMaps.modifiers.add(modifier)
 
 
 

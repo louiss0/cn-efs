@@ -1631,12 +1631,12 @@ describe("Test if all class map changers work", () => {
 
             expect(bem.has("card")).toBeTruthy()
 
-            const cardElementAndModifierMap = bem.get("card");
+            const cardElementAndModifierMap = bem.get("card")
 
-            expect(cardElementAndModifierMap?.has("element")).toBeTruthy()
+            expect(cardElementAndModifierMap?.elements.has("__title")).toBeTruthy()
 
 
-            expect(cardElementAndModifierMap?.has("modifier")).toBeTruthy()
+            expect(cardElementAndModifierMap?.modifiers.has("--lg")).toBeTruthy()
 
 
 
@@ -1655,9 +1655,9 @@ describe("Test if all class map changers work", () => {
 
                 const cardElementAndModifierMap = bem.get("card");
 
-                expect(cardElementAndModifierMap?.has("element")).toBeTruthy()
+                expect(cardElementAndModifierMap?.elements.has("__title")).toBeTruthy()
 
-                expect(cardElementAndModifierMap?.get("element")).toBe("__title")
+                expect(cardElementAndModifierMap?.elements.get("__title")).toBe("__title")
 
 
 
@@ -1681,9 +1681,9 @@ describe("Test if all class map changers work", () => {
 
                 const cardElementAndModifierMap = bem.get("card");
 
-                expect(cardElementAndModifierMap?.has("element")).toBeTruthy()
+                expect(cardElementAndModifierMap?.elements.has("__title")).toBeTruthy()
 
-                expect(cardElementAndModifierMap?.get("element")).toBe("__title")
+                expect(cardElementAndModifierMap?.elements.get("__title")).toBe("__title")
 
 
 
@@ -1705,9 +1705,9 @@ describe("Test if all class map changers work", () => {
 
                 const cardElementAndModifierMap = bem.get("card");
 
-                expect(cardElementAndModifierMap?.has("element")).toBeTruthy()
+                expect(cardElementAndModifierMap?.elements.has("__title")).toBeTruthy()
 
-                expect(cardElementAndModifierMap?.get("element")).toBe("__title")
+                expect(cardElementAndModifierMap?.elements.get("__title")).toBe("__title")
 
 
 
