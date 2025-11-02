@@ -1657,7 +1657,8 @@ describe("Test if all class map changers work", () => {
 
                 expect(cardElementAndModifierMap?.elements.has("__title")).toBeTruthy()
 
-                expect(cardElementAndModifierMap?.elements.get("__title")).toBe("__title")
+                expect(cardElementAndModifierMap?.elements.get("__title")?.base)
+                    .toBe("__title")
 
 
 
@@ -1683,7 +1684,8 @@ describe("Test if all class map changers work", () => {
 
                 expect(cardElementAndModifierMap?.elements.has("__title")).toBeTruthy()
 
-                expect(cardElementAndModifierMap?.elements.get("__title")).toBe("__title")
+                expect(cardElementAndModifierMap?.elements.get("__title")?.base)
+                    .toBe("__title")
 
 
 
@@ -1707,7 +1709,8 @@ describe("Test if all class map changers work", () => {
 
                 expect(cardElementAndModifierMap?.elements.has("__title")).toBeTruthy()
 
-                expect(cardElementAndModifierMap?.elements.get("__title")).toBe("__title")
+                expect(cardElementAndModifierMap?.elements.get("__title")?.base)
+                    .toBe("__title")
 
 
 

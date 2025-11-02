@@ -20,8 +20,13 @@ export class ClassNamesMap {
 }
 
 
+type BEMElementEntry = {
+    base?: string
+    modifiers: Set<string>
+}
+
 type BEMBlockMaps = {
-    elements: Map<string, string>
+    elements: Map<string, BEMElementEntry>
     modifiers: Set<string>
 }
 

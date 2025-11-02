@@ -1895,7 +1895,7 @@ const getOrCreateBEMBlockMaps = (
     if (blockMaps) return blockMaps
 
     const newBlockMaps = {
-        elements: new Map<string, string>(),
+        elements: new Map<string, { base?: string; modifiers: Set<string> }>(),
         modifiers: new Set<string>(),
     }
 
@@ -1938,7 +1938,22 @@ export const attemptToChangeClassNameMapAccordingToIfTheBEMConvention: ClassMapC
 
             const blockMaps = getOrCreateBEMBlockMaps(classMap, lower_case_word)
 
-            blockMaps.elements.set(getBlockElementKey(element), element)
+            const elementKey = getBlockElementKey(element)
+            const existingElementEntry = blockMaps.elements.get(elementKey)
+
+            if (!existingElementEntry) {
+                const hasModifier = element.includes("--")
+                blockMaps.elements.set(elementKey, {
+                    ...(hasModifier ? {} : { base: element }),
+                    modifiers: hasModifier ? new Set([element]) : new Set(),
+                })
+            } else {
+                if (element.includes("--")) {
+                    existingElementEntry.modifiers.add(element)
+                } else {
+                    existingElementEntry.base = element
+                }
+            }
 
 
             return true

@@ -76,7 +76,7 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
             const sortedClasses = cnEFS(bemClassesWithOnlyElementsAndElementModifiers)
 
 
-            expect(sortedClasses).toBe("card card__title--lg")
+            expect(sortedClasses).toBe("card card__title card__title--lg")
 
         })
 

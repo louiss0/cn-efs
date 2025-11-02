@@ -243,8 +243,20 @@ export const cnEFS: (...args: Parameters<typeof clsx>) => string =
                     }
 
                     if (elements?.size) {
-                        for (const element of elements.values()) {
-                            sortString = sortString.concat(`${block}${element} `);
+                        for (const elementEntry of elements.values()) {
+                            if (!elementEntry) continue;
+
+                            const { base, modifiers } = elementEntry;
+
+                            if (base) {
+                                sortString = sortString.concat(`${block}${base} `);
+                            }
+
+                            if (modifiers.size) {
+                                for (const modifier of modifiers) {
+                                    sortString = sortString.concat(`${block}${modifier} `);
+                                }
+                            }
                         }
                     }
                 }
