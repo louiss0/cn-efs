@@ -2,12 +2,7 @@
 
 export const viableUtilityClassMapKeys = ["digit", "word", "color", "variable", "function", "args", "slashValue"] as const
 
-export const viableBEMClassMapKeys = ["element", "modifier"] as const
-
 export type ViableUtilityClassMapKeys = typeof viableUtilityClassMapKeys[number]
-
-
-type ViableBemClassMapKeys = typeof viableBEMClassMapKeys[number]
 
 
 type StringOrOmitFromString<T extends string> = T | Omit<string, T>
@@ -25,11 +20,18 @@ export class ClassNamesMap {
 }
 
 
+type BEMElementEntry = {
+    base?: string
+    modifiers: Set<string>
+}
+
+type BEMBlockMaps = {
+    elements: Map<string, BEMElementEntry>
+    modifiers: Set<string>
+}
+
 export class BEMClassNamesMap extends ClassNamesMap {
-    public readonly bem: Map<
-        string,
-        Map<ViableBemClassMapKeys, string | undefined> | undefined
-    > = new Map()
+    public readonly bem: Map<string, BEMBlockMaps> = new Map()
 }
 
 export class BaseCN_EFSClassNamesMap extends BEMClassNamesMap {
@@ -76,11 +78,13 @@ export class TailwindClassNamesMap extends ClassNamesMap {
 
 
 
-export type ClassNameMap = Map<
-    string,
-    Map<
-        string | Omit<string, string>,
-        string | Map<string, string> | undefined
+export type ClassNameMap =
+    | Map<
+        string,
+        Map<
+            string | Omit<string, string>,
+            string | Map<string, string> | undefined
+        >
+        | undefined
     >
-    | undefined
->;
+    | Map<string, BEMBlockMaps>;

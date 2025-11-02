@@ -55,18 +55,16 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
 
 
 
-            expect(sortedClasses).toMatchInlineSnapshot('"card card card--baz"')
+            expect(sortedClasses).toMatchInlineSnapshot('"card card--foo card--baz"')
 
 
 
         })
 
-        it("throws error when string is not spaced", () => {
+        it("returns a single class unchanged when only one class is provided", () => {
 
 
-
-            expect(() => cnEFS("foo"))
-                .toThrowErrorMatchingInlineSnapshot("[Error: This string has no sets of classes please add spaces between classes that need to be sorted]")
+            expect(cnEFS("foo")).toBe("foo")
 
         })
 
@@ -78,24 +76,30 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
             const sortedClasses = cnEFS(bemClassesWithOnlyElementsAndElementModifiers)
 
 
-            expect(sortedClasses).toBe("card card__title--lg")
+            expect(sortedClasses).toBe("card card__title card__title--lg")
+
+        })
+
+        it("keeps multiple BEM elements without dropping earlier siblings", () => {
+
+            const multipleElements = "card card__title card__image"
+
+            const sortedClasses = cnEFS(multipleElements)
+
+
+            expect(sortedClasses).toBe("card card__title card__image")
 
         })
 
 
-        it("throws error when a class that is modifier is in a list that is does'nt have a block ", () => {
+        it("adds a missing block when modifiers are provided before the block", () => {
 
             const bemClassesWithOnlyModifiers = " card--lg card--md"
 
 
 
-
-
-            expect(() => cnEFS(bemClassesWithOnlyModifiers))
-                .toThrowErrorMatchingInlineSnapshot(`
-                  [Error: To have a modifier you must have the block card in the list of classes already.
-                                      Please put the block as the class that requires the use of the modifier.]
-                `)
+            expect(cnEFS(bemClassesWithOnlyModifiers))
+                .toBe("card card--lg card--md")
 
 
         })
