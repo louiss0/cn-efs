@@ -340,7 +340,7 @@ export const windiCN_EFS: (...args: Parameters<typeof clsx>) => string =
                 "inline",
                 "block",
             ],
-            visibility: ["visible", "invisible", "collaspe"],
+            visibility: ["visible", "invisible", "collapse"],
             sr: ["sr-only", "not-sr-only"],
             textDecoration: ["underline", "overline", "line-through", "no-underline"],
             textTransform: ["uppercase", "lowercase", "capitalize", "normal-case"],

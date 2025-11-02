@@ -195,6 +195,23 @@ describe("Testing Class Name Evaluator Filter Sorters work as intended", () => {
             })
 
 
+        it("recognizes the collapse visibility utility class", () => {
+
+            const visibilityClasses = [
+                "visible",
+                "invisible",
+                "collapse",
+            ]
+
+            const sortedClasses = windiCN_EFS(visibilityClasses)
+
+
+            expect(sortedClasses).toBe(visibilityClasses.at(-1))
+
+
+        })
+
+
         it("filters and sorts utility classes", () => {
 
             const classes = [
